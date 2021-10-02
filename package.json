@@ -2,6 +2,10 @@
     "name": "web3",
     "version": "0.1.0",
     "private": true,
+    "engines": {
+      "npm": "5.7.1",
+      "node": "9.5.0"
+    },
     "homepage": "",
     "dependencies": {
         "bootstrap": "4.1.3",
