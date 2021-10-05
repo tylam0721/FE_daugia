@@ -2,5 +2,4 @@
     npm install
     npm start
 
-## PROJECT URL:
-    https://fedaugia.herokuapp.com/
+## PROJECT URL: [https://fedaugia.herokuapp.com/](https://fedaugia.herokuapp.com/)
