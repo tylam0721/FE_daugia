@@ -9,12 +9,14 @@ function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    db.collection("Products").onSnapshot((snapshot) => {
-      setProduct(snapshot.docs.map((doc) => doc.data()));
-      setLoading(false);
-    });
+    // db.collection("Products").onSnapshot((snapshot) => {
+    //   setProduct(snapshot.docs.map((doc) => doc.data()));
+    //   setLoading(false);
+    // });
+    setTimeout(() => {
+            setLoading(false);
+    }, 1000);
   }, [setProduct]);
-  console.log(product);
 
   return (
     <div className="home">
@@ -43,6 +45,17 @@ function Home() {
                 </Grid.Column>
               );
             })}
+
+            <Grid.Column stretched key={"index"}>
+              <Product
+                id={"product.id"}
+                key={"product.id"}
+                title={"product.title"}
+                price={"product.price"}
+                rating={"product.rating"}
+                imageUrl={"https://cdn.pixabay.com/photo/2014/05/02/21/49/laptop-336373__340.jpg"}
+              ></Product>
+            </Grid.Column>
           </Grid>
         </Container>
       )}

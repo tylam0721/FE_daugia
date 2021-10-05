@@ -15,14 +15,14 @@ function Footer() {
             alt="userPic"
           />
           <List horizontal inverted divided link size="small">
-            <List.Item as="a" href="https://github.com/Rajangrg">
-              By Rajan Gurung
+            <List.Item as="a" href="https://github.com">
+              footer link
             </List.Item>
-            <List.Item as="a" href="https://github.com/Rajangrg/React-Ecommerce-Template">
-              Source Code
+            <List.Item as="a" href="https://github.com">
+              footer link
             </List.Item>
-            <List.Item as="a" href="https://github.com/Rajangrg/React-Ecommerce-Template/blob/master/LICENSE">
-              MIT License
+            <List.Item as="a" href="https://github.com">
+              footer link
             </List.Item>
           </List>
         </Container>
