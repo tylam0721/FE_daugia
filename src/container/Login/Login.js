@@ -34,29 +34,30 @@ function Login() {
       <Container>
         <Grid centered columns={3} doubling stackable>
           <Grid.Column>
-            <h2>Sign In</h2>
-
-            <Card>
+            <Card className="card">
+              <Card.Header className="card_header">ĐĂNG NHẬP</Card.Header>
               <Form className="login__form">
                 <Form.Field required>
-                  <label>E-mail</label>
+                  <label>Tên người dùng</label>
                   <input
-                    placeholder="First Name"
-                    type="email"
+                    placeholder="Tên người dùng"
+                    type="text"
                     onChange={(event) => setEmail(event.target.value)}
                   />
                 </Form.Field>
                 <Form.Field required>
-                  <label>Password</label>
+                  <label>Mật khẩu</label>
                   <input
-                    placeholder="password"
+                    placeholder="Mật khẩu"
                     type="password"
                     onChange={(event) => setPassword(event.target.value)}
                   />
                 </Form.Field>
-                <Button color="green" type="submit" onClick={loginUser}>
-                  Login
+                <div className="center">
+                <Button className="button-3" color="green" type="submit" onClick={loginUser}>
+                  Đăng nhập
                 </Button>
+                </div>
               </Form>
             </Card>
           </Grid.Column>
