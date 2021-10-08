@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //container
 import Home from "./container/Home/Home";
 import Login from "./container/Login/Login";
+import Register from "./container/Register/Register";
 import Checkout from "./container/Checkout/Checkout";
 import Footer from "./container/Footer/Footer";
 import { auth } from "./Firebase/FirebaseConfig";
@@ -41,6 +42,7 @@ function App() {
           <Route path="/" component={Home} exact></Route>
           <Route path="/uploadImage" component={UploadImage}></Route>
           <Route path="/login" component={Login}></Route>
+          <Route path="/register" component={Register}></Route>
           <Route path="/checkout" component={Checkout}></Route>
         </Switch>
         <Footer></Footer>

@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Card, Form, Button, Grid } from "semantic-ui-react";
-import "./Login.css";
+import "./Register.css";
 import { auth } from "../../Firebase/FirebaseConfig";
 import { useHistory } from "react-router-dom";
-import { Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
-function Login() {
+function Register() {
   //router
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [captcha, setCaptcha] = useState("");
+  const [captchaKey, setCaptchaKey] = useState("");
+
+  useEffect(() => {
+    console.log(process.env)
+    setCaptchaKey(process.env.CAPTCHA_PUBLIC_KEY);
+  }, [])
 
   const loginUser = (event) => {
     event.preventDefault();
@@ -30,12 +38,16 @@ function Login() {
     }
   };
 
+  const onCheckCaptcha = (value) => {
+    setCaptcha(value);
+  }
+
   return (
     <div className="login">
       <Container>
         <Grid centered columns={3} doubling stackable>
           <Grid.Column>
-            <h2>Đăng nhập</h2>
+            <h2>Tạo tài khoản mới</h2>
 
             <Card>
               <Form className="login__form">
@@ -55,7 +67,18 @@ function Login() {
                     onChange={(event) => setPassword(event.target.value)}
                   />
                 </Form.Field>
-                <Link to="register">Tạo tài khoản</Link>
+                <Form.Field required>
+                  <label>Nhập lại password</label>
+                  <input
+                    placeholder="nhập lại password"
+                    type="password"
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                  />
+                </Form.Field>
+                {/* <ReCAPTCHA
+                  sitekey={process.env.CAPTCHA_PUBLIC_KEY}
+                  onChange={onCheckCaptcha}
+                /> */}
                 <Button color="green" type="submit" onClick={loginUser}>
                   Login
                 </Button>
@@ -68,4 +91,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
