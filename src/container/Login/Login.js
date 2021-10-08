@@ -4,6 +4,8 @@ import "./Login.css";
 import { auth } from "../../Firebase/FirebaseConfig";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import {API_HOST, API_HOST_DEV} from '../../config/endpoints';
 
 function Login() {
   //router
@@ -14,51 +16,61 @@ function Login() {
   const loginUser = (event) => {
     event.preventDefault();
     if (email && password) {
-      auth
-        .signInWithEmailAndPassword(email, password)
-        .then((authUser) => {
-          history.push("/");
+      axios.post(
+        `${API_HOST_DEV}/api/auth`,
+        {
+          Username: email,
+          Password: password
+        }
+      )
+        .then(function (response) {
+          // handle success
+          console.log(response);
+          localStorage.setItem('accessToken', response?.data?.accessToken);
+          localStorage.setItem('refreshToken', response?.data?.refreshToken);
         })
-        .catch((error) => {
-          alert(
-            "Opps! something went wrong please check your console for more info"
-          );
-          console.error(error.message);
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        })
+        .then(function () {
+          // always executed
         });
     } else {
       alert("Please Enter all the fields");
     }
   };
 
+
   return (
     <div className="login">
       <Container>
         <Grid centered columns={3} doubling stackable>
           <Grid.Column>
-            <h2>Đăng nhập</h2>
-
-            <Card>
+            <Card className="card">
+              <Card.Header className="card_header">ĐĂNG NHẬP</Card.Header>
               <Form className="login__form">
                 <Form.Field required>
-                  <label>E-mail</label>
+                  <label>Tên người dùng</label>
                   <input
-                    placeholder="First Name"
-                    type="email"
+                    placeholder="Tên người dùng"
+                    type="text"
                     onChange={(event) => setEmail(event.target.value)}
                   />
                 </Form.Field>
                 <Form.Field required>
-                  <label>Password</label>
+                  <label>Mật khẩu</label>
                   <input
-                    placeholder="password"
+                    placeholder="Mật khẩu"
                     type="password"
                     onChange={(event) => setPassword(event.target.value)}
                   />
                 </Form.Field>
-                <Link to="register">Tạo tài khoản</Link>
-                <Button color="green" type="submit" onClick={loginUser}>
-                  Login
-                </Button>
+                <div className="center">
+                  <Button className="button-3" color="green" type="submit" onClick={loginUser}>
+                    Đăng nhập
+                  </Button>
+                </div>
               </Form>
             </Card>
           </Grid.Column>

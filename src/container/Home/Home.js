@@ -9,13 +9,17 @@ function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // db.collection("Products").onSnapshot((snapshot) => {
-    //   setProduct(snapshot.docs.map((doc) => doc.data()));
-    //   setLoading(false);
-    // });
-    setTimeout(() => {
-            setLoading(false);
-    }, 1000);
+    db.collection("Products").onSnapshot((snapshot) => {
+      setProduct(snapshot.docs.map((doc) => doc.data()));
+      setLoading(false);
+    });
+
+    
+
+
+    // setTimeout(() => {
+    //         setLoading(false);
+    // }, 1000);
   }, [setProduct]);
 
   return (

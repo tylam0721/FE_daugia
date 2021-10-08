@@ -23,10 +23,10 @@ function Header() {
             <Link to="/" className="header__leftItem">
               <img
                 className="header__logo"
-                src="https://img.icons8.com/ios/100/000000/online-shop-favorite.png"
+                src="https://img.icons8.com/plasticine/100/000000/auction.png"
                 alt="secondhand store logo"
               />
-              <p className="header__companyName">Second-hand Store</p>
+              <p className="header__companyName">Đấu Giá Online</p>
             </Link>
           </Menu.Item>
         </Menu.Menu>
@@ -46,12 +46,12 @@ function Header() {
               {user ? (
                 <div onClick={login}>
                   <Icon name="sign-out" />
-                  Logout
+                  Đăng xuất
                 </div>
               ) : (
                 <>
                   <Icon name="sign-in" />
-                  Sign in
+                  Đăng nhập
                 </>
               )}
             </Menu.Item>
