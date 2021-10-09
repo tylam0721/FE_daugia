@@ -17,7 +17,7 @@ function Login() {
     event.preventDefault();
     if (email && password) {
       axios.post(
-        `${API_HOST_DEV}/api/auth`,
+        `${API_HOST}/api/auth`,
         {
           Username: email,
           Password: password
@@ -28,6 +28,7 @@ function Login() {
           console.log(response);
           localStorage.setItem('accessToken', response?.data?.accessToken);
           localStorage.setItem('refreshToken', response?.data?.refreshToken);
+          history.push('/');
         })
         .catch(function (error) {
           // handle error
