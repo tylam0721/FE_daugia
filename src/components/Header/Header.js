@@ -31,16 +31,24 @@ function Header() {
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu position="right">
-          <Link to="/uploadImage">
-            <Menu.Item>
-              <Icon name="upload" /> Add product
-            </Menu.Item>
-          </Link>
-          <Link to="/checkout">
-            <Menu.Item>
-              <Icon name="shop" /> {basket?.length}
-            </Menu.Item>
-          </Link>
+
+
+          {user && (
+                <div>
+                  <Link to="/uploadImage">
+                      <Menu.Item>
+                        <Icon name="upload" /> Add product
+                      </Menu.Item>
+                    </Link>
+                    <Link to="/checkout">
+                      <Menu.Item>
+                        <Icon name="shop" /> {basket?.length}
+                      </Menu.Item>
+                    </Link>
+                </div>
+              )
+          }
+          
           <Link to="/login">
             <Menu.Item>
               {user ? (
