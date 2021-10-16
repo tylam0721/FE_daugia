@@ -4,14 +4,13 @@ import { Menu, Icon } from "semantic-ui-react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import { useStateValue } from "../../StateProvider/StateProvider";
-import { auth } from "../../Firebase/FirebaseConfig";
 
 function Header() {
-  const [{ basket, user }] = useStateValue();
+  const [{ basket, user }, dispatch] = useStateValue();
 
   const login = () => {
     if (user) {
-      auth.signOut();
+      // dispatch({ type: "SET_USER", user: null });
     }
   };
 
@@ -31,24 +30,29 @@ function Header() {
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu position="right">
-
-
-          {user && (
+          <Link to="/">
+            <Menu.Item>
+              {user ? (
                 <div>
-                  <Link to="/uploadImage">
-                      <Menu.Item>
-                        <Icon name="upload" /> Add product
-                      </Menu.Item>
-                    </Link>
-                    <Link to="/checkout">
-                      <Menu.Item>
-                        <Icon name="shop" /> {basket?.length}
-                      </Menu.Item>
-                    </Link>
+                  <Icon name="user" />
+                  {`
+                    ${user.firstName ? user.firstName : ""} 
+                    ${user.lastName ? user.lastName : ""}
+                  `}
                 </div>
-              )
-          }
-          
+              ) : (<></>)}
+            </Menu.Item>
+          </Link>
+          <Link to="/uploadImage">
+            <Menu.Item>
+              <Icon name="upload" /> Add product
+            </Menu.Item>
+          </Link>
+          <Link to="/checkout">
+            <Menu.Item>
+              <Icon name="shop" /> {basket?.length}
+            </Menu.Item>
+          </Link>
           <Link to="/login">
             <Menu.Item>
               {user ? (
