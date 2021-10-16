@@ -6,9 +6,11 @@ import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import {API_HOST, API_HOST_DEV} from '../../config/endpoints';
+import jwt from 'jwt-decode';
+import { useStateValue } from "../../StateProvider/StateProvider";
 
 function Login() {
-  //router
+  const [, dispatch] = useStateValue();
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +21,7 @@ function Login() {
       axios.post(
         `${API_HOST}/api/auth`,
         {
-          Username: email,
+          Email: email,
           Password: password
         }
       )
@@ -28,6 +30,7 @@ function Login() {
           console.log(res);
           localStorage.setItem('accessToken', res?.data?.accessToken);
           localStorage.setItem('refreshToken', res?.data?.refreshToken);
+          // setUserInfo(res?.data?.accessToken);
           history.push('/');
         })
         .catch(function (error) {
@@ -42,6 +45,21 @@ function Login() {
     }
   };
 
+  // const setUserInfo = (accessToken) => {
+  //   if(accessToken != null)
+  //   {
+  //     // use login in
+  //     const user = jwt(accessToken); // decode your token here
+  //     console.log(user);
+
+  //     // set USER global state:
+  //     dispatch({ type: "SET_USER", user: user });
+  //   }
+  //   else{
+  //     // remove USER global state:
+  //     dispatch({ type: "SET_USER", user: null });
+  //   }
+  // }
 
   return (
     <div className="login">

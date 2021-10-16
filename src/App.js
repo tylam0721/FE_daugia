@@ -14,32 +14,38 @@ import Footer from "./container/Footer/Footer";
 import { auth } from "./Firebase/FirebaseConfig";
 import { useStateValue } from "./StateProvider/StateProvider";
 import UploadImage from "./container/UploadImage/UploadImage";
+import jwt from 'jwt-decode';
 
 function App() {
   const [{ user }, dispatch] = useStateValue();
 
   useEffect(() => {
-    /*const unsubscribe = auth.onAuthStateChanged((authUser) => {
-      if (authUser) {
-        //user login in .
-        dispatch({ type: "SET_USER", user: authUser });
-      } else {
-        //user log out
-        dispatch({ type: "SET_USER", user: null });
-      }
-    });
-    return () => {
-      unsubscribe();
-    };*/
+    // const unsubscribe = auth.onAuthStateChanged((authUser) => {
+    //   if (authUser) {
+    //     //user login in .
+    //     dispatch({ type: "SET_USER", user: authUser });
+    //   } else {
+    //     //user log out
+    //     dispatch({ type: "SET_USER", user: null });
+    //   }
+    // });
+    // return () => {
+    //   unsubscribe();
+    // };
     
-    const data = localStorage.getItem("accessToken");
-    if(data != null)
+    const accessToken = localStorage.getItem("accessToken");
+    if(accessToken != null)
     {
-      console.log("logged in, access token: "+ localStorage.getItem('accessToken'));
+      // use login in
+      const user = jwt(accessToken); // decode your token here
+      console.log(user);
 
+      // set USER global state:
+      dispatch({ type: "SET_USER", user: user });
     }
     else{
-      console.log("not login");
+      // remove USER global state:
+      dispatch({ type: "SET_USER", user: null });
     }
   }, [dispatch]);
 
