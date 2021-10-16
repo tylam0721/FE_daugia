@@ -19,7 +19,7 @@ function App() {
   const [{ user }, dispatch] = useStateValue();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+    /*const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         //user login in .
         dispatch({ type: "SET_USER", user: authUser });
@@ -30,7 +30,17 @@ function App() {
     });
     return () => {
       unsubscribe();
-    };
+    };*/
+    
+    const data = localStorage.getItem("accessToken");
+    if(data != null)
+    {
+      console.log("logged in, access token: "+ localStorage.getItem('accessToken'));
+
+    }
+    else{
+      console.log("not login");
+    }
   }, [dispatch]);
 
   console.log( user);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Component } from "react";
 import { Container, Card, Form, Button, Grid } from "semantic-ui-react";
 import "./Login.css";
 import { auth } from "../../Firebase/FirebaseConfig";
@@ -23,11 +23,11 @@ function Login() {
           Password: password
         }
       )
-        .then(function (response) {
+        .then(function (res) {
           // handle success
-          console.log(response);
-          localStorage.setItem('accessToken', response?.data?.accessToken);
-          localStorage.setItem('refreshToken', response?.data?.refreshToken);
+          console.log(res);
+          localStorage.setItem('accessToken', res?.data?.accessToken);
+          localStorage.setItem('refreshToken', res?.data?.refreshToken);
           history.push('/');
         })
         .catch(function (error) {
