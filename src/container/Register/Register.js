@@ -45,11 +45,11 @@ function Register() {
   return (
     <div className="login">
       <Container>
-        <Grid centered columns={3} doubling stackable>
+        <Grid centered columns={2} doubling stackable>
           <Grid.Column>
             <h2>Tạo tài khoản mới</h2>
 
-            <Card>
+            <Card className="test">
               <Form className="login__form">
                 <Form.Field required>
                   <label>E-mail</label>

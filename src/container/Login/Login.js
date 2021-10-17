@@ -5,17 +5,24 @@ import { auth } from "../../Firebase/FirebaseConfig";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import {API_HOST, API_HOST_DEV} from '../../config/endpoints';
+import { API_HOST, API_HOST_DEV } from '../../config/endpoints';
 import jwt from 'jwt-decode';
 import { useStateValue } from "../../StateProvider/StateProvider";
+import Alert from "../../Common/Alert";
 
 function Login() {
   const [, dispatch] = useStateValue();
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [alertStatus, setAlertStatus] = useState(false);
+  const [alertType, setAlertType] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const loginUser = (event) => {
+    // test modal:
+    setAlertStatus(true);
+
     event.preventDefault();
     if (email && password) {
       axios.post(
@@ -63,6 +70,13 @@ function Login() {
 
   return (
     <div className="login">
+      <Alert
+        status={alertStatus}   // true or false
+        type={alertType}   // success, warning, error, info
+        title={errorMessage}   // title you want to display
+        setIsAlert={setAlertStatus}
+      />
+
       <Container>
         <Grid centered columns={3} doubling stackable>
           <Grid.Column>
