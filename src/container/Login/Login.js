@@ -5,33 +5,33 @@ import { auth } from "../../Firebase/FirebaseConfig";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import {API_HOST, API_HOST_DEV} from '../../config/endpoints';
-import jwt from 'jwt-decode';
+import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
+import jwt from "jwt-decode";
 import { useStateValue } from "../../StateProvider/StateProvider";
+import validator from "validator";
 
 function Login() {
   const [, dispatch] = useStateValue();
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const loginUser = (event) => {
     event.preventDefault();
     if (email && password) {
-      axios.post(
-        `${API_HOST}/api/auth`,
-        {
+      axios
+        .post(`${API_HOST}/api/auth`, {
           Email: email,
-          Password: password
-        }
-      )
+          Password: password,
+        })
         .then(function (res) {
           // handle success
           console.log(res);
-          localStorage.setItem('accessToken', res?.data?.accessToken);
-          localStorage.setItem('refreshToken', res?.data?.refreshToken);
+          localStorage.setItem("accessToken", res?.data?.accessToken);
+          localStorage.setItem("refreshToken", res?.data?.refreshToken);
           // setUserInfo(res?.data?.accessToken);
-          history.push('/');
+          history.push("/");
         })
         .catch(function (error) {
           // handle error
@@ -70,12 +70,29 @@ function Login() {
               <Card.Header className="card_header">ĐĂNG NHẬP</Card.Header>
               <Form className="login__form">
                 <Form.Field required>
-                  <label>Tên người dùng</label>
+                  <label>Email</label>
                   <input
-                    placeholder="Tên người dùng"
-                    type="text"
-                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="Email"
+                    type="email"
+                    onChange={(event) => {
+                      setEmail(event.target.value);
+                      if (validator.isEmail(event.target.value)) {
+                        setEmailError("");
+                      } else {
+                        setEmailError("Email không hợp lệ");
+                      }
+                    }}
                   />
+                  {emailError.length > 0 && (
+                    <span
+                      style={{
+                        color: "red",
+                      }}
+                    >
+                      <i className="exclamation circle icon"></i>
+                      {emailError}
+                    </span>
+                  )}
                 </Form.Field>
                 <Form.Field required>
                   <label>Mật khẩu</label>
@@ -86,7 +103,12 @@ function Login() {
                   />
                 </Form.Field>
                 <div className="center">
-                  <Button className="button-3" color="green" type="submit" onClick={loginUser}>
+                  <Button
+                    className="button-3"
+                    color="green"
+                    type="submit"
+                    onClick={loginUser}
+                  >
                     Đăng nhập
                   </Button>
                 </div>

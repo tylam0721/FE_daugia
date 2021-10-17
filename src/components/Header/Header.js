@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Menu, Icon } from "semantic-ui-react";
 
 import "./Header.css";
@@ -10,7 +10,7 @@ function Header() {
 
   const login = () => {
     if (user) {
-      // dispatch({ type: "SET_USER", user: null });
+      dispatch({ type: "SET_USER", user: null });
     }
   };
 
@@ -36,8 +36,7 @@ function Header() {
                 <div>
                   <Icon name="user" />
                   {`
-                    ${user.firstName ? user.firstName : ""} 
-                    ${user.lastName ? user.lastName : ""}
+                    ${user.email ? user.email : "your email here"} 
                   `}
                 </div>
               ) : (<></>)}

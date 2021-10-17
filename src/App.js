@@ -11,7 +11,6 @@ import Login from "./container/Login/Login";
 import Register from "./container/Register/Register";
 import Checkout from "./container/Checkout/Checkout";
 import Footer from "./container/Footer/Footer";
-import { auth } from "./Firebase/FirebaseConfig";
 import { useStateValue } from "./StateProvider/StateProvider";
 import UploadImage from "./container/UploadImage/UploadImage";
 import jwt from 'jwt-decode';
@@ -38,8 +37,6 @@ function App() {
     {
       // use login in
       const user = jwt(accessToken); // decode your token here
-      console.log(user);
-
       // set USER global state:
       dispatch({ type: "SET_USER", user: user });
     }
@@ -49,7 +46,6 @@ function App() {
     }
   }, [dispatch]);
 
-  console.log( user);
   return (
     <div className="app">
       <Router>
