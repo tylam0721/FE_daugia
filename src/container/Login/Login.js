@@ -1,7 +1,6 @@
 import React, { useState, Component } from "react";
 import { Container, Card, Form, Button, Grid } from "semantic-ui-react";
 import "./Login.css";
-import { auth } from "../../Firebase/FirebaseConfig";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -18,14 +17,15 @@ function Login() {
   const [password, setPassword] = useState("");
   const [alertStatus, setAlertStatus] = useState(false);
   const [alertType, setAlertType] = useState('');
+  const [alertTitle, setAlertTitle] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [emailError, setEmailError] = useState("");
-
   const loginUser = (event) => {
     // test modal:
-    setAlertStatus(true);
+
 
     event.preventDefault();
+    localStorage.clear();
     if (email && password) {
       axios
         .post(`${API_HOST}/api/auth`, {
@@ -37,18 +37,20 @@ function Login() {
           console.log(res);
           localStorage.setItem("accessToken", res?.data?.accessToken);
           localStorage.setItem("refreshToken", res?.data?.refreshToken);
-          // setUserInfo(res?.data?.accessToken);
           history.push("/");
+          // setUserInfo(res?.data?.accessToken);
         })
         .catch(function (error) {
           // handle error
+          setAlertStatus(true);
+          setAlertType('error');
+          setAlertTitle('Đăng nhập thất bại');
           console.log(error);
         })
-        .then(function () {
-          // always executed
-        });
     } else {
-      alert("Please Enter all the fields");
+      setAlertStatus(true);
+      setAlertType('error');
+      setAlertTitle('Đăng nhập thất bại');
     }
   };
 
@@ -73,7 +75,7 @@ function Login() {
       <Alert
         status={alertStatus}   // true or false
         type={alertType}   // success, warning, error, info
-        title={errorMessage}   // title you want to display
+        title={alertTitle}   // title you want to display
         setIsAlert={setAlertStatus}
       />
 

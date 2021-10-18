@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, Icon } from "semantic-ui-react";
 
 import "./Header.css";
@@ -13,6 +13,7 @@ function Header() {
       dispatch({ type: "SET_USER", user: null });
     }
   };
+
 
   return (
     <div className="header">
@@ -38,18 +39,20 @@ function Header() {
                   {`
                     ${user.email ? user.email : "your email here"} 
                   `}
+                  <Link to="/uploadImage">
+                    <Menu.Item>
+                      <Icon name="upload" /> Add product
+                    </Menu.Item>
+                  </Link>
+                  <Link to="/checkout">
+                    <Menu.Item>
+                      <Icon name="shop" /> {basket?.length}
+                    </Menu.Item>
+                  </Link>
                 </div>
-              ) : (<></>)}
-            </Menu.Item>
-          </Link>
-          <Link to="/uploadImage">
-            <Menu.Item>
-              <Icon name="upload" /> Add product
-            </Menu.Item>
-          </Link>
-          <Link to="/checkout">
-            <Menu.Item>
-              <Icon name="shop" /> {basket?.length}
+              ) : (
+                <></>
+              )}
             </Menu.Item>
           </Link>
           <Link to="/login">
