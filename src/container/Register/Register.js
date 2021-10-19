@@ -5,7 +5,6 @@ import {
   Form,
   Button,
   Grid,
-  GridRow,
   Image,
 } from "semantic-ui-react";
 import "./Register.css";

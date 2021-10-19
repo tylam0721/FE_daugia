@@ -14,6 +14,7 @@ import Footer from "./container/Footer/Footer";
 import { useStateValue } from "./StateProvider/StateProvider";
 import UploadImage from "./container/UploadImage/UploadImage";
 import jwt from 'jwt-decode';
+import moment from 'moment'
 
 function App() {
   const [{ user }, dispatch] = useStateValue();
@@ -37,12 +38,21 @@ function App() {
     {
       // use login in
       const user = jwt(accessToken); // decode your token here
+      if(moment.unix(user.exp) > moment())
+      {
+        dispatch({ type: "SET_USER", user: user });
+
+      }
+      else{
+        dispatch({ type: "SET_USER", user: null });
+        localStorage.clear();
+      }
       // set USER global state:
-      dispatch({ type: "SET_USER", user: user });
     }
     else{
       // remove USER global state:
       dispatch({ type: "SET_USER", user: null });
+      localStorage.clear();
     }
   }, [dispatch]);
 

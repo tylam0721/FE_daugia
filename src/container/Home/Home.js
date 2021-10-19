@@ -34,7 +34,7 @@ function Home() {
         </Segment>
       ) : (
         <Container>
-          <Grid container columns={4} doubling stackable>
+          <Grid container columns={3} doubling stackable>
             {product.map((product, index) => {
               return (
                 <Grid.Column stretched key={index}>
@@ -43,6 +43,7 @@ function Home() {
                     key={product.id}
                     title={product.title}
                     price={product.price}
+                    buyNowPrice={product.buyNowPrice}
                     rating={product.rating}
                     imageUrl={product.imageUrl}
                   ></Product>
@@ -54,10 +55,11 @@ function Home() {
               <Product
                 id={"product.id"}
                 key={"product.id"}
-                title={"product.title"}
-                price={"product.price"}
+                title={"RTXX TIGERBYTE"}
+                price={"100.000.000"}
+                buyNowPrice={"100.000.000"}
                 rating={"product.rating"}
-                imageUrl={"https://cdn.pixabay.com/photo/2014/05/02/21/49/laptop-336373__340.jpg"}
+                imageUrl={"https://scontent.fsgn2-6.fna.fbcdn.net/v/t1.6435-9/224312462_847159839544101_819576698287251221_n.jpg?_nc_cat=110&ccb=1-5&_nc_sid=dbeb18&_nc_ohc=1d6RMRJTCnAAX8PgGeA&_nc_ht=scontent.fsgn2-6.fna&oh=462b14d2fd59eb332843541e043bef09&oe=61949520"}
               ></Product>
             </Grid.Column>
           </Grid>

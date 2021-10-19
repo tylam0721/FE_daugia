@@ -11,9 +11,9 @@ function Header() {
   const login = () => {
     if (user) {
       dispatch({ type: "SET_USER", user: null });
+      localStorage.clear();
     }
   };
-
 
   return (
     <div className="header">
@@ -31,30 +31,46 @@ function Header() {
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu position="right">
-          <Link to="/">
-            <Menu.Item>
-              {user ? (
-                <div>
+          {user ? (
+            <div>
+              <Link to="/">
+                <Menu.Item>
                   <Icon name="user" />
                   {`
-                    ${user.email ? user.email : "your email here"} 
-                  `}
-                  <Link to="/uploadImage">
-                    <Menu.Item>
-                      <Icon name="upload" /> Add product
-                    </Menu.Item>
-                  </Link>
-                  <Link to="/checkout">
-                    <Menu.Item>
-                      <Icon name="shop" /> {basket?.length}
-                    </Menu.Item>
-                  </Link>
-                </div>
-              ) : (
-                <></>
-              )}
-            </Menu.Item>
-          </Link>
+                ${user.email ? user.email : "your email here"} 
+              `}
+                </Menu.Item>
+              </Link>
+            </div>
+          ) : (
+            <></>
+          )}
+          {user ? (
+            <div>
+              <Link to="/uploadImage">
+                <Menu.Item>
+                  <Icon name="upload" /> Add product
+                </Menu.Item>
+              </Link>
+            </div>
+          ) : (
+            <></>
+          )}
+          {user ? (
+            <div>
+              <Link to="/checkout">
+                <Menu.Item>
+                  <Icon name="shop" /> {basket?.length}
+                </Menu.Item>
+              </Link>
+            </div>
+          ) : (
+            <Link to="/register">
+                <Menu.Item>
+                  <Icon name="user plus" /> Đăng ký
+                </Menu.Item>
+              </Link>
+          )}
           <Link to="/login">
             <Menu.Item>
               {user ? (

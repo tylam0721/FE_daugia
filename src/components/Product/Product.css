@@ -3,7 +3,7 @@
 }
 
 .product__title{
-    color: #7c64be !important;
+    color: #5B86E5 !important;
     font-weight: bold;
 }
 
@@ -19,12 +19,37 @@
 }
 
 .product__button{
-    background-color: #8D86CC !important;
+      background: #36D1DC !important;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #5B86E5, #36D1DC) !important;  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #5B86E5, #36D1DC) !important; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
 }
 
 .product__price{
     font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.product__auction{
+    color:rgb(255, 59, 59);
+    font-weight: bold;
     font-size: 1.3rem;
+}
+
+.product__timer{
+    color:rgb(255, 59, 59);
+    font-weight: bold;
+}
+
+.product__buyNowPrice{
+    font-weight: bold;
+    color: red;
+    font-size: 1.2rem;
+}
+
+.product__bidder{
+    font-weight: bold;
+    font-size: 1.1rem;
 }
 
 .product__card{
