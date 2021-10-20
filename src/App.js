@@ -11,6 +11,7 @@ import Login from "./container/Login/Login";
 import Register from "./container/Register/Register";
 import Checkout from "./container/Checkout/Checkout";
 import Footer from "./container/Footer/Footer";
+import UserProfile from "./container/UserProfile/UserProfile";
 import { useStateValue } from "./StateProvider/StateProvider";
 import UploadImage from "./container/UploadImage/UploadImage";
 import jwt from 'jwt-decode';
@@ -66,6 +67,7 @@ function App() {
           <Route path="/login" component={Login}></Route>
           <Route path="/register" component={Register}></Route>
           <Route path="/checkout" component={Checkout}></Route>
+          <Route path="/profile" component={UserProfile}></Route>
         </Switch>
         <Footer></Footer>
       </Router>

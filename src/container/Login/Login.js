@@ -1,5 +1,5 @@
 import React, { useState, Component } from "react";
-import { Container, Card, Form, Button, Grid } from "semantic-ui-react";
+import { Container, Card, Form, Button, Grid, Input } from "semantic-ui-react";
 import "./Login.css";
 import { useHistory, Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -89,7 +89,7 @@ function Login() {
               <Form className="login__form">
                 <Form.Field required>
                   <label>Email</label>
-                  <input
+                  <Input icon='at' iconPosition='left'
                     placeholder="Email"
                     type="email"
                     onChange={(event) => {
@@ -114,7 +114,7 @@ function Login() {
                 </Form.Field>
                 <Form.Field required>
                   <label>Mật khẩu</label>
-                  <input
+                  <Input icon='lock' iconPosition='left'
                     placeholder="Mật khẩu"
                     type="password"
                     onChange={(event) => setPassword(event.target.value)}

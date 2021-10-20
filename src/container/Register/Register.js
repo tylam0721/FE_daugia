@@ -6,6 +6,7 @@ import {
   Button,
   Grid,
   Image,
+  Input
 } from "semantic-ui-react";
 import "./Register.css";
 import { useHistory } from "react-router-dom";
@@ -85,7 +86,7 @@ function Register() {
               <Form className="login__form">
                 <Form.Field required>
                   <label>E-mail</label>
-                  <input
+                  <Input icon='at' iconPosition='left'
                     placeholder="Email"
                     type="email"
                     onChange={(event) => {
@@ -110,7 +111,7 @@ function Register() {
                 </Form.Field>
                 <Form.Field required>
                   <label>Mật khẩu</label>
-                  <input
+                  <Input icon='lock' iconPosition='left'
                     placeholder="Mật khẩu"
                     type="password"
                     onChange={(event) => {
@@ -135,7 +136,7 @@ function Register() {
                 </Form.Field>
                 <Form.Field required>
                   <label>Xác nhận lại mật khẩu</label>
-                  <input
+                  <Input icon='lock' iconPosition='left'
                     placeholder="Xác nhận lại mật khẩu"
                     type="password"
                     onChange={(event) => {
@@ -159,12 +160,12 @@ function Register() {
                   )}
                 </Form.Field>
                 <Form.Field>
-                  <Grid columns={2}>
+                  <Grid columns={2} stretched>
                     <Grid.Row>
                       <Grid.Column>
                         <Form.Field>
                           <label>Họ và tên đệm </label>
-                          <input
+                          <Input icon='user' iconPosition='left'
                             placeholder="Họ và tên đệm"
                             type="text"
                             onChange={(event) =>
@@ -176,7 +177,7 @@ function Register() {
                       <Grid.Column>
                         <Form.Field>
                           <label>Tên</label>
-                          <input
+                          <Input
                             placeholder="Tên"
                             type="text"
                             onChange={(event) =>
