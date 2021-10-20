@@ -1,7 +1,7 @@
 import React, { useState, Component } from "react";
 import { Container, Card, Form, Button, Grid } from "semantic-ui-react";
 import "./Login.css";
-import { useHistory } from "react-router-dom";
+import { useHistory, Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Alert from "../../Common/Alert";
@@ -38,6 +38,8 @@ function Login() {
           localStorage.setItem("accessToken", res?.data?.accessToken);
           localStorage.setItem("refreshToken", res?.data?.refreshToken);
           history.push("/");
+          setUserInfo(res?.data?.accessToken);
+          // <Redirect to='/'/>
           // setUserInfo(res?.data?.accessToken);
         })
         .catch(function (error) {
@@ -54,21 +56,21 @@ function Login() {
     }
   };
 
-  // const setUserInfo = (accessToken) => {
-  //   if(accessToken != null)
-  //   {
-  //     // use login in
-  //     const user = jwt(accessToken); // decode your token here
-  //     console.log(user);
+  const setUserInfo = (accessToken) => {
+    if(accessToken != null)
+    {
+      // use login in
+      const user = jwt(accessToken); // decode your token here
+      console.log(user);
 
-  //     // set USER global state:
-  //     dispatch({ type: "SET_USER", user: user });
-  //   }
-  //   else{
-  //     // remove USER global state:
-  //     dispatch({ type: "SET_USER", user: null });
-  //   }
-  // }
+      // set USER global state:
+      dispatch({ type: "SET_USER", user: user });
+    }
+    else{
+      // remove USER global state:
+      dispatch({ type: "SET_USER", user: null });
+    }
+  }
 
   return (
     <div className="login">
