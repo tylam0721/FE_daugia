@@ -1,0 +1,13 @@
+.home{
+   padding-bottom: 15rem;
+   margin-top: 30px;
+   height:100%
+}
+
+.home__segment{
+   height: 100vh;
+}
+
+.home__loaderMessage{
+   font-weight: bold;
+}
