@@ -45,7 +45,7 @@ function Header() {
           ) : (
             <></>
           )}
-          {user ? (
+          {(user?.scope == 15) ? (
             <div>
               <Link to="/uploadImage">
                 <Menu.Item>
