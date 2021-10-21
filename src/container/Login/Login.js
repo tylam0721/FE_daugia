@@ -1,5 +1,5 @@
 import React, { useState, Component } from "react";
-import { Container, Card, Form, Button, Grid, Input } from "semantic-ui-react";
+import { Container, Card, Form, Button, Grid, Input,Message,Icon,Label } from "semantic-ui-react";
 import "./Login.css";
 import { useHistory, Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -86,7 +86,7 @@ function Login() {
           <Grid.Column>
             <Card className="card">
               <Card.Header className="card_header">ĐĂNG NHẬP</Card.Header>
-              <Form className="login__form">
+              <Form className="attached fluid segment login__form">
                 <Form.Field required>
                   <label>Email</label>
                   <Input icon='at' iconPosition='left'
@@ -102,14 +102,9 @@ function Login() {
                     }}
                   />
                   {emailError.length > 0 && (
-                    <span
-                      style={{
-                        color: "red",
-                      }}
-                    >
-                      <i className="exclamation circle icon"></i>
-                      {emailError}
-                    </span>
+                    <Label basic color="red" pointing>
+                    {emailError}
+                  </Label>
                   )}
                 </Form.Field>
                 <Form.Field required>
@@ -131,6 +126,10 @@ function Login() {
                   </Button>
                 </div>
               </Form>
+              <Message attached="bottom" warning>
+                <Icon name="help" />
+                Chưa có tài khoản?&nbsp;<a href="/register">Đăng ký tại đây</a>
+              </Message>
             </Card>
           </Grid.Column>
         </Grid>

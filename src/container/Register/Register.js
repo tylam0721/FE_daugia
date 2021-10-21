@@ -6,7 +6,10 @@ import {
   Button,
   Grid,
   Image,
-  Input
+  Input,
+  Message,
+  Icon,
+  Label,
 } from "semantic-ui-react";
 import "./Register.css";
 import { useHistory } from "react-router-dom";
@@ -83,10 +86,12 @@ function Register() {
               <Card.Header className="register_card_header">
                 TẠO TÀI KHOẢN MỚI
               </Card.Header>
-              <Form className="login__form">
+              <Form className="attached fluid segment login__form">
                 <Form.Field required>
                   <label>E-mail</label>
-                  <Input icon='at' iconPosition='left'
+                  <Input
+                    icon="at"
+                    iconPosition="left"
                     placeholder="Email"
                     type="email"
                     onChange={(event) => {
@@ -99,19 +104,16 @@ function Register() {
                     }}
                   />
                   {emailError.length > 0 && (
-                    <span
-                      style={{
-                        color: "red",
-                      }}
-                    >
-                      <i className="exclamation circle icon"></i>
+                    <Label basic color="red" pointing>
                       {emailError}
-                    </span>
+                    </Label>
                   )}
                 </Form.Field>
                 <Form.Field required>
                   <label>Mật khẩu</label>
-                  <Input icon='lock' iconPosition='left'
+                  <Input
+                    icon="lock"
+                    iconPosition="left"
                     placeholder="Mật khẩu"
                     type="password"
                     onChange={(event) => {
@@ -124,19 +126,16 @@ function Register() {
                     }}
                   />
                   {passwordError.length > 0 && (
-                    <span
-                      style={{
-                        color: "red",
-                      }}
-                    >
-                      <i className="exclamation circle icon"></i>
+                    <Label basic color="red" pointing>
                       {passwordError}
-                    </span>
+                    </Label>
                   )}
                 </Form.Field>
                 <Form.Field required>
                   <label>Xác nhận lại mật khẩu</label>
-                  <Input icon='lock' iconPosition='left'
+                  <Input
+                    icon="lock"
+                    iconPosition="left"
                     placeholder="Xác nhận lại mật khẩu"
                     type="password"
                     onChange={(event) => {
@@ -149,45 +148,32 @@ function Register() {
                     }}
                   />
                   {confirmError.length > 0 && (
-                    <span
-                      style={{
-                        color: "red",
-                      }}
-                    >
-                      <i className="exclamation circle icon"></i>
+                    <Label basic color="red" pointing>
                       {confirmError}
-                    </span>
+                    </Label>
                   )}
                 </Form.Field>
                 <Form.Field>
-                  <Grid columns={2} stretched>
-                    <Grid.Row>
-                      <Grid.Column>
-                        <Form.Field>
-                          <label>Họ và tên đệm </label>
-                          <Input icon='user' iconPosition='left'
-                            placeholder="Họ và tên đệm"
-                            type="text"
-                            onChange={(event) =>
-                              setFirstName(event.target.value)
-                            }
-                          />
-                        </Form.Field>
-                      </Grid.Column>
-                      <Grid.Column>
-                        <Form.Field>
-                          <label>Tên</label>
-                          <Input
-                            placeholder="Tên"
-                            type="text"
-                            onChange={(event) =>
-                              setLastName(event.target.value)
-                            }
-                          />
-                        </Form.Field>
-                      </Grid.Column>
-                    </Grid.Row>
-                  </Grid>
+                  <Form.Group widths="equal">
+                    <Form.Field>
+                      <label>Họ và tên đệm </label>
+                      <Input
+                        icon="user"
+                        iconPosition="left"
+                        placeholder="Họ và tên đệm"
+                        type="text"
+                        onChange={(event) => setFirstName(event.target.value)}
+                      />
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Tên</label>
+                      <Input
+                        placeholder="Tên"
+                        type="text"
+                        onChange={(event) => setLastName(event.target.value)}
+                      />
+                    </Form.Field>
+                  </Form.Group>
                 </Form.Field>
                 <Form.Field>
                   <label>Ngày sinh</label>
@@ -201,22 +187,11 @@ function Register() {
                   onChange={onCheckCaptcha}
                 /> */}
                 <Form.Field>
-                  <div>
-                    Đã có tài khoản ?{" "}
-                    <i className="hand point right outline icon"></i>
-                    <a href="/login">Đăng Nhập</a>
-                  </div>
-                </Form.Field>
-                <Form.Field>
                   {checkValid.length > 0 && (
-                    <span
-                      style={{
-                        color: "red",
-                      }}
-                    >
-                      <i className="exclamation circle icon"></i>
-                      {checkValid}
-                    </span>
+                <Message negative>
+                <Message.Header>Vui lòng kiểm tra lại các trường thông tin</Message.Header>
+                <p>Các trường có chứa dấu * là các trường bắt buộc</p>
+              </Message>
                   )}
                 </Form.Field>
                 <Form.Field>
@@ -225,6 +200,10 @@ function Register() {
                   </Button>
                 </Form.Field>
               </Form>
+              <Message attached="bottom" info>
+                <Icon name="help" />
+                Đã có tài khoản?&nbsp;<a href="/login">Đăng nhập tại đây</a>
+              </Message>
             </Card>
           </Grid.Column>
         </Grid>

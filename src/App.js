@@ -14,6 +14,7 @@ import Footer from "./container/Footer/Footer";
 import UserProfile from "./container/UserProfile/UserProfile";
 import { useStateValue } from "./StateProvider/StateProvider";
 import UploadImage from "./container/UploadImage/UploadImage";
+import AccountActivation from "./container/AccountActivation/AccountActivation";
 import jwt from 'jwt-decode';
 import moment from 'moment'
 
@@ -69,6 +70,7 @@ function App() {
           <Route path="/register" component={Register}></Route>
           <Route path="/checkout" component={Checkout}></Route>
           <Route path="/profile" component={UserProfile}></Route>
+          <Route exact path="/accountActivation/:code" component={AccountActivation}></Route>
         </Switch>
         <Footer></Footer>
       </Router>

@@ -33,7 +33,7 @@ function Header() {
         <Menu.Menu position="right">
           {user ? (
             <div>
-              <Link to="/">
+              <Link to="/profile">
                 <Menu.Item>
                   <Icon name="user" />
                   {`
