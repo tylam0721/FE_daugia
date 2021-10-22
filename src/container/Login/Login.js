@@ -19,7 +19,8 @@ function Login() {
   const [alertType, setAlertType] = useState('');
   const [alertTitle, setAlertTitle] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [emailError, setEmailError] = useState("");
+  const [emailError, setEmailError] = useState('');
+  const [checkValid, setCheckValid] = useState('');
   const loginUser = (event) => {
     // test modal:
 
@@ -44,15 +45,15 @@ function Login() {
         })
         .catch(function (error) {
           // handle error
-          setAlertStatus(true);
-          setAlertType('error');
-          setAlertTitle('Đăng nhập thất bại');
-          console.log(error);
+          setCheckValid(
+            'Email hoặc mật khẩu sai hoặc không tồn tại',
+            'Nếu bạn đã đăng ký vui lòng kiểm tra trong hộp thư email để kích hoạt tài khoản'
+          );
         })
     } else {
-      setAlertStatus(true);
-      setAlertType('error');
-      setAlertTitle('Đăng nhập thất bại');
+      setCheckValid(
+        'Email và mật khẩu không được để trống',
+      );
     }
   };
 
@@ -114,6 +115,15 @@ function Login() {
                     type="password"
                     onChange={(event) => setPassword(event.target.value)}
                   />
+                </Form.Field>
+                <Form.Field>
+                  {checkValid.length > 0 && (
+                <Message
+                error
+                header='Đăng nhập thất bại'
+                list={['Sai email hoặc mật khẩu','Email đăng ký chưa được kích hoạt']}
+              />
+                  )}
                 </Form.Field>
                 <div className="center">
                   <Button

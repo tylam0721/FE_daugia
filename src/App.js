@@ -40,7 +40,6 @@ function App() {
     {
       // use login in
       const user = jwt(accessToken); // decode your token here
-      console.log(user);
       if(moment.unix(user.exp) > moment())
       {
         dispatch({ type: "SET_USER", user: user });
