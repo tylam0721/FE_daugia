@@ -17,9 +17,24 @@ import UploadImage from "./container/UploadImage/UploadImage";
 import AccountActivation from "./container/AccountActivation/AccountActivation";
 import jwt from 'jwt-decode';
 import moment from 'moment'
+import { useHistory, Redirect } from "react-router-dom";
 
 function App() {
+  const history = useHistory();
   const [{ user }, dispatch] = useStateValue();
+  var userValidated = function(){
+    if(user !== null)
+    {
+      history.push('/')
+    }
+  }
+
+  var userValidation = function() {
+    if(user !== null)
+    {
+      history.push('/login')
+    }
+};
 
   useEffect(() => {
     // const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -33,8 +48,7 @@ function App() {
     // });
     // return () => {
     //   unsubscribe();
-    // };
-    
+    // };   
     const accessToken = localStorage.getItem("accessToken");
     if(accessToken != null)
     {
@@ -58,6 +72,9 @@ function App() {
     }
   }, [dispatch]);
 
+
+
+
   return (
     <div className="app">
       <Router>
@@ -65,10 +82,10 @@ function App() {
         <Switch>
           <Route path="/" component={Home} exact></Route>
           <Route path="/uploadImage" component={UploadImage}></Route>
-          <Route path="/login" component={Login}></Route>
-          <Route path="/register" component={Register}></Route>
+          <Route path="/login" component={Login} onEnter={userValidated}></Route>
+          <Route path="/register" component={Register} onEnter={userValidated}></Route>
           <Route path="/checkout" component={Checkout}></Route>
-          <Route path="/profile" component={UserProfile}></Route>
+          <Route path="/profile" component={UserProfile} onEnter={userValidation}></Route>
           <Route exact path="/accountActivation/:code" component={AccountActivation}></Route>
         </Switch>
         <Footer></Footer>

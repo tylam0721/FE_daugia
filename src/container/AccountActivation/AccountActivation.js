@@ -14,15 +14,17 @@ import "./AccountActivation.css";
 import { useParams } from "react-router-dom";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import axios from "axios";
+import { useHistory, Redirect } from "react-router-dom";
 
 function AccountActivation() {
+  const history = useHistory();
   const { code } = useParams();
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
     console.log(code);
     axios
-      .post(`${API_HOST}/api/accountActivation`, {
+      .post(`${API_HOST}/api/otp/confirm`, {
         OTP: code,
       })
       .then(function (res) {
@@ -44,7 +46,7 @@ function AccountActivation() {
                 header="Xác thực tài khoản thành công"
                 content="Bây giờ bạn có thể đăng nhập bằng email bạn đã đăng ký "
               />
-              <Button className="button-3" color="green" type="submit">
+              <Button className="button-3" color="green" onClick={(e)=>{history.push('/login')}}>
                 Đăng nhập ngay
               </Button>
             </div>
@@ -55,7 +57,7 @@ function AccountActivation() {
                 header="Xác thực tài khoản thất bại"
                 list={["Mã OTP không hợp lệ hoặc không tồn tại"]}
               />
-              <Button color="blue" type="submit">
+              <Button color="blue" onClick={(e)=>{history.push('/')}}>
                 Trang chủ
               </Button>
             </div>

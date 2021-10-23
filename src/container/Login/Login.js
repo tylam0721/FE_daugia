@@ -1,5 +1,15 @@
 import React, { useState, Component } from "react";
-import { Container, Card, Form, Button, Grid, Input,Message,Icon,Label } from "semantic-ui-react";
+import {
+  Container,
+  Card,
+  Form,
+  Button,
+  Grid,
+  Input,
+  Message,
+  Icon,
+  Label,
+} from "semantic-ui-react";
 import "./Login.css";
 import { useHistory, Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -16,14 +26,13 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [alertStatus, setAlertStatus] = useState(false);
-  const [alertType, setAlertType] = useState('');
-  const [alertTitle, setAlertTitle] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [checkValid, setCheckValid] = useState('');
+  const [alertType, setAlertType] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [checkValid, setCheckValid] = useState("");
   const loginUser = (event) => {
     // test modal:
-
 
     event.preventDefault();
     localStorage.clear();
@@ -45,40 +54,33 @@ function Login() {
         })
         .catch(function (error) {
           // handle error
-          setCheckValid(
-            'Email hoặc mật khẩu sai hoặc không tồn tại',
-            'Nếu bạn đã đăng ký vui lòng kiểm tra trong hộp thư email để kích hoạt tài khoản'
-          );
-        })
+          setCheckValid("Email hoặc mật khẩu sai hoặc không tồn tại");
+        });
     } else {
-      setCheckValid(
-        'Email và mật khẩu không được để trống',
-      );
+      setCheckValid("Email và mật khẩu không được để trống");
     }
   };
 
   const setUserInfo = (accessToken) => {
-    if(accessToken != null)
-    {
+    if (accessToken != null) {
       // use login in
       const user = jwt(accessToken); // decode your token here
       console.log(user);
 
       // set USER global state:
       dispatch({ type: "SET_USER", user: user });
-    }
-    else{
+    } else {
       // remove USER global state:
       dispatch({ type: "SET_USER", user: null });
     }
-  }
+  };
 
   return (
     <div className="login">
       <Alert
-        status={alertStatus}   // true or false
-        type={alertType}   // success, warning, error, info
-        title={alertTitle}   // title you want to display
+        status={alertStatus} // true or false
+        type={alertType} // success, warning, error, info
+        title={alertTitle} // title you want to display
         setIsAlert={setAlertStatus}
       />
 
@@ -90,7 +92,9 @@ function Login() {
               <Form className="attached fluid segment login__form">
                 <Form.Field required>
                   <label>Email</label>
-                  <Input icon='at' iconPosition='left'
+                  <Input
+                    icon="at"
+                    iconPosition="left"
                     placeholder="Email"
                     type="email"
                     onChange={(event) => {
@@ -104,13 +108,15 @@ function Login() {
                   />
                   {emailError.length > 0 && (
                     <Label basic color="red" pointing>
-                    {emailError}
-                  </Label>
+                      {emailError}
+                    </Label>
                   )}
                 </Form.Field>
                 <Form.Field required>
                   <label>Mật khẩu</label>
-                  <Input icon='lock' iconPosition='left'
+                  <Input
+                    icon="lock"
+                    iconPosition="left"
                     placeholder="Mật khẩu"
                     type="password"
                     onChange={(event) => setPassword(event.target.value)}
@@ -118,11 +124,10 @@ function Login() {
                 </Form.Field>
                 <Form.Field>
                   {checkValid.length > 0 && (
-                <Message
-                error
-                header='Đăng nhập thất bại'
-                list={['Sai email hoặc mật khẩu','Email đăng ký chưa được kích hoạt']}
-              />
+                    <Message negative>
+                      <Message.Header>Đăng nhập thất bại</Message.Header>
+                      <p>{checkValid}</p>
+                    </Message>
                   )}
                 </Form.Field>
                 <div className="center">
