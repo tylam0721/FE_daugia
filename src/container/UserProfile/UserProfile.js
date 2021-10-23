@@ -5,7 +5,7 @@ import axios from "axios";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import { useStateValue } from "../../StateProvider/StateProvider";
 import { useHistory, Redirect } from "react-router-dom";
-
+import Profile from "../../components/UserProfile/Profile";
 
 
 function UserProfile() {
@@ -20,7 +20,6 @@ const [activeItem, setActiveItem] = useState("profile");
     .get(`${API_HOST}/api/user/info/${user.userId}`)
     .then(function (res) {
       // handle success
-      console.log(res);
       // <Redirect to='/'/>
       // setUserInfo(res?.data?.accessToken);
     })
@@ -40,7 +39,7 @@ const [activeItem, setActiveItem] = useState("profile");
   const renderSwitch = function()
   {
     switch(activeItem){
-        case 'profile': return <div>Bạn đang xem profile</div>
+        case 'profile': return <Profile/>
         case 'productList': return <div>Bạn đang xem danh sách sản phẩm</div>;
         case 'Posts': return <div>Bạn đang xem danh sách bài viết</div>;
         case '4': return <div></div>;
