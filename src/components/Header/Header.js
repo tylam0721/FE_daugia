@@ -56,6 +56,17 @@ function Header() {
           ) : (
             <></>
           )}
+          {(user?.scope == 25) ? (
+            <div>
+              <Link to="/uploadImage">
+                <Menu.Item>
+                  <Icon name="upload" /> Admin
+                </Menu.Item>
+              </Link>
+            </div>
+          ) : (
+            <></>
+          )}
           {user ? (
             <div>
               <Link to="/checkout">

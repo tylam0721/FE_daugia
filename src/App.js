@@ -10,6 +10,7 @@ import Home from "./container/Home/Home";
 import Login from "./container/Login/Login";
 import Register from "./container/Register/Register";
 import Checkout from "./container/Checkout/Checkout";
+import Category from "./container/Admin/Category/Category";
 import Footer from "./container/Footer/Footer";
 import UserProfile from "./container/UserProfile/UserProfile";
 import { useStateValue } from "./StateProvider/StateProvider";
@@ -87,6 +88,7 @@ function App() {
           <Route path="/checkout" component={Checkout}></Route>
           <Route path="/profile" component={UserProfile} onEnter={userValidation}></Route>
           <Route exact path="/accountActivation/:code" component={AccountActivation}></Route>
+          <Route path="/category" component={Category}></Route>
         </Switch>
         <Footer></Footer>
       </Router>
