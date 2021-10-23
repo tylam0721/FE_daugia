@@ -7,3 +7,9 @@
     min-height: 100vh;
     padding-bottom: 2px;
 }
+
+main {
+    display: flex;
+    align-items: stretch;
+
+}
