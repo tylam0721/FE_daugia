@@ -9,3 +9,7 @@
 .home__loaderMessage{
    font-weight: bold;
 }
+
+.ui.active.transition.visible.inverted.dimmer {
+   width: calc(100vw - 200px);
+}

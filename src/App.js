@@ -19,23 +19,22 @@ import AccountActivation from "./container/AccountActivation/AccountActivation";
 import jwt from 'jwt-decode';
 import moment from 'moment'
 import { useHistory, Redirect } from "react-router-dom";
+import SideMenu from './container/SideMenu/SideMenu';
 
 function App() {
   const history = useHistory();
   const [{ user }, dispatch] = useStateValue();
-  var userValidated = function(){
-    if(user !== null)
-    {
+  var userValidated = function () {
+    if (user !== null) {
       history.push('/')
     }
   }
 
-  var userValidation = function() {
-    if(user !== null)
-    {
+  var userValidation = function () {
+    if (user !== null) {
       history.push('/login')
     }
-};
+  };
 
   useEffect(() => {
     // const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -51,22 +50,20 @@ function App() {
     //   unsubscribe();
     // };   
     const accessToken = localStorage.getItem("accessToken");
-    if(accessToken != null)
-    {
+    if (accessToken != null) {
       // use login in
       const user = jwt(accessToken); // decode your token here
-      if(moment.unix(user.exp) > moment())
-      {
+      if (moment.unix(user.exp) > moment()) {
         dispatch({ type: "SET_USER", user: user });
 
       }
-      else{
+      else {
         dispatch({ type: "SET_USER", user: null });
         localStorage.clear();
       }
       // set USER global state:
     }
-    else{
+    else {
       // remove USER global state:
       dispatch({ type: "SET_USER", user: null });
       localStorage.clear();
@@ -80,16 +77,19 @@ function App() {
     <div className="app">
       <Router>
         <Header></Header>
-        <Switch>
-          <Route path="/" component={Home} exact></Route>
-          <Route path="/uploadImage" component={UploadImage}></Route>
-          <Route path="/login" component={Login} onEnter={userValidated}></Route>
-          <Route path="/register" component={Register} onEnter={userValidated}></Route>
-          <Route path="/checkout" component={Checkout}></Route>
-          <Route path="/profile" component={UserProfile} onEnter={userValidation}></Route>
-          <Route exact path="/accountActivation/:code" component={AccountActivation}></Route>
-          <Route path="/category" component={Category}></Route>
-        </Switch>
+        <main>
+          <SideMenu></SideMenu>
+          <Switch>
+            <Route path="/" component={Home} exact></Route>
+            <Route path="/uploadImage" component={UploadImage}></Route>
+            <Route path="/login" component={Login} onEnter={userValidated}></Route>
+            <Route path="/register" component={Register} onEnter={userValidated}></Route>
+            <Route path="/checkout" component={Checkout}></Route>
+            <Route path="/profile" component={UserProfile} onEnter={userValidation}></Route>
+            <Route exact path="/accountActivation/:code" component={AccountActivation}></Route>
+            <Route path="/category" component={Category}></Route>
+          </Switch>
+        </main>
         <Footer></Footer>
       </Router>
     </div>
