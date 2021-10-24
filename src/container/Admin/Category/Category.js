@@ -38,6 +38,10 @@ function Category() {
 
   const AuthStr = "Bearer ".concat("");
 
+  const formatDatime = (a) => {
+    return a.toString().slice(0, 19).replace("T", " ");
+  };
+
   let config = {
     headers: {
       Authorization: AuthStr,
@@ -63,6 +67,34 @@ function Category() {
       title: "DateCreated",
       dataIndex: "DateCreated",
       key: "DateCreated",
+      render: (text) => <p>{formatDatime(text)}</p>,
+    },
+    {
+      title: "Product",
+      key: "product",
+      render: (text, record) => {
+        return (
+          <Space
+            size="middle"
+            onClick={() => {
+              setSeletedRow(record);
+              setNameUpdatecategory(record.Name);
+            }}
+          >
+            <Button type="primary" ghost onClick={showModalUpdateCategory}>
+              Update
+            </Button>
+            <Button
+              type="primary"
+              danger
+              ghost
+              onClick={showModalDeleteCategory}
+            >
+              Delete
+            </Button>
+          </Space>
+        );
+      },
     },
     {
       title: "Action",
