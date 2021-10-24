@@ -16,6 +16,7 @@ import Footer from "./container/Footer/Footer";
 import UserProfile from "./container/UserProfile/UserProfile";
 import { useStateValue } from "./StateProvider/StateProvider";
 import UploadImage from "./container/UploadImage/UploadImage";
+import UploadProduct from "./components/UploadProduct/UploadProduct";
 import AccountActivation from "./container/AccountActivation/AccountActivation";
 import jwt from "jwt-decode";
 import moment from "moment";
@@ -76,6 +77,7 @@ function App() {
           {/* <SideMenu></SideMenu> */}
           <Switch>
             <Route path="/" component={Home} exact></Route>
+            <Route path="/product/add" component={UploadProduct}></Route>
             <Route path="/uploadImage" component={UploadImage}></Route>
             <Route
               path="/login"

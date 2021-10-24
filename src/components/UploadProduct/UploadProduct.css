@@ -1,0 +1,35 @@
+.uploadImage{
+   height: 100vh;
+}
+
+.add-product-container {
+   padding-top: 40px;
+}
+
+form#nest-messages {
+   width: 600px;
+   max-width: 100%;
+   margin: 0 auto;
+   border-radius: 5px;
+   /* border: 1px solid rgb(139, 139, 139); */
+   box-shadow: 0 0 0 1px #c9ba9b inset, 0 0 0 0 transparent;
+}
+
+form#nest-messages .header {
+   padding-top: 10;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+    padding: 15px;
+   background: linear-gradient(to right, #38ef7d, #11998e);
+   border-radius: 5px 5px 0 0;
+}
+
+.ant-row.ant-form-item {
+   padding: 0 10px;
+}
+
+.ant-row.ant-form-item:last-child {
+   padding-bottom: 20px;
+}
