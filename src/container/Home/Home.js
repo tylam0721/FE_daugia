@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Product from "../../components/Product/Product";
-import { Container, Grid, Segment, Dimmer, Loader, Menu, Input } from "semantic-ui-react";
+import { Container, Grid, Segment, Dimmer, Loader, Menu, Input, Pagination } from "semantic-ui-react";
 import "./Home.css";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import axios from "axios";
@@ -125,6 +125,15 @@ function Home() {
               ></Product>
             </Grid.Column> */}
           </Grid>
+          {/* <Pagination
+            boundaryRange={0}
+            defaultActivePage={1}
+            ellipsisItem={null}
+            firstItem={null}
+            lastItem={null}
+            siblingRange={1}
+            totalPages={10}
+          /> */}
         </Container>
       )}
     </div>

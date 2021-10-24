@@ -78,7 +78,7 @@ function App() {
       <Router>
         <Header></Header>
         <main>
-          <SideMenu></SideMenu>
+          {/* <SideMenu></SideMenu> */}
           <Switch>
             <Route path="/" component={Home} exact></Route>
             <Route path="/uploadImage" component={UploadImage}></Route>
