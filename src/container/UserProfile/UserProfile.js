@@ -6,6 +6,7 @@ import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import { useStateValue } from "../../StateProvider/StateProvider";
 import { useHistory, Redirect } from "react-router-dom";
 import Profile from "../../components/UserProfile/Profile";
+import ProductList from "../../components/UserProfile/ProductList";
 
 
 function UserProfile() {
@@ -40,7 +41,7 @@ const [activeItem, setActiveItem] = useState("profile");
   {
     switch(activeItem){
         case 'profile': return <Profile/>
-        case 'productList': return <div>Bạn đang xem danh sách sản phẩm</div>;
+        case 'productList': return <ProductList/>;
         case 'Posts': return <div>Bạn đang xem danh sách bài viết</div>;
         case '4': return <div></div>;
         default: return <div></div>
