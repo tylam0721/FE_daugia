@@ -1,28 +1,46 @@
 import React, { useState, useEffect } from "react";
 import Product from "../../components/Product/Product";
-import { Container, Grid, Segment, Dimmer, Loader } from "semantic-ui-react";
+import { Container, Grid, Segment, Dimmer, Loader, Menu, Input } from "semantic-ui-react";
 import "./Home.css";
-import { db } from "../../Firebase/FirebaseConfig";
+import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
+import axios from "axios";
+import Alert from "../../Common/Alert";
 
 function Home() {
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [alertStatus, setAlertStatus] = useState(false);
+  const [alertType, setAlertType] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [activeItem, setActiveItem] = useState("all");
 
   useEffect(() => {
-    db.collection("Products").onSnapshot((snapshot) => {
-      setProduct(snapshot.docs.map((doc) => doc.data()));
-      setLoading(false);
-    });
+    axios
+      .get(`${API_HOST}/api/product`)
+      .then(function (res) {
+        setProduct(res?.data);
+        setLoading(false);
+      })
+      .catch(function (error) {
 
+        setAlertStatus(true);
+        setAlertType("error");
+      });
+  }, []);
 
-
-    // setTimeout(() => {
-    //         setLoading(false);
-    // }, 1000);
-  }, [setProduct]);
+  const onMenuClick = (menuValue) => {
+    setActiveItem(menuValue);
+  }
 
   return (
     <div className="home">
+      <Alert
+        status={alertStatus} // true or false
+        type={alertType} // success, warning, error, info
+        title={alertTitle} // title you want to display
+        setIsAlert={setAlertStatus}
+      />
       {loading ? (
         <Segment className="home__segment">
           <Dimmer active inverted>
@@ -33,6 +51,27 @@ function Home() {
         </Segment>
       ) : (
         <Container>
+                <Menu secondary>
+        <Menu.Item
+          name='Tất cả'
+          active={true}
+          active={activeItem === 'all'}
+          onClick={() => onMenuClick("all")}
+        />
+        <Menu.Item
+          name='Đồ điện tử'
+          active={activeItem === 'electronic'}
+          onClick={() => onMenuClick("electronic")}
+        />
+        <Menu.Item
+          name='Đồ gia dụng'
+          active={activeItem === 'houseware'}
+          onClick={() => onMenuClick("houseware")}
+        />
+        <Menu.Item>
+          <Input icon='search' placeholder='Tìm kiếm...' />
+        </Menu.Item>
+      </Menu>
           <Grid container columns={3} doubling stackable>
             {product.map((product, index) => {
               return (

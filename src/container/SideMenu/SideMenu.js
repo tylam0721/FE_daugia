@@ -1,8 +1,11 @@
 import React from "react";
 import './SideMenu.css';
+import { useHistory, Redirect } from "react-router-dom";
 
 
 function SideMenu() {
+  const history = useHistory();
+
   return (
     <div className="sidenav">
       <a href="#">About</a>
