@@ -1,9 +1,11 @@
 .home{
-   padding-bottom: 15rem;
+   /* padding-bottom: 15rem; */
+   padding-bottom: 0 !important;
+   margin-bottom: 0 !important;
 }
 
 .home__segment{
-   height: 100vh;
+   /* height: 100vh; */
 }
 
 .home__loaderMessage{
@@ -11,5 +13,14 @@
 }
 
 .ui.active.transition.visible.inverted.dimmer {
-   width: calc(100vw - 200px);
+   /* width: calc(100vw - 200px); */
+}
+
+.ui.pagination.menu {
+   margin: unset;
+}
+
+.paging {
+   text-align: center;
+   margin-top: 40px;
 }

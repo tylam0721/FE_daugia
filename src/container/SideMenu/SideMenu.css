@@ -3,6 +3,7 @@ body {
 }
 
 .sidenav {
+    /* height: 100vh; */
   /* height: 100%; */
   width: 186px;
   /* z-index: 1; */
