@@ -51,6 +51,7 @@ function Register() {
       confirmError.length === 0 &&
       emailError.length === 0
     ) {
+      setCheckValid('');
       axios
         .post(`${API_HOST}/api/user/register`, {
           Email: email,

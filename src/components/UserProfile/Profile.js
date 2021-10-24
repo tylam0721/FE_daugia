@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
   Grid,
-  Menu,
+  Button,
   Segment,
   Item,
-  Divider,
+  Modal,
   Icon,
   Input,
   Form,
@@ -25,22 +25,23 @@ function Profile() {
   const [birthDay, setbirthDay] = useState(new Date());
 
   useEffect(() => {
-    if (user && user.userId) {
+    if(user && user.userId)
+    {
       axios
-        .get(`${API_HOST}/api/user/info/${user.userId}`)
-        .then((res)=>{
-          // handle success
-          setProfile(res.data);
-          console.log(profile);
-          // <Redirect to='/'/>
-          // setUserInfo(res?.data?.accessToken);
-        })
-        .catch((error)=>{
-          // handle error
-          history.push('/')
-        });
+      .get(`${API_HOST}/api/user/info/${user.userId}`)
+      .then((res)=>{
+        // handle success
+        setProfile(res.data);
+        console.log(profile);
+        // <Redirect to='/'/>
+        // setUserInfo(res?.data?.accessToken);
+      })
+      .catch((error)=>{
+        // handle error
+        history.push('/');
+      });
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <div>
@@ -52,7 +53,7 @@ function Profile() {
               fluid
             />
           </Grid.Column>
-          <Grid.Column stretched>
+          <Grid.Column fluid>
             <Header as="h2">
               <Icon name="settings" />
               <Header.Content>
@@ -60,9 +61,9 @@ function Profile() {
                 <Header.Subheader>Thiết lập thông tin cá nhân</Header.Subheader>
               </Header.Content>
             </Header>
-            <Form className="attached fluid segment">
+            <Form fluid className="attached segment">
               <Form.Field inline >
-                <label>E-mail:</label> abcyxz@gmail.com
+                <label>E-mail:</label> {profile.Email}
               </Form.Field>
               <Form.Field inline>
                 <label>Mật khẩu: </label> ******** <a href="#">Thay đổi</a>
@@ -70,7 +71,12 @@ function Profile() {
               <Form.Field>
               <Form.Field inline >
               <label> Vai trò: </label>
-              <Label color={'blue'}> Bidder</Label>
+              {profile.Scope === 'Seller' &&(
+                  <Label color={'blue'}> <Icon name='gem outline'/> {profile.Scope}</Label>
+              )}
+              {profile.Scope === 'Bidder' &&(
+                  <Label color={'Green'}> <Icon name='user outline'/> {profile.Scope}</Label>
+              )}
               </Form.Field>
                 <Form.Group widths="equal">
                   <Form.Field>
