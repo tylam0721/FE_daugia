@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Card, Image, Rating, Button, Grid, Form } from "semantic-ui-react";
 import "./Product.css";
 import { useStateValue } from "../../StateProvider/StateProvider";
+import { IMG_HOST } from "../../config/endpoints";
 
-function Product({ id, title, price, buyNowPrice, rating, imageUrl }) {
+function Product({ id, title, price, buyNowPrice, rating, images }) {
   const [, dispatch] = useStateValue();
 
   const addTobasket = () => {
@@ -15,14 +16,14 @@ function Product({ id, title, price, buyNowPrice, rating, imageUrl }) {
         price,
         buyNowPrice,
         rating,
-        imageUrl,
+        images,
       },
     });
   };
   return (
     <div className="product">
       <Card className="product__card">
-        <Image className="product__image" centered src={imageUrl} />
+        <Image className="product__image" centered src={(images?.length > 0) ? `${IMG_HOST}${images[0].Name}` : 'https://giaoducthuydien.vn/wp-content/themes/consultix/images/no-image-found-360x250.png'} />
         <Card.Content>
           <Card.Header className="product__title">
             <div className="ui red ribbon label">
@@ -51,7 +52,7 @@ function Product({ id, title, price, buyNowPrice, rating, imageUrl }) {
           </Card.Description>
         </Card.Content>
         <Card.Content extra className="product__footer">
-          <Grid center columns={2}>
+          <Grid columns={2}>
             <Grid.Row>
               <Grid.Column>
                 <div>
@@ -69,9 +70,9 @@ function Product({ id, title, price, buyNowPrice, rating, imageUrl }) {
             </Grid.Row>
           </Grid>
           <Button inverted className="product__button" onClick={addTobasket}>
-            <i className="hand point right outline icon"/> &nbsp;
- Xem chi tiết sản phẩm
-          </Button>
+            <i className="hand point right outline icon" /> &nbsp;
+            Xem chi tiết sản 
+          </Button>phẩm
         </Card.Content>
       </Card>
     </div>

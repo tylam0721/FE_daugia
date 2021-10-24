@@ -1,9 +1,11 @@
 .home{
-   padding-bottom: 15rem;
+   /* padding-bottom: 15rem; */
+   padding-bottom: 0 !important;
+   margin-bottom: 0 !important;
 }
 
 .home__segment{
-   height: 100vh;
+   /* height: 100vh; */
 }
 
 .home__loaderMessage{
