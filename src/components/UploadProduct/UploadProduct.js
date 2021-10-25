@@ -5,6 +5,10 @@ import './UploadProduct.css';
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import axios from "axios";
 import { useStateValue } from "../../StateProvider/StateProvider";
+import { Redirect } from 'react-router'
+import { useHistory } from "react-router-dom";
+import jwt from "jwt-decode";
+import moment from "moment";
 const { Option } = Select;
 
 const layout = {
@@ -32,8 +36,25 @@ const validateMessages = {
 const UploadProduct = () => {
     const [{ user }, dispatch] = useStateValue();
     const [category, setCategory] = useState([]);
+    const history = useHistory();
 
-    useEffect(() => {            
+    useEffect(() => {        
+        const accessToken = localStorage.getItem("accessToken");
+        if (accessToken != null) {
+          const user = jwt(accessToken);
+          if (moment.unix(user.exp) > moment()) {
+            dispatch({ type: "SET_USER", user: user });
+          } else {
+            dispatch({ type: "SET_USER", user: null });
+            localStorage.clear();
+            history.push('/login');
+          }
+        } else {
+          dispatch({ type: "SET_USER", user: null });
+          localStorage.clear();
+          history.push('/login');
+        }
+
         axios
             .get(`${API_HOST}/api/category`)
             .then(function (res) {
@@ -47,13 +68,14 @@ const UploadProduct = () => {
     const onFinish = (values) => {
         values.product.IdUserSeller = user?.userId;
         console.log(user);
-        console.log(values);
+        console.log(values.product);
         axios
             .post(`${API_HOST}/api/product/add`, values.product)
             .then(function (res) {
-                console.log(res)
+                
             })
             .catch(function (error) {
+
             });
     };
 

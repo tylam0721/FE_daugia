@@ -21,11 +21,11 @@ import AccountActivation from "./container/AccountActivation/AccountActivation";
 import jwt from "jwt-decode";
 import moment from "moment";
 import { useHistory, Redirect } from "react-router-dom";
-import SideMenu from "./container/SideMenu/SideMenu";
 
 function App() {
   const history = useHistory();
   const [{ user }, dispatch] = useStateValue();
+
   var userValidated = function () {
     if (user !== null) {
       history.push("/");
@@ -39,31 +39,16 @@ function App() {
   };
 
   useEffect(() => {
-    // const unsubscribe = auth.onAuthStateChanged((authUser) => {
-    //   if (authUser) {
-    //     //user login in .
-    //     dispatch({ type: "SET_USER", user: authUser });
-    //   } else {
-    //     //user log out
-    //     dispatch({ type: "SET_USER", user: null });
-    //   }
-    // });
-    // return () => {
-    //   unsubscribe();
-    // };
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken != null) {
-      // use login in
-      const user = jwt(accessToken); // decode your token here
+      const user = jwt(accessToken);
       if (moment.unix(user.exp) > moment()) {
         dispatch({ type: "SET_USER", user: user });
       } else {
         dispatch({ type: "SET_USER", user: null });
         localStorage.clear();
       }
-      // set USER global state:
     } else {
-      // remove USER global state:
       dispatch({ type: "SET_USER", user: null });
       localStorage.clear();
     }
@@ -77,7 +62,12 @@ function App() {
           {/* <SideMenu></SideMenu> */}
           <Switch>
             <Route path="/" component={Home} exact></Route>
-            <Route path="/product/add" component={UploadProduct}></Route>
+            {/* <PrivateRoute authed={user !== null} path='/product/add' component={UploadProduct} /> */}
+            <Route
+              path="/product/add"
+              component={UploadProduct}
+              onEnter={userValidation}
+            ></Route>
             <Route path="/uploadImage" component={UploadImage}></Route>
             <Route
               path="/login"
