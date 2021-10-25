@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Container, Item, Card, Grid, Message } from "semantic-ui-react";
 import "./Category.css";
 import "antd/dist/antd.css";
@@ -18,6 +19,7 @@ import { NotificationTwoTone } from "@ant-design/icons";
 import axios from "axios";
 
 function Category() {
+  const history = useHistory();
   const [data, setdata] = useState([
     {
       Name: "nam",
@@ -35,6 +37,7 @@ function Category() {
   const [namcategory, setNamecategory] = useState();
   const [namupdatecategory, setNameUpdatecategory] = useState();
   const [selectedRow, setSeletedRow] = useState(null);
+  const [selectedId, setSeletedId] = useState();
 
   const AuthStr = "Bearer ".concat("");
 
@@ -56,6 +59,11 @@ function Category() {
     });
   };
 
+  const handledetail = (id) => {
+    history.push("./product?id=" + id);
+    console.log(id);
+  };
+
   const columns = [
     {
       title: "Name",
@@ -71,26 +79,25 @@ function Category() {
     },
     {
       title: "Product",
-      key: "product",
+      key: "id",
       render: (text, record) => {
         return (
           <Space
             size="middle"
             onClick={() => {
               setSeletedRow(record);
-              setNameUpdatecategory(record.Name);
+              setSeletedId(record.id);
             }}
           >
-            <Button type="primary" ghost onClick={showModalUpdateCategory}>
-              Update
-            </Button>
             <Button
+              className="div_btn_green"
               type="primary"
-              danger
               ghost
-              onClick={showModalDeleteCategory}
+              onClick={() => {
+                handledetail(record.id);
+              }}
             >
-              Delete
+              Details
             </Button>
           </Space>
         );

@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Menu, Icon } from "semantic-ui-react";
+import { Menu, Icon, Dropdown, Button } from "semantic-ui-react";
 
 import "./Header.css";
 import { Link } from "react-router-dom";
+import "antd/dist/antd.css";
 import { useStateValue } from "../../StateProvider/StateProvider";
 
 function Header() {
   const [{ basket, user }, dispatch] = useStateValue();
+
+  const options = [
+    {
+      key: 1,
+      text: "Nâng cấp tài khoản",
+      value: 1,
+      as: Link,
+      to: "/my-account",
+    },
+    { key: 2, text: "Hạ Cấp tài khoản", value: 2, as: Link, to: "/my-account" },
+  ];
 
   const login = () => {
     if (user) {
@@ -45,7 +57,7 @@ function Header() {
           ) : (
             <></>
           )}
-          {(user?.scope == 15) ? (
+          {user?.scope === 15 ? (
             <div>
               <Link to="/product/add">
                 <Menu.Item>
@@ -56,18 +68,27 @@ function Header() {
           ) : (
             <></>
           )}
-          {(user?.scope == 25) ? (
+          {user?.scope === 25 ? (
             <div>
-              <Link to="/uploadImage">
+              <Link to="/admin/category">
                 <Menu.Item>
-                  <Icon name="upload" /> Admin
+                  <Icon name="tasks" /> Quản lý Danh Mục
                 </Menu.Item>
               </Link>
             </div>
           ) : (
             <></>
           )}
-          {user ? (
+          {user?.scope === 25 ? (
+            <div>
+              <Dropdown text="Quản lý User" options={options} simple item />
+            </div>
+          ) : (
+            <></>
+          )}
+          {user?.scope === 25 ? (
+            <></>
+          ) : user ? (
             <div>
               <Link to="/checkout">
                 <Menu.Item>
@@ -77,10 +98,10 @@ function Header() {
             </div>
           ) : (
             <Link to="/register">
-                <Menu.Item>
-                  <Icon name="user plus" /> Đăng ký
-                </Menu.Item>
-              </Link>
+              <Menu.Item>
+                <Icon name="user plus" /> Đăng ký
+              </Menu.Item>
+            </Link>
           )}
           <Link to="/login">
             <Menu.Item>

@@ -18,11 +18,10 @@ import { API_HOST, API_HOST_DEV } from "../../../config/endpoints";
 import { NotificationTwoTone } from "@ant-design/icons";
 import axios from "axios";
 
-function Product() {
+function Upto() {
   const [data, setdata] = useState();
   const AuthStr = "Bearer ".concat("");
-  const [isModalVisibleDeleteProduct, setIsModalVisibleDeleteProduct] =
-    useState(false);
+
   const [selectedRow, setSeletedRow] = useState(null);
 
   let config = {
@@ -90,12 +89,7 @@ function Product() {
               setSeletedRow(record);
             }}
           >
-            <Button
-              type="primary"
-              danger
-              ghost
-              onClick={showModalDeleteProduct}
-            >
+            <Button type="primary" danger ghost>
               Delete
             </Button>
           </Space>
@@ -124,28 +118,6 @@ function Product() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const showModalDeleteProduct = () => {
-    setIsModalVisibleDeleteProduct(true);
-  };
-
-  const handleCancelDeleteProduct = () => {
-    setIsModalVisibleDeleteProduct(false);
-  };
-
-  const handleOkDeleteProduct = () => {
-    setIsModalVisibleDeleteProduct(false);
-    axios
-      .get(`${API_HOST_DEV}/api/product/delete/` + selectedRow.id, {}, config)
-      .then((response) => {
-        const params = new URLSearchParams(window.location.search);
-        let id = params.get("id");
-        FnLoadCategory(id);
-      })
-      .catch((error) => {
-        console.log("error " + error);
-      });
-  };
-
   return (
     <>
       <div className="div__Content">
@@ -159,19 +131,8 @@ function Product() {
           </div>
         </Container>
       </div>
-      <Modal
-        title="DELETE CATEGORY"
-        visible={isModalVisibleDeleteProduct}
-        onOk={handleOkDeleteProduct}
-        onCancel={handleCancelDeleteProduct}
-      >
-        <h1>
-          <b className="delete__category">Bạn có chắc muốn xóa </b>{" "}
-          <NotificationTwoTone />{" "}
-        </h1>
-      </Modal>
     </>
   );
 }
 
-export default Product;
+export default Upto;
