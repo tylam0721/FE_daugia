@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Menu, Icon } from "semantic-ui-react";
+import { Menu, Icon, Dropdown, Button } from "semantic-ui-react";
 
 import "./Header.css";
 import { Link } from "react-router-dom";
+import "antd/dist/antd.css";
 import { useStateValue } from "../../StateProvider/StateProvider";
 
 function Header() {
   const [{ basket, user }, dispatch] = useStateValue();
+
+  const options = [
+    {
+      key: 1,
+      text: "Nâng cấp tài khoản",
+      value: 1,
+      as: Link,
+      to: "/my-account",
+    },
+    { key: 2, text: "Hạ Cấp tài khoản", value: 2, as: Link, to: "/my-account" },
+  ];
 
   const login = () => {
     if (user) {
@@ -33,7 +45,7 @@ function Header() {
         <Menu.Menu position="right">
           {(user?.scope == 15) ? (
             <div>
-              <Link to="/uploadImage">
+              <Link to="/product/add">
                 <Menu.Item>
                   <Icon name="upload" /> Đăng sản phẩm
                 </Menu.Item>
@@ -58,10 +70,10 @@ function Header() {
           )}
           {!user &&(
             <Link to="/register">
-                <Menu.Item>
-                  <Icon name="user plus" /> Đăng ký
-                </Menu.Item>
-              </Link>
+              <Menu.Item>
+                <Icon name="user plus" /> Đăng ký
+              </Menu.Item>
+            </Link>
           )}
           <Link to="/login">
             <Menu.Item>
