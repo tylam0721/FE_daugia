@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Menu, Segment, Item, Divider , Icon} from "semantic-ui-react";
+import { Grid, Menu, Segment, Dimmer, Divider , Loader} from "semantic-ui-react";
 import "./UserProfile.css";
 import axios from "axios";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
@@ -7,14 +7,14 @@ import { useStateValue } from "../../StateProvider/StateProvider";
 import { useHistory, Redirect } from "react-router-dom";
 import Profile from "../../components/UserProfile/Profile";
 import ProductList from "../../components/UserProfile/ProductList";
-
+import AddProduct from "../../components/AddProduct/AddProduct"
 
 
 function UserProfile() {
 const history = useHistory();
 const [{ user }, dispatch] = useStateValue()
 const [activeItem, setActiveItem] = useState("profile");
-
+const [loading, setLoading] = useState(true);
 
   if(user && user.userId)
   {
@@ -24,6 +24,7 @@ const [activeItem, setActiveItem] = useState("profile");
       // handle success
       // <Redirect to='/'/>
       // setUserInfo(res?.data?.accessToken);
+      setLoading(false);
     })
     .catch(function (error) {
       // handle error
@@ -43,14 +44,23 @@ const [activeItem, setActiveItem] = useState("profile");
     switch(activeItem){
         case 'profile': return <Profile/>
         case 'productList': return <ProductList/>;
-        case 'Posts': return <div>Bạn đang xem danh sách bài viết</div>;
-        case '4': return <div></div>;
+        case 'LogOut': return <div>Bạn đang xem danh sách bài viết</div>;
+        case 'postProduct': return <AddProduct/>;
         default: return <div></div>
     }
 }
 
   return (
     <div>
+       {loading ? (
+        <Segment className="home__segment">
+          <Dimmer active inverted>
+            <Loader size="large" className="home__loaderMessage">
+              Đangi tải...
+            </Loader>
+          </Dimmer>
+        </Segment>
+      ) : (
       <Grid stackable>
         <Grid.Column width={2}>
           <Menu fluid vertical borderless inverted>
@@ -73,6 +83,15 @@ const [activeItem, setActiveItem] = useState("profile");
               }}
             />
             <Menu.Item
+              icon="edit"
+              name="postProduct"
+              content="Đăng sản phẩm"
+              active={activeItem === "postProduct"}
+              onClick={(event) => {
+                setActiveItem("postProduct");
+              }}
+            />
+            <Menu.Item
               icon="shopping basket"
               name="productList"
               content="Danh sách sản phẩm"
@@ -82,21 +101,15 @@ const [activeItem, setActiveItem] = useState("profile");
               }}
             />
             <Menu.Item
-            icon="pencil"
-              name="Posts"
-              content="Danh sách bài đăng"
-              active={activeItem === "Posts"}
+              icon="sign-out"
+              name="LogOut"
+              content="Đăng xuất"
+              active={activeItem === "LogOut"}
               onClick={(event) => {
-                setActiveItem("Posts");
+                setActiveItem("LogOut");
               }}
             />
-            <Menu.Item
-              name="links"
-              active={activeItem === "links"}
-              onClick={(event) => {
-                setActiveItem("links");
-              }}
-            />
+
           </Menu>
         </Grid.Column>
         <Grid.Column stretched width={12}>
@@ -104,7 +117,7 @@ const [activeItem, setActiveItem] = useState("profile");
             {renderSwitch()}
           </Segment>
         </Grid.Column>
-      </Grid>
+      </Grid>)}
     </div>
   );
 }

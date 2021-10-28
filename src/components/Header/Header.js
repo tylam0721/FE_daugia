@@ -31,7 +31,18 @@ function Header() {
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu position="right">
-          {user ? (
+          {(user?.scope == 15) ? (
+            <div>
+              <Link to="/uploadImage">
+                <Menu.Item>
+                  <Icon name="upload" /> Đăng sản phẩm
+                </Menu.Item>
+              </Link>
+            </div>
+          ) : (
+            <></>
+          )}
+                    {user ? (
             <div>
               <Link to="/profile">
                 <Menu.Item>
@@ -45,37 +56,7 @@ function Header() {
           ) : (
             <></>
           )}
-          {(user?.scope == 15) ? (
-            <div>
-              <Link to="/uploadImage">
-                <Menu.Item>
-                  <Icon name="upload" /> Add product
-                </Menu.Item>
-              </Link>
-            </div>
-          ) : (
-            <></>
-          )}
-          {(user?.scope == 25) ? (
-            <div>
-              <Link to="/uploadImage">
-                <Menu.Item>
-                  <Icon name="upload" /> Admin
-                </Menu.Item>
-              </Link>
-            </div>
-          ) : (
-            <></>
-          )}
-          {user ? (
-            <div>
-              <Link to="/checkout">
-                <Menu.Item>
-                  <Icon name="shop" /> {basket?.length}
-                </Menu.Item>
-              </Link>
-            </div>
-          ) : (
+          {!user &&(
             <Link to="/register">
                 <Menu.Item>
                   <Icon name="user plus" /> Đăng ký

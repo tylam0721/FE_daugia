@@ -64,7 +64,7 @@ function Home() {
         <Segment className="home__segment">
           <Dimmer active inverted>
             <Loader size="large" className="home__loaderMessage">
-              Loading...
+              Đang tải...
             </Loader>
           </Dimmer>
         </Segment>

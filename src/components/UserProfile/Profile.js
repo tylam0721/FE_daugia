@@ -16,6 +16,7 @@ import axios from "axios";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import { useStateValue } from "../../StateProvider/StateProvider";
 import { useHistory, Redirect } from "react-router-dom";
+
 import DatePicker from "react-datepicker";
 
 function Profile() {
@@ -80,14 +81,14 @@ function Profile() {
               </Form.Field>
                 <Form.Group widths="equal">
                   <Form.Field>
-                    <label>Họ và tên đệm </label> Đinh Văn
+                    <label>Họ và tên đệm </label> {profile.Firstname}
                   </Form.Field>
                   <Form.Field>
-                    <label>Tên</label> Búa
+                    <label>Tên</label> {profile.Lastname}
                   </Form.Field>
                 </Form.Group>
               </Form.Field>
-              <Form.Field>
+              <Form.Field inline>
                 <label>Ngày sinh</label>
                 <DatePicker
                   selected={birthDay}
