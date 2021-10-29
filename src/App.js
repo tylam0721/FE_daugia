@@ -12,6 +12,7 @@ import Register from "./container/Register/Register";
 import Checkout from "./container/Checkout/Checkout";
 import AdminCategory from "./container/Admin/Category/Category";
 import AdminProduct from "./container/Admin/Product/Prodcuct";
+import ProductDetail from "./components/ProductDetail/ProductDetail";
 import Footer from "./container/Footer/Footer";
 import UserProfile from "./container/UserProfile/UserProfile";
 import { useStateValue } from "./StateProvider/StateProvider";
@@ -83,6 +84,11 @@ function App() {
             <Route
               path="/profile"
               component={UserProfile}
+              onEnter={userValidation}
+            ></Route>
+              <Route
+              path="/product/detail/:id"
+              component={ProductDetail}
               onEnter={userValidation}
             ></Route>
             <Route
