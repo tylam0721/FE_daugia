@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import { useStateValue } from "../../StateProvider/StateProvider";
 import { Link, useHistory, useParams } from "react-router-dom";
 import "./ProductDetail.css";
+import AliceCarousel from "react-alice-carousel";
+import "react-alice-carousel/lib/alice-carousel.css";
+import Product from "../../components/Product/Product";
+import socketIOClient from "socket.io-client";
 import {
+  Button,
   Segment,
   Dimmer,
   Loader,
@@ -19,7 +24,10 @@ import {
   Rating,
   Table,
   Breadcrumb,
+  Input,
 } from "semantic-ui-react";
+import CurrencyFormat from "react-currency-format";
+import moment from "moment";
 
 function ProductDetail() {
   const sections = [
@@ -27,15 +35,32 @@ function ProductDetail() {
     { key: "Store", content: "Store", link: true },
     { key: "Shirt", content: "T-Shirt", active: true },
   ];
+  const [{ user }, dispatch] = useStateValue();
   const [loading, setLoading] = useState(true);
-  const [post, setPost] = useState("");
+  const [product, setProduct] = useState([]);
   const { id } = useParams();
+  const [bidAmount, SetBidAmount] = useState("");
+  const [checkValid, SetCheckValid] = useState("");
+
+  const onChangeBidAmount = function (values) {
+    if (values < 100000) {
+      SetCheckValid("Giá tiền không được nhỏ hơn giá khởi điểm");
+    } else {
+      const { formattedValue, value } = values;
+      // formattedValue = $2,223
+      // value ie, 2223
+      SetBidAmount(formattedValue);
+      SetCheckValid("");
+    }
+  };
+
   useEffect(() => {
     axios
       .get(`${API_HOST}/api/product/${id}`)
-      .then(function (res) {
+      .then(async function (res) {
         setLoading(false);
-        setPost(res?.data?.data);
+        await setProduct(res.data[0]);
+        console.log(product);
       })
       .catch(function (error) {});
   }, []);
@@ -61,16 +86,90 @@ function ProductDetail() {
             >
               <Grid.Row stretched>
                 <Grid.Column width={8}>
-                  <Segment></Segment>
+                  <Segment>
+                    <AliceCarousel autoPlay autoPlayInterval="3000">
+                      <img
+                        src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+                        className="sliderimg"
+                      />
+                      <img
+                        src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+                        className="sliderimg"
+                      />
+                      <img
+                        src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+                        className="sliderimg"
+                      />
+                      <img
+                        src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+                        className="sliderimg"
+                      />
+                    </AliceCarousel>
+                    <Divider />
+                    {user ? (
+                      <div>
+                        {product.IdUserSeller !== user.userId && (
+                          <Form>
+                            <h2
+                              style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Tham gia đấu giá
+                            </h2>
+                            {checkValid.length > 0 && (
+                              <Form.Field>
+                                <Label basic color="red" pointing="below">
+                                  {checkValid}
+                                </Label>
+                              </Form.Field>
+                            )}
+                            <Form.Field>
+                              <Input
+                                labelPosition="right"
+                                type="text"
+                                placeholder="Nhập số tiền để tham gia đấu giá"
+                              >
+                                <CurrencyFormat
+                                  value={bidAmount}
+                                  thousandSeparator={true}
+                                  onValueChange={onChangeBidAmount}
+                                />
+                                <Label>VNĐ</Label>
+                              </Input>
+                            </Form.Field>
+                            <Button color={"green"}>Đặt giá</Button>
+                          </Form>
+                        )}
+                        {product.IdUserSeller === user.userId &&(<Form>
+                          <Button color={"green"}> <Icon name="pencil alternative"/>Bổ sung thông tin sản phẩm</Button>
+                        </Form>)}
+                      </div>
+                    ) : (
+                      <Message
+                        warning
+                        header="Bạn cần phải đăng nhập"
+                        content="Hãy đăng nhập để được tham gia đấu giá"
+                      />
+                    )}
+                  </Segment>
                 </Grid.Column>
                 <Grid.Column width={8} fluid>
                   <Segment>
                     <Breadcrumb fluid icon="right angle" sections={sections} />
                     <br />
-                    <h3>Cạc màn hình RTXX Ricardo</h3>
+                    <h3>{product.Name}</h3>
                     <Message size="large" color={"blue"}>
                       <Message.Header>Giá khởi điểm</Message.Header>
-                      <p style={{color:'red', fontWeight:'bold'}}>1.300.000 VNĐ</p>
+                      <p style={{ color: "red", fontWeight: "bold" }}>
+                        <CurrencyFormat
+                          value={product.StartingPrice}
+                          displayType={"text"}
+                          thousandSeparator={true}
+                        />{" "}
+                        VNĐ
+                      </p>
                     </Message>
                     <Grid style={{ padding: "1em" }} columns={2} divided>
                       <Grid.Row>
@@ -78,21 +177,35 @@ function ProductDetail() {
                           <Icon name="user" /> baoanh2003199
                         </Grid.Column>
                         <Grid.Column>
-                          <Rating icon="star" defaultRating={5} maxRating={5} />
+                          <Rating
+                            disabled
+                            icon="star"
+                            defaultRating={5}
+                            maxRating={5}
+                          />
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
                     <Message>
                       <Message.Header>Thông tin sản phẩm</Message.Header>
                       <Message.List>
-                      <Message.Item>
-                          <Icon name="money" /> Bước giá:{" "}
+                        <Message.Item>
+                          <Icon name="money" />
+                          <b>
+                            Bước giá:{" "}
+                            <CurrencyFormat
+                              value={product.StepPrice}
+                              displayType={"text"}
+                              thousandSeparator={true}
+                            />{" "}
+                            VNĐ
+                          </b>
                         </Message.Item>
                         <Message.Item>
-                          <Icon name="calendar outline" /> Thời gian đăng:{" "}
+                          <Icon name="calendar outline" /> Thời gian đăng: {moment(product.DateCreated).format("DD-MM-YYYY")}
                         </Message.Item>
                         <Message.Item>
-                          <Icon name="clock outline" /> Thời gian kết thúc:{" "}
+                          <Icon name="clock outline" /> Thời gian kết thúc: {moment(product.DateUpdated).format("DD-MM-YYYY")}
                         </Message.Item>
                       </Message.List>
                     </Message>
@@ -103,7 +216,14 @@ function ProductDetail() {
                       <Message.Header>Người đặt giá cao nhất</Message.Header>
                       <p>
                         <b>abcxyz</b> đang đặt giá cao nhất hiện tại:{" "}
-                        <b>1.300.000 vnđ</b>
+                        <b>
+                          <CurrencyFormat
+                            value={product.NowPrice}
+                            displayType={"text"}
+                            thousandSeparator={true}
+                          />{" "}
+                          VNĐ
+                        </b>
                       </p>
                     </Message>
                     <Table celled selectable unstackable>
