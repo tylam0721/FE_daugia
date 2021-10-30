@@ -5,6 +5,7 @@ import "./Home.css";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import axios from "axios";
 import Alert from "../../Common/Alert";
+import webSocket from "../../Common/WebSocket";
 
 function Home() {
   const [allProduct, setAllProduct] = useState([]);
@@ -51,6 +52,17 @@ function Home() {
       setProduct(filteredProduct);
     }
   }
+
+  webSocket.onopen = function(){
+    //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
+    console.log('connected to server');
+  }
+  webSocket.onmessage = function(message) {
+
+    let data = JSON.parse(message.data);
+    console.log('Socket server message', data);
+
+  };
 
   return (
     <div className="home">
