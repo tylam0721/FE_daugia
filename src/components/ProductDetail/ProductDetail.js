@@ -7,7 +7,6 @@ import "./ProductDetail.css";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import Product from "../../components/Product/Product";
-import socketIOClient from "socket.io-client";
 import {
   Button,
   Segment,
@@ -29,7 +28,11 @@ import {
 import CurrencyFormat from "react-currency-format";
 import moment from "moment";
 
+
+
+
 function ProductDetail() {
+  const ws = new WebSocket('ws://localhost:4000');
   const sections = [
     { key: "Home", content: "Home", link: true },
     { key: "Store", content: "Store", link: true },
@@ -45,6 +48,7 @@ function ProductDetail() {
   const onChangeBidAmount = function (values) {
     if (values < 100000) {
       SetCheckValid("Giá tiền không được nhỏ hơn giá khởi điểm");
+      
     } else {
       const { formattedValue, value } = values;
       // formattedValue = $2,223
@@ -54,16 +58,28 @@ function ProductDetail() {
     }
   };
 
+  ws.onmessage = function(message) {
+
+    let data = JSON.parse(message.data);
+    console.log('Socket server message', data);
+
+  };
+
   useEffect(() => {
     axios
-      .get(`${API_HOST}/api/product/${id}`)
+      .get(`${API_HOST_DEV}/api/product/${id}`)
       .then(async function (res) {
         setLoading(false);
         await setProduct(res.data[0]);
         console.log(product);
       })
       .catch(function (error) {});
-  }, []);
+      
+      ws.onopen = function(){
+        ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
+        console.log('connected to server');
+      }
+    }, []);
 
   return (
     <div className="home">
