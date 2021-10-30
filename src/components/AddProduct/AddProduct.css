@@ -1,13 +1,27 @@
-.addProduct {
-    margin-top: 20px;
-
+.upload-image-container {
+    width: 600px;
+    max-width: calc(100% - 20px);
+    margin: 0 auto;
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px #c9ba9b inset, 0 0 0 0 transparent;
 }
 
-.addProduct__form {
-    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
-    padding: 20px 20px 30px 10px;
+.upload-image-container .header {
+    padding-top: 10;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+    padding: 15px;
+    background: linear-gradient(to right, #38ef7d, #11998e);
+    border-radius: 5px 5px 0 0;
 }
 
-.addProduct__warningMessage {
-    margin-top: 20px;
+.ant-upload-picture-card-wrapper {
+    padding: 10px;
+}
+
+.upload-img-btn {
+    margin: 0 auto;
+    display: block;
 }

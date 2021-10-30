@@ -19,6 +19,8 @@ import axios from "axios";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import "react-datepicker/dist/react-datepicker.css";
 import validator from "validator";
+import * as moment from "moment";
+import "moment/locale/nl";
 
 function Register() {
   //router
@@ -64,6 +66,7 @@ function Register() {
         .then(function (res) {
           if (res.status === 201) {
             alert("Đăng ký thành công");
+            history.push('/');
           }
         })
         .catch(function (error) {

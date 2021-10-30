@@ -3,8 +3,8 @@ import {
   Grid,
   Menu,
   Segment,
-  Item,
-  Divider,
+  Dimmer,
+  Loader,
   Icon,
   Container,
   Button,
@@ -20,6 +20,7 @@ function AccountActivation() {
   const history = useHistory();
   const { code } = useParams();
   const [isValid, setIsValid] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     console.log(code);
@@ -29,6 +30,7 @@ function AccountActivation() {
       })
       .then(function (res) {
         setIsValid(true);
+        setLoading(false);
       })
       .catch(function (error) {
         setIsValid(false);
@@ -37,7 +39,16 @@ function AccountActivation() {
 
   return (
     <div className="home">
-      <Container>
+      {loading?(
+                <Segment className="home__segment">
+                <Dimmer active inverted>
+                  <Loader size="large" className="home__loaderMessage">
+                    Đang tải...
+                  </Loader>
+                </Dimmer>
+              </Segment>
+      ):(
+<Container>
         <Segment>
           {isValid ? (
             <div>
@@ -64,6 +75,7 @@ function AccountActivation() {
           )}
         </Segment>
       </Container>
+      )}
     </div>
   );
 }
