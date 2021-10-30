@@ -13,11 +13,13 @@ import {
   Row,
   Col,
   notification,
+  Tabs
 } from "antd";
 import { API_HOST, API_HOST_DEV } from "../../../config/endpoints";
 import { NotificationTwoTone } from "@ant-design/icons";
 import axios from "axios";
 
+const { TabPane } = Tabs;
 function Category() {
   const history = useHistory();
   const [data, setdata] = useState([
@@ -26,6 +28,10 @@ function Category() {
       DateCreated: "2021-10-24T00:00:00",
     },
   ]);
+
+  function callback(key) {
+    console.log(key);
+  }
 
   const [isModalVisibleAddCategory, setIsModalVisibleAddCategory] =
     useState(false);
@@ -242,14 +248,19 @@ function Category() {
 
         <Container>
           <div className="div__parent">
-            <Button type="primary" onClick={showModalAddCategory}>
-              Add Category
-            </Button>
-            <Table
-              pagination={{ pageSize: 4 }}
-              columns={columns}
-              dataSource={data}
-            />
+          <Tabs defaultActiveKey="1" onChange={callback}>
+            <TabPane tab="Quản lý danh mục" key="1" size="large">
+              <Button type="primary" onClick={showModalAddCategory}>
+                Add Category
+              </Button>
+              <Table
+                pagination={{ pageSize: 4 }}
+                columns={columns}
+                dataSource={data}
+              />
+            </TabPane>
+          </Tabs>
+            
           </div>
         </Container>
         <Modal

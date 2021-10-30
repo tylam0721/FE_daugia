@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Item, Card, Grid, Message } from "semantic-ui-react";
-import "../Upto/Upto.css";
+import "../Downto/Downto.css";
 import "antd/dist/antd.css";
 import {
   Table,
@@ -99,7 +99,7 @@ function Upto() {
             }}
           >
             <Button type="primary" danger ghost onClick={() => showModalUpto(record.id)}>
-              UPTO
+              DOWNTO
             </Button>
           </Space>
         );
@@ -120,7 +120,7 @@ function Upto() {
   const handleOkUpto = () => {
     setIsModalVisibleAddUpto(false);
     axios
-      .post(`${API_HOST_DEV}/api/admin/upto`, {
+      .post(`${API_HOST_DEV}/api/admin/downto`, {
         id: selectedRowID
       }, config)
       .then((response) => {
@@ -133,7 +133,7 @@ function Upto() {
 
   let FnLoaduser = () => {
     axios
-      .get(`${API_HOST_DEV}/api/admin/bidder`, {}, config)
+      .get(`${API_HOST_DEV}/api/admin/seller`, {}, config)
       .then((response) => {
         setdata(response.data.data);
       })
@@ -153,7 +153,7 @@ function Upto() {
         <Container>
           <div className="div__parent">
           <Tabs defaultActiveKey="1" onChange={callback}>
-            <TabPane tab="Tài khoản Bidder cần nâng cấp lên Seller" key="1" size="large">
+            <TabPane tab="Tài khoản Seller" key="1" size="large">
               <Table
                 pagination={{ pageSize: 4 }}
                 columns={columns}
@@ -171,7 +171,7 @@ function Upto() {
         onCancel={handleCancelUpto}
       >
         <h1>
-          <b className="delete__category">Nâng cấp tài khoảng lên Seller </b>{" "}
+          <b className="delete__category">Hạ cấp tài khoản xuống Bidder </b>{" "}
         </h1>
       </Modal>
     </>
