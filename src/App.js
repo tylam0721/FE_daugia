@@ -77,7 +77,7 @@ function App() {
               component={UploadProduct}
               onEnter={userValidation}
             ></Route>
-            <Route path="/uploadImage" component={UploadImage}></Route>
+            <Route path="/product/upload-image" component={UploadImage}></Route>
             <Route
               path="/login"
               component={Login}

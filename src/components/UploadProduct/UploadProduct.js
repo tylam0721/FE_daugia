@@ -9,6 +9,10 @@ import { Redirect } from 'react-router'
 import { useHistory } from "react-router-dom";
 import jwt from "jwt-decode";
 import moment from "moment";
+import {convertFromRaw, EditorState} from "draft-js";
+import {Editor} from "react-draft-wysiwyg";
+import { convertToHTML } from 'draft-convert';
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 const { Option } = Select;
 
 const layout = {
@@ -37,6 +41,8 @@ const UploadProduct = () => {
     const [{ user }, dispatch] = useStateValue();
     const [category, setCategory] = useState([]);
     const history = useHistory();
+    const[editorState,setEditorState] = useState(EditorState.createEmpty());
+    const  [convertedContent, setConvertedContent] = useState(null);
 
     useEffect(() => {        
         const accessToken = localStorage.getItem("accessToken");
@@ -63,21 +69,36 @@ const UploadProduct = () => {
             .catch(function (error) {
             });
 
-    }, [])
+    }, [dispatch, history])
 
     const onFinish = (values) => {
         values.product.IdUserSeller = user?.userId;
-        console.log(user);
+        values.product.Description = convertedContent;
         console.log(values.product);
         axios
             .post(`${API_HOST}/api/product/add`, values.product)
             .then(function (res) {
-                
+                if (res.data.productId) {
+                    history.push(`/product/upload-image?id=${res?.data?.productId}`);
+                } else {
+                    history.push(`/`);
+                }
             })
             .catch(function (error) {
 
             });
     };
+
+    const onEditorStateChange = (editorState) => {
+        setEditorState(editorState);
+        convertContentToHTML();
+      };
+
+      const convertContentToHTML = () => {
+        let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
+        console.log(currentContentAsHTML);
+        setConvertedContent(currentContentAsHTML);
+      }
 
     return (
         <div className="add-product-container">
@@ -163,11 +184,15 @@ const UploadProduct = () => {
                         <Option value={1}>Không</Option>        
                     </Select>
                 </Form.Item>
-                <Form.Item
-                    name={['product', 'Description']}
-                    label="Mô tả"
-                >
-                    <Input />
+
+                <Form.Item label="Mô tả" rules={[{ required: true }]}>
+                    <Editor
+                        editorState={editorState}
+                        wrapperClassName="wrapper-class"
+                        editorClassName="editor-class"
+                        toolbarClassName="toolbar-class"
+                        onEditorStateChange={onEditorStateChange}
+                    />
                 </Form.Item>
 
                 <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
