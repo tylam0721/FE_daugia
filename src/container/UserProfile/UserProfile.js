@@ -45,7 +45,7 @@ const [loading, setLoading] = useState(true);
         case 'profile': return <Profile/>
         case 'productList': return <ProductList/>;
         case 'LogOut': return <div>Bạn đang xem danh sách bài viết</div>;
-        case 'postProduct': return <AddProduct/>;
+        case 'postProduct': return <div>Đ có gì để xem {':)'}</div>;
         default: return <div></div>
     }
 }

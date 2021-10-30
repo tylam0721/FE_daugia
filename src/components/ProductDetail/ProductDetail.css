@@ -1,0 +1,19 @@
+tbody {
+    display: block;
+    height: 130px;
+    overflow: auto;
+  }
+  
+  thead,
+  tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .alice-carousel ul li img{
+    height: 400px;
+    width: 100%;
+    object-fit: cover;
+  }
+  
