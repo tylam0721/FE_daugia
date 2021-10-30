@@ -27,12 +27,12 @@ import {
 } from "semantic-ui-react";
 import CurrencyFormat from "react-currency-format";
 import moment from "moment";
-
+import webSocket from "../../Common/WebSocket";
 
 
 
 function ProductDetail() {
-  const ws = new WebSocket('ws://localhost:4000');
+  
   const sections = [
     { key: "Home", content: "Home", link: true },
     { key: "Store", content: "Store", link: true },
@@ -58,12 +58,17 @@ function ProductDetail() {
     }
   };
 
-  ws.onmessage = function(message) {
+  webSocket.onopen = function(){
+    //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
+    console.log('connected to server');
+  }
+  webSocket.onmessage = function(message) {
 
     let data = JSON.parse(message.data);
     console.log('Socket server message', data);
 
   };
+
 
   useEffect(() => {
     axios
@@ -75,10 +80,7 @@ function ProductDetail() {
       })
       .catch(function (error) {});
       
-      ws.onopen = function(){
-        ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
-        console.log('connected to server');
-      }
+
     }, []);
 
   return (

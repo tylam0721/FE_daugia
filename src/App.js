@@ -22,10 +22,14 @@ import AccountActivation from "./container/AccountActivation/AccountActivation";
 import jwt from "jwt-decode";
 import moment from "moment";
 import { useHistory, Redirect } from "react-router-dom";
+import webSocket from "./Common/WebSocket";
 
 function App() {
   const history = useHistory();
   const [{ user }, dispatch] = useStateValue();
+
+
+
 
   var userValidated = function () {
     if (user !== null) {
@@ -40,6 +44,7 @@ function App() {
   };
 
   useEffect(() => {
+
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken != null) {
       const user = jwt(accessToken);
@@ -54,6 +59,9 @@ function App() {
       localStorage.clear();
     }
   }, [dispatch]);
+
+
+
 
   return (
     <div className="app">
