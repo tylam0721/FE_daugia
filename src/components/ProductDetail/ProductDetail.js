@@ -76,7 +76,6 @@ function ProductDetail() {
       .then(async function (res) {
         setLoading(false);
         await setProduct(res.data[0]);
-        console.log(product);
       })
       .catch(function (error) {});
       
@@ -179,7 +178,7 @@ function ProductDetail() {
                     <br />
                     <h3>{product.Name}</h3>
                     <Message size="large" color={"blue"}>
-                      <Message.Header>Giá khởi điểm</Message.Header>
+                      <Message.Header>Giá hiện tại</Message.Header>
                       <p style={{ color: "red", fontWeight: "bold" }}>
                         <CurrencyFormat
                           value={product.StartingPrice}

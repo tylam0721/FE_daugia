@@ -36,8 +36,13 @@
     font-size: 1.3rem;
 }
 
-.product__timer{
+.product__timer_timeout{
     color:rgb(255, 59, 59);
+    font-weight: bold;
+}
+
+.product__timer{
+    color:rgb(42, 151, 32);
     font-weight: bold;
 }
 

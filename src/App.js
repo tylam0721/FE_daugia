@@ -21,10 +21,13 @@ import UploadProduct from "./components/UploadProduct/UploadProduct";
 import AccountActivation from "./container/AccountActivation/AccountActivation";
 import jwt from "jwt-decode";
 import moment from "moment";
+import 'moment/locale/vi'  // without this line it didn't work
+
 import { useHistory, Redirect } from "react-router-dom";
 import webSocket from "./Common/WebSocket";
 
 function App() {
+  moment().locale('vi')
   const history = useHistory();
   const [{ user }, dispatch] = useStateValue();
 

@@ -1,11 +1,29 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import { Card, Image, Rating, Button, Grid, Form } from "semantic-ui-react";
 import "./Product.css";
 import { useStateValue } from "../../StateProvider/StateProvider";
 import { IMG_HOST } from "../../config/endpoints";
+import moment from "moment";
+
+
 
 function Product({ id, title, price, buyNowPrice, rating, images }) {
   const [, dispatch] = useStateValue();
+  const [dateEnded, setDateEnded] = useState();
+  const [expired, setExpired] = useState(false);
+
+  useEffect(()=>{
+
+    setInterval(() => {
+      let endedIn = moment("2021-10-31 12:40:00", "YYYY-MM-DD HH:mm:ss");
+      setDateEnded(endedIn.from(moment()));
+      var min = endedIn.diff(moment(),'seconds');
+      if (min <= 0){
+        //a is bigger than b actual moment.
+        setExpired(true);
+      }
+    }, 1000);
+  });
 
   const addTobasket = () => {
     dispatch({
@@ -62,17 +80,31 @@ function Product({ id, title, price, buyNowPrice, rating, images }) {
                 </div>
               </Grid.Column>
               <Grid.Column>
-                <div className="right floated">
-                  <i className="clock outline icon product__timer" />
-                  <span className="product__timer">05:49:10</span>
-                </div>
+              
+                  {
+                    expired === true&&(
+                      <div className="right floated">
+                      <i className="clock outline icon product__timer_timeout" />
+                      <span className="product__timer_timeout">{dateEnded}</span>
+                    </div>
+                    )
+                  }
+                   {
+                    expired === false&&(
+                      <div className="right floated">
+                      <i className="clock outline icon product__timer" />
+                      <span className="product__timer">{dateEnded}</span>
+                    </div>
+                    )
+                  }
+     
               </Grid.Column>
             </Grid.Row>
           </Grid>
           <Button inverted className="product__button" onClick={addTobasket}>
-            <i className="hand point right outline icon" /> &nbsp;
-            Xem chi tiết sản 
-          </Button>phẩm
+              <i className="hand point right outline icon" /> &nbsp;
+              Xem chi tiết sản phẩm
+            </Button>
         </Card.Content>
       </Card>
     </div>

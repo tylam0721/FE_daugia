@@ -54,13 +54,14 @@ function Home() {
   }
 
   webSocket.onopen = function(){
-    //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
+    //webSocket.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
     console.log('connected to server');
   }
   webSocket.onmessage = function(message) {
 
     let data = JSON.parse(message.data);
     console.log('Socket server message', data);
+    setProduct([...product,data]);
 
   };
 
