@@ -15,9 +15,9 @@ function Header() {
       text: "Nâng cấp tài khoản",
       value: 1,
       as: Link,
-      to: "/my-account",
+      to: "/admin/upto",
     },
-    { key: 2, text: "Hạ Cấp tài khoản", value: 2, as: Link, to: "/my-account" },
+    { key: 2, text: "Hạ Cấp tài khoản", value: 2, as: Link, to: "/admin/downto" },
   ];
 
   const login = () => {

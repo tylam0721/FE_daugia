@@ -55,7 +55,7 @@ function Register() {
     ) {
       setCheckValid('');
       axios
-        .post(`${API_HOST}/api/user/register`, {
+        .post(`${API_HOST}/api/register/create`, {
           Email: email,
           Password: password,
           cf_password: confirmPassword,
@@ -186,6 +186,7 @@ function Register() {
                     onChange={(date) => setbirthDay(date)}
                   />
                 </Form.Field>
+                
                 {/* <ReCAPTCHA
                   sitekey={process.env.CAPTCHA_PUBLIC_KEY}
                   onChange={onCheckCaptcha}

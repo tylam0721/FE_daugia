@@ -12,6 +12,8 @@ import Register from "./container/Register/Register";
 import Checkout from "./container/Checkout/Checkout";
 import AdminCategory from "./container/Admin/Category/Category";
 import AdminProduct from "./container/Admin/Product/Prodcuct";
+import AdminUpto from "./container/Admin/Upto/Upto";
+import AdminDownto from "./container/Admin/Downto/Downto";
 import ProductDetail from "./components/ProductDetail/ProductDetail";
 import Footer from "./container/Footer/Footer";
 import UserProfile from "./container/UserProfile/UserProfile";
@@ -106,6 +108,8 @@ function App() {
             ></Route>
             <Route path="/admin/category" component={AdminCategory}></Route>
             <Route path="/admin/product" component={AdminProduct}></Route>
+            <Route path="/admin/downto" component={AdminDownto}></Route>
+            <Route path="/admin/upto" component={AdminUpto}></Route>
           </Switch>
         </main>
         <Footer></Footer>

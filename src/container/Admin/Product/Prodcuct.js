@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Item, Card, Grid, Message } from "semantic-ui-react";
-import { useParams } from "react-router-dom";
+import { Container} from "semantic-ui-react";
 import "./Product.css";
 import "antd/dist/antd.css";
 import {
@@ -13,10 +12,14 @@ import {
   Row,
   Col,
   notification,
+  Tabs
 } from "antd";
+
 import { API_HOST, API_HOST_DEV } from "../../../config/endpoints";
 import { NotificationTwoTone } from "@ant-design/icons";
 import axios from "axios";
+
+const { TabPane } = Tabs;
 
 function Product() {
   const [data, setdata] = useState();
@@ -24,6 +27,10 @@ function Product() {
   const [isModalVisibleDeleteProduct, setIsModalVisibleDeleteProduct] =
     useState(false);
   const [selectedRow, setSeletedRow] = useState(null);
+
+  function callback(key) {
+    console.log(key);
+  }
 
   let config = {
     headers: {
@@ -60,12 +67,6 @@ function Product() {
       dataIndex: "NowPrice",
       key: "NowPrice",
       render: (text) => <p>{text}$</p>,
-    },
-    {
-      title: "Description",
-      dataIndex: "Description",
-      key: "Description",
-      render: (text) => <p>{text}</p>,
     },
     {
       title: "DateCreated",
@@ -151,11 +152,15 @@ function Product() {
       <div className="div__Content">
         <Container>
           <div className="div__parent">
-            <Table
-              pagination={{ pageSize: 4 }}
-              columns={columns}
-              dataSource={data}
-            />
+          <Tabs defaultActiveKey="1" onChange={callback}>
+            <TabPane tab="Quản lý sản phẩm" key="1">
+                <Table
+                      pagination={{ pageSize: 4 }}
+                      columns={columns}
+                      dataSource={data}
+                    />
+            </TabPane>
+          </Tabs>
           </div>
         </Container>
       </div>
