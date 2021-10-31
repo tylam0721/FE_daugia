@@ -4,7 +4,7 @@ import "./Product.css";
 import { useStateValue } from "../../StateProvider/StateProvider";
 import { IMG_HOST } from "../../config/endpoints";
 
-function Product({ id, title, price, buyNowPrice, rating, images }) {
+function Product({ id, title, StartingPrice, NowPrice, rating, images, DateUpdated}) {
   const [, dispatch] = useStateValue();
 
   const addTobasket = () => {
@@ -13,10 +13,11 @@ function Product({ id, title, price, buyNowPrice, rating, images }) {
       item: {
         id,
         title,
-        price,
-        buyNowPrice,
+        StartingPrice,
+        NowPrice,
         rating,
         images,
+        DateUpdated,
       },
     });
   };
