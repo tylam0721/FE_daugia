@@ -7,6 +7,7 @@ import axios from "axios";
 import Alert from "../../Common/Alert";
 import webSocket from "../../Common/WebSocket";
 import moment from "moment";
+import CurrencyFormat from "react-currency-format";
 
 function Home() {
   const [allProduct, setAllProduct] = useState([]);
@@ -122,7 +123,7 @@ function Home() {
                     title={product.Name}
                     nowPrice={product.NowPrice}
                     buyNowPrice={product.buyNowPrice}
-                    dateCreated ={product.dateCreated}
+                    dateCreated ={product.DateCreated}
                     dateEnded = {product.DateUpdated}
                     //rating={product.rating}
                     images={product.images}
