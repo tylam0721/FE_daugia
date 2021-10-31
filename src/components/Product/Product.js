@@ -7,7 +7,7 @@ import moment from "moment";
 
 
 
-function Product({ id, title, price, buyNowPrice, rating, images }) {
+function Product({ id, title, StartingPrice, NowPrice, rating, images, DateUpdated}) {
   const [, dispatch] = useStateValue();
   const [dateEnded, setDateEnded] = useState();
   const [expired, setExpired] = useState(false);
@@ -31,10 +31,11 @@ function Product({ id, title, price, buyNowPrice, rating, images }) {
       item: {
         id,
         title,
-        price,
-        buyNowPrice,
+        StartingPrice,
+        NowPrice,
         rating,
         images,
+        DateUpdated,
       },
     });
   };
@@ -61,12 +62,12 @@ function Product({ id, title, price, buyNowPrice, rating, images }) {
           <Card.Description>
             <i className="calendar alternate outline icon" />
             <span>Ngày đăng: </span>
-            <span className="">19/10/2021 </span>
+            <span className="">{DateUpdated}</span>
           </Card.Description>
           <Card.Description>
             <i className="money bill alternate outline icon" />
             <span>Giá hiện tại: </span>
-            <span className="product__price">{price} VNĐ</span>
+            <span className="product__price">{StartingPrice} VNĐ</span>
           </Card.Description>
         </Card.Content>
         <Card.Content extra className="product__footer">

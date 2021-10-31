@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, InputNumber, Button, Select } from 'antd';
+import { Form, Input, InputNumber, Button, Select, Modal } from 'antd';
 import 'antd/dist/antd.css';
 import './UploadProduct.css';
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
@@ -13,6 +13,7 @@ import {convertFromRaw, EditorState} from "draft-js";
 import {Editor} from "react-draft-wysiwyg";
 import { convertToHTML } from 'draft-convert';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import AddProduct from '../AddProduct/AddProduct';
 const { Option } = Select;
 
 const layout = {
@@ -38,6 +39,8 @@ const validateMessages = {
 
 
 const UploadProduct = () => {
+    const [showUploadImageModal, setShowUploadImageModal] = useState(false);
+    const [productId, setProductId] = useState(null);
     const [{ user }, dispatch] = useStateValue();
     const [category, setCategory] = useState([]);
     const history = useHistory();
@@ -79,7 +82,9 @@ const UploadProduct = () => {
             .post(`${API_HOST}/api/product/add`, values.product)
             .then(function (res) {
                 if (res.data.productId) {
-                    history.push(`/product/upload-image?id=${res?.data?.productId}`);
+                    // history.push(`/product/upload-image?id=${res?.data?.productId}`);
+                    setProductId(res?.data?.productId);
+                    setShowUploadImageModal(true);
                 } else {
                     history.push(`/`);
                 }
@@ -102,6 +107,24 @@ const UploadProduct = () => {
 
     return (
         <div className="add-product-container">
+            {
+                productId && (
+                    <Modal
+                        title="Thêm ảnh"
+                        visible={showUploadImageModal}
+                        onOk={() => {
+                            setShowUploadImageModal(false)
+                            window.location.reload();
+                        }}
+                        onCancel={() => {
+                            setShowUploadImageModal(false)
+                            window.location.reload();
+                        }}
+                    >
+                        <AddProduct productId={productId}/>
+                    </Modal>
+                )
+            }
             <Form {...layout} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages}>
                 <h2 className="header">Thêm sản phẩm mới</h2>
                 <Form.Item
@@ -141,7 +164,12 @@ const UploadProduct = () => {
                         },
                     ]}
                 >
-                    <InputNumber style={{ width: 150 }} />
+                    <InputNumber
+                        style={{ width: 150 }}
+                        defaultValue={1000}
+                        formatter={value => `VND ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\VND\s?|(,*)/g, '')}
+                    />
                 </Form.Item>
                 <Form.Item
                     name={['product', 'StepPrice']}
@@ -157,7 +185,12 @@ const UploadProduct = () => {
                         },
                     ]}
                 >
-                    <InputNumber style={{ width: 150 }} />
+                    <InputNumber
+                        style={{ width: 150 }}
+                        defaultValue={1000}
+                        formatter={value => `VND ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\VND\s?|(,*)/g, '')}
+                    />
                 </Form.Item>
                 <Form.Item
                     name={['product', 'NowPrice']}
@@ -173,7 +206,12 @@ const UploadProduct = () => {
                         },
                     ]}
                 >
-                    <InputNumber style={{ width: 150 }} />
+                    <InputNumber
+                        style={{ width: 150 }}
+                        defaultValue={1000}
+                        formatter={value => `VND ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\VND\s?|(,*)/g, '')}
+                    />
                 </Form.Item>
                 <Form.Item name={['product', 'IsCheckReturn']} label="Loại" rules={[{ required: true }]}>
                     <Select
