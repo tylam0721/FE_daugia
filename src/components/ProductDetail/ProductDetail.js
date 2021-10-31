@@ -45,7 +45,14 @@ function ProductDetail() {
   const [checkValid, SetCheckValid] = useState("");
   const [dateEnded, setDateEnded] = useState();
   const [expired, setExpired] = useState(true);
-  const [isRated,SetIsRated] = useState();
+  const [isRated,setIsRated] = useState();
+  const [watchListCheck, setWatchListCheck] = useState(0);
+
+
+  const onWatchListCheck = function(e, { rating, maxRating }){
+    setWatchListCheck(rating);
+    console.log(rating);
+  }
 
   const onChangeBidAmount = function (values) {
     if (values < 100000) {
@@ -87,10 +94,10 @@ function ProductDetail() {
         setProduct(data[0]);
         if(data[0].UserSeller[0].RateGood + data[0].UserSeller[0].RateBad === 0)
         {
-          SetIsRated(false);
+          setIsRated(false);
         }
         else{
-          SetIsRated(true);
+          setIsRated(true);
         }
         const timer = setInterval(() => {
           let endedIn = moment(
@@ -255,9 +262,17 @@ function ProductDetail() {
                 </Grid.Column>
                 <Grid.Column width={8} fluid>
                   <Segment>
-                    <Breadcrumb fluid icon="right angle" sections={sections} />
-                    <br />
-                    <h3>{product.Name}</h3>
+                    <Grid stackable >
+                      <Grid.Row><Breadcrumb fluid icon="right angle" sections={sections} style={{paddingTop:'1em',paddingLeft:'2em'}}/></Grid.Row>
+                      <Grid.Row>
+                        <Grid.Column width={13}>
+                        <h3 style={{paddingLeft:'0.5em'}}>{product.Name}</h3>
+                        </Grid.Column>
+                        <Grid.Column width={3}>
+                        <Rating icon='star' defaultRating={watchListCheck} maxRating={1} size='massive'onRate={onWatchListCheck}/>
+                        </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                     <Message size="large" color={"blue"}>
                       <Message.Header>Giá hiện tại</Message.Header>
                       <p style={{ color: "red", fontWeight: "bold" }}>
@@ -272,7 +287,7 @@ function ProductDetail() {
                     <Grid style={{ padding: "1em" }} columns={2} divided>
                       <Grid.Row>
                         <Grid.Column>
-                          <Icon name="user" /> Tên người bán
+                          <Icon name="user" />{product.UserSeller?.length > 0? product.UserSeller[0].Firstname : `No Name`}
                         </Grid.Column>
                         <Grid.Column>
                           {
