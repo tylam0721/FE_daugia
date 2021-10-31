@@ -122,7 +122,7 @@ function Home() {
                     title={product.Name}
                     nowPrice={product.NowPrice}
                     buyNowPrice={product.buyNowPrice}
-                    dateCreated ={product.dateCreated}
+                    DateCreated ={product.DateCreated}
                     dateEnded = {product.DateUpdated}
                     //rating={product.rating}
                     images={product.images}

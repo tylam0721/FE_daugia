@@ -7,11 +7,10 @@ import moment from "moment";
 
 
 
-function Product({ id, title, nowPrice, images, dateCreated,dateEnded, highestBid}) {
+function Product({ id, title, nowPrice, images, DateCreated,dateEnded, highestBid}) {
   const [, dispatch] = useStateValue();
   const [endedCounter, setEndedCounter] = useState();
   const [expired, setExpired] = useState(false);
-
   useEffect(()=>{
 
     setInterval(() => {
@@ -33,21 +32,34 @@ function Product({ id, title, nowPrice, images, dateCreated,dateEnded, highestBi
         title,
         nowPrice,
         images,
-        dateCreated,
+        DateCreated,
         dateEnded
       },
     });
   };
+  function compareDay(day){
+    var date1=moment(day, 'DD-MM-YYYY HH:mm:ss');
+    var date2=moment(moment(), 'DD-MM-YYYY HH:mm:ss');
+    var diff = (date2.diff(date1,'days'));
+    console.log(diff);
+    if(parseInt(diff) <= 3)
+    {
+      return true;
+    }
+    return false
+  }
   return (
     <div className="product">
       <Card className="product__card">
         <Image className="product__image" centered src={(images?.length > 0) ? `${IMG_HOST}${images[0].Name}` : 'https://giaoducthuydien.vn/wp-content/themes/consultix/images/no-image-found-360x250.png'} />
         <Card.Content>
           <Card.Header className="product__title">
-            <div className="ui red ribbon label">
+            { compareDay(DateCreated) && <div className="ui red ribbon label">
               <i className="thumbtack  icon" />
               MỚI
             </div>
+            }
+            
             {title}
           </Card.Header>
 
@@ -59,7 +71,7 @@ function Product({ id, title, nowPrice, images, dateCreated,dateEnded, highestBi
           <Card.Description>
             <i className="calendar alternate outline icon" />
             <span>Ngày đăng: </span>
-            <span className="">{moment(dateCreated).format("DD-MM-YYYY HH:mm:ss")}</span>
+            <span className="">{moment(DateCreated).format("DD-MM-YYYY HH:mm:ss")}</span>
           </Card.Description>
           <Card.Description>
             <i className="money bill alternate outline icon" />
