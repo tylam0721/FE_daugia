@@ -7,16 +7,16 @@ import moment from "moment";
 
 
 
-function Product({ id, title, StartingPrice, NowPrice, rating, images, DateUpdated}) {
+function Product({ id, title, nowPrice, images, dateCreated,dateEnded, highestBid}) {
   const [, dispatch] = useStateValue();
-  const [dateEnded, setDateEnded] = useState();
+  const [endedCounter, setEndedCounter] = useState();
   const [expired, setExpired] = useState(false);
 
   useEffect(()=>{
 
     setInterval(() => {
-      let endedIn = moment("2021-10-31 12:40:00", "YYYY-MM-DD HH:mm:ss");
-      setDateEnded(endedIn.from(moment()));
+      let endedIn = moment(moment(dateEnded).format("DD-MM-YYYY HH:mm:ss"), "DD-MM-YYYY HH:mm:ss");
+      setEndedCounter(endedIn.from(moment()));
       var min = endedIn.diff(moment(),'seconds');
       if (min <= 0){
         //a is bigger than b actual moment.
@@ -31,11 +31,10 @@ function Product({ id, title, StartingPrice, NowPrice, rating, images, DateUpdat
       item: {
         id,
         title,
-        StartingPrice,
-        NowPrice,
-        rating,
+        nowPrice,
         images,
-        DateUpdated,
+        dateCreated,
+        dateEnded
       },
     });
   };
@@ -51,23 +50,21 @@ function Product({ id, title, StartingPrice, NowPrice, rating, images, DateUpdat
             </div>
             {title}
           </Card.Header>
-          <Card.Meta>
-            <Rating icon="star" defaultRating={rating} maxRating={5} />
-          </Card.Meta>
+
           <Card.Description>
             <i className="user icon" />
             <span>Người đặt giá cao nhất: </span>
-            <span className="product__bidder">****Dần</span>
+            <span className="product__bidder">{highestBid}</span>
           </Card.Description>
           <Card.Description>
             <i className="calendar alternate outline icon" />
             <span>Ngày đăng: </span>
-            <span className="">{DateUpdated}</span>
+            <span className="">{moment(dateCreated).format("DD-MM-YYYY HH:mm:ss")}</span>
           </Card.Description>
           <Card.Description>
             <i className="money bill alternate outline icon" />
             <span>Giá hiện tại: </span>
-            <span className="product__price">{StartingPrice} VNĐ</span>
+            <span className="product__price">{nowPrice} VNĐ</span>
           </Card.Description>
         </Card.Content>
         <Card.Content extra className="product__footer">
@@ -86,7 +83,7 @@ function Product({ id, title, StartingPrice, NowPrice, rating, images, DateUpdat
                     expired === true&&(
                       <div className="right floated">
                       <i className="clock outline icon product__timer_timeout" />
-                      <span className="product__timer_timeout">{dateEnded}</span>
+                      <span className="product__timer_timeout">{endedCounter}</span>
                     </div>
                     )
                   }
@@ -94,7 +91,7 @@ function Product({ id, title, StartingPrice, NowPrice, rating, images, DateUpdat
                     expired === false&&(
                       <div className="right floated">
                       <i className="clock outline icon product__timer" />
-                      <span className="product__timer">{dateEnded}</span>
+                      <span className="product__timer">{endedCounter}</span>
                     </div>
                     )
                   }

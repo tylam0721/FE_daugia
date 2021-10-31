@@ -6,6 +6,7 @@ import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import axios from "axios";
 import Alert from "../../Common/Alert";
 import webSocket from "../../Common/WebSocket";
+import moment from "moment";
 
 function Home() {
   const [allProduct, setAllProduct] = useState([]);
@@ -58,10 +59,12 @@ function Home() {
     console.log('connected to server');
   }
   webSocket.onmessage = function(message) {
-
-    let data = JSON.parse(message.data);
-    console.log('Socket server message', data);
-    setProduct([...product,data]);
+    if(JSON.parse(message.data)[0] === 'newProduct')
+    {
+      let data = JSON.parse(message.data)[1];
+      setProduct([...product,data]);
+      console.log(product[0].Name)
+    }
 
   };
 
@@ -116,10 +119,12 @@ function Home() {
                   <Product
                     id={product.id}
                     key={product.id}
-                    title={product.title}
-                    price={product.price}
+                    title={product.Name}
+                    nowPrice={product.NowPrice}
                     buyNowPrice={product.buyNowPrice}
-                    rating={product.rating}
+                    dateCreated ={product.dateCreated}
+                    dateEnded = {product.DateUpdated}
+                    //rating={product.rating}
                     images={product.images}
                   ></Product>
                 </Grid.Column>
