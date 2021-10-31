@@ -14,7 +14,6 @@ import {Editor} from "react-draft-wysiwyg";
 import { convertToHTML } from 'draft-convert';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import AddProduct from '../AddProduct/AddProduct';
-import NumberFormat from 'react-number-format';
 const { Option } = Select;
 
 const layout = {
