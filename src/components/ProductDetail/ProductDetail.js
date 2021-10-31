@@ -28,6 +28,8 @@ import {
 import CurrencyFormat from "react-currency-format";
 import moment from "moment";
 import webSocket from "../../Common/WebSocket";
+import HTMLRenderer from "react-html-renderer";
+import { IMG_HOST } from "../../config/endpoints";
 
 function ProductDetail() {
   const sections = [
@@ -43,6 +45,14 @@ function ProductDetail() {
   const [checkValid, SetCheckValid] = useState("");
   const [dateEnded, setDateEnded] = useState();
   const [expired, setExpired] = useState(true);
+  const [isRated,setIsRated] = useState();
+  const [watchListCheck, setWatchListCheck] = useState(0);
+
+
+  const onWatchListCheck = function(e, { rating, maxRating }){
+    setWatchListCheck(rating);
+    console.log(rating);
+  }
 
   const onChangeBidAmount = function (values) {
     if (values < 100000) {
@@ -56,7 +66,6 @@ function ProductDetail() {
     }
   };
 
-
   webSocket.onopen = function () {
     //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
     console.log("connected to server");
@@ -67,43 +76,49 @@ function ProductDetail() {
   };
 
   useEffect(() => {
-
     function axiosGetProduct() {
       // create a promise for the axios request
-      const promise = axios.get(`${API_HOST_DEV}/api/product/${id}`)
-  
+      const promise = axios.get(`${API_HOST_DEV}/api/product/${id}`);
+
       // using .then, create a new promise which extracts the data
-      const dataPromise = promise.then((response) => response.data)
-  
+      const dataPromise = promise.then((response) => response.data);
+
       // return it
-      return dataPromise
-  }
-  
-  // now we can use that data from the outside!
-  axiosGetProduct()
-      .then(data => {
+      return dataPromise;
+    }
+
+    // now we can use that data from the outside!
+    axiosGetProduct()
+      .then((data) => {
         setLoading(false);
         setProduct(data[0]);
+        if(data[0].UserSeller[0].RateGood + data[0].UserSeller[0].RateBad === 0)
+        {
+          setIsRated(false);
+        }
+        else{
+          setIsRated(true);
+        }
         const timer = setInterval(() => {
-          let endedIn = moment(moment(data[0].DateUpdated).format("HH:mm:ss DD-MM-YYYY"), "HH:mm:ss DD-MM-YYYY");
+          let endedIn = moment(
+            moment(data[0].DateUpdated).format("HH:mm:ss DD-MM-YYYY"),
+            "HH:mm:ss DD-MM-YYYY"
+          );
           setDateEnded(endedIn.from(moment()));
           var min = endedIn.diff(moment(), "seconds");
           if (min <= 0) {
             //a is bigger than b actual moment.
             setExpired(true);
-          }
-          else{
+          } else {
             setDateEnded(false);
           }
         }, 1000);
-        if(expired === true)
-        {
+        if (expired === true) {
           return () => clearInterval(timer);
-        }  
+        }
+        
       })
-      .catch(err => console.log(err))
-
-
+      .catch((err) => console.log(err));
     /*axios
       .get(`${API_HOST_DEV}/api/product/${id}`)
       .then( function (res) {
@@ -112,7 +127,6 @@ function ProductDetail() {
         console.log(product.DateUpdated);
       })
       .catch(function (error) {});*/
-
   }, []);
 
   return (
@@ -138,21 +152,41 @@ function ProductDetail() {
                 <Grid.Column width={8}>
                   <Segment>
                     <AliceCarousel autoPlay autoPlayInterval="3000">
-                      <img
-                        src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+                      <Image
                         className="sliderimg"
+                        centered
+                        src={
+                          product.images?.length > 0
+                            ? `${IMG_HOST}${product.images[0].Name}`
+                            : "https://giaoducthuydien.vn/wp-content/themes/consultix/images/no-image-found-360x250.png"
+                        }
                       />
-                      <img
-                        src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+                      <Image
                         className="sliderimg"
+                        centered
+                        src={
+                          product.images?.length > 0
+                            ? `${IMG_HOST}${product.images[0].Name}`
+                            : "https://giaoducthuydien.vn/wp-content/themes/consultix/images/no-image-found-360x250.png"
+                        }
                       />
-                      <img
-                        src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+                      <Image
                         className="sliderimg"
+                        centered
+                        src={
+                          product.images?.length > 0
+                            ? `${IMG_HOST}${product.images[0].Name}`
+                            : "https://giaoducthuydien.vn/wp-content/themes/consultix/images/no-image-found-360x250.png"
+                        }
                       />
-                      <img
-                        src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+                      <Image
                         className="sliderimg"
+                        centered
+                        src={
+                          product.images?.length > 0
+                            ? `${IMG_HOST}${product.images[0].Name}`
+                            : "https://giaoducthuydien.vn/wp-content/themes/consultix/images/no-image-found-360x250.png"
+                        }
                       />
                     </AliceCarousel>
                     <Divider />
@@ -228,9 +262,17 @@ function ProductDetail() {
                 </Grid.Column>
                 <Grid.Column width={8} fluid>
                   <Segment>
-                    <Breadcrumb fluid icon="right angle" sections={sections} />
-                    <br />
-                    <h3>{product.Name}</h3>
+                    <Grid stackable >
+                      <Grid.Row><Breadcrumb fluid icon="right angle" sections={sections} style={{paddingTop:'1em',paddingLeft:'2em'}}/></Grid.Row>
+                      <Grid.Row>
+                        <Grid.Column width={13}>
+                        <h3 style={{paddingLeft:'0.5em'}}>{product.Name}</h3>
+                        </Grid.Column>
+                        <Grid.Column width={3}>
+                        <Rating icon='star' defaultRating={watchListCheck} maxRating={1} size='massive'onRate={onWatchListCheck}/>
+                        </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                     <Message size="large" color={"blue"}>
                       <Message.Header>Giá hiện tại</Message.Header>
                       <p style={{ color: "red", fontWeight: "bold" }}>
@@ -245,15 +287,22 @@ function ProductDetail() {
                     <Grid style={{ padding: "1em" }} columns={2} divided>
                       <Grid.Row>
                         <Grid.Column>
-                          <Icon name="user" /> baoanh2003199
+                          <Icon name="user" />{product.UserSeller?.length > 0? product.UserSeller[0].Firstname : `No Name`}
                         </Grid.Column>
                         <Grid.Column>
-                          <Rating
-                            disabled
-                            icon="star"
-                            defaultRating={5}
-                            maxRating={5}
-                          />
+                          {
+                            isRated?(
+                              <Rating
+                              disabled
+                              icon="star"
+                              defaultRating={8}
+                              maxRating={10}
+                            />
+                            ):(
+                              <div>Chưa có đánh giá</div>
+                            )
+                          }
+
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
@@ -274,10 +323,12 @@ function ProductDetail() {
                         </Message.Item>
                         <Message.Item>
                           <Icon name="calendar outline" /> Thời gian đăng:{" "}
-                          {moment(product.DateCreated).format("HH:mm:ss DD-MM-YYYY")}
+                          {moment(product.DateCreated).format(
+                            "HH:mm:ss DD-MM-YYYY"
+                          )}
                         </Message.Item>
                         <Message.Item>
-                        <Icon name="clock outline" /> Thời gian kết thúc: {" "}
+                          <Icon name="clock outline" /> Thời gian kết thúc:{" "}
                           {dateEnded}
                         </Message.Item>
                       </Message.List>
@@ -288,7 +339,7 @@ function ProductDetail() {
                     <Message positive>
                       <Message.Header>Người đặt giá cao nhất</Message.Header>
                       <p>
-                        <b>abcxyz</b> đang đặt giá cao nhất hiện tại:{" "}
+                        <b>abcxyz</b> là đặt giá cao nhất:{" "}
                         <b>
                           <CurrencyFormat
                             value={product.NowPrice}
@@ -345,7 +396,7 @@ function ProductDetail() {
               </Grid.Row>
             </Grid>
             <Segment style={{ padding: "1em" }}>
-              Hiển thị mô tả sản phẩm tại đây
+              <HTMLRenderer html={product.Description} />
             </Segment>
           </div>
         </Container>
