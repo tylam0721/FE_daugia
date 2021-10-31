@@ -29,10 +29,7 @@ import CurrencyFormat from "react-currency-format";
 import moment from "moment";
 import webSocket from "../../Common/WebSocket";
 
-
-
 function ProductDetail() {
-  
   const sections = [
     { key: "Home", content: "Home", link: true },
     { key: "Store", content: "Store", link: true },
@@ -44,11 +41,12 @@ function ProductDetail() {
   const { id } = useParams();
   const [bidAmount, SetBidAmount] = useState("");
   const [checkValid, SetCheckValid] = useState("");
+  const [dateEnded, setDateEnded] = useState();
+  const [expired, setExpired] = useState(true);
 
   const onChangeBidAmount = function (values) {
     if (values < 100000) {
       SetCheckValid("Giá tiền không được nhỏ hơn giá khởi điểm");
-      
     } else {
       const { formattedValue, value } = values;
       // formattedValue = $2,223
@@ -58,29 +56,64 @@ function ProductDetail() {
     }
   };
 
-  webSocket.onopen = function(){
+
+  webSocket.onopen = function () {
     //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
-    console.log('connected to server');
-  }
-  webSocket.onmessage = function(message) {
-
+    console.log("connected to server");
+  };
+  webSocket.onmessage = function (message) {
     let data = JSON.parse(message.data);
-    console.log('Socket server message', data);
-
+    console.log("Socket server message", data);
   };
 
-
   useEffect(() => {
-    axios
+
+    function axiosGetProduct() {
+      // create a promise for the axios request
+      const promise = axios.get(`${API_HOST_DEV}/api/product/${id}`)
+  
+      // using .then, create a new promise which extracts the data
+      const dataPromise = promise.then((response) => response.data)
+  
+      // return it
+      return dataPromise
+  }
+  
+  // now we can use that data from the outside!
+  axiosGetProduct()
+      .then(data => {
+        setLoading(false);
+        setProduct(data[0]);
+        const timer = setInterval(() => {
+          let endedIn = moment(moment(data[0].DateUpdated).format("HH:mm:ss DD-MM-YYYY"), "HH:mm:ss DD-MM-YYYY");
+          setDateEnded(endedIn.from(moment()));
+          var min = endedIn.diff(moment(), "seconds");
+          if (min <= 0) {
+            //a is bigger than b actual moment.
+            setExpired(true);
+          }
+          else{
+            setDateEnded(false);
+          }
+        }, 1000);
+        if(expired === true)
+        {
+          return () => clearInterval(timer);
+        }  
+      })
+      .catch(err => console.log(err))
+
+
+    /*axios
       .get(`${API_HOST_DEV}/api/product/${id}`)
-      .then(async function (res) {
+      .then( function (res) {
         setLoading(false);
         await setProduct(res.data[0]);
+        console.log(product.DateUpdated);
       })
-      .catch(function (error) {});
-      
+      .catch(function (error) {});*/
 
-    }, []);
+  }, []);
 
   return (
     <div className="home">
@@ -127,41 +160,62 @@ function ProductDetail() {
                       <div>
                         {product.IdUserSeller !== user.userId && (
                           <Form>
-                            <h2
-                              style={{
-                                textAlign: "center",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              Tham gia đấu giá
-                            </h2>
-                            {checkValid.length > 0 && (
-                              <Form.Field>
-                                <Label basic color="red" pointing="below">
-                                  {checkValid}
-                                </Label>
-                              </Form.Field>
+                            {expired === false && (
+                              <div>
+                                <h2
+                                  style={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Tham gia đấu giá
+                                </h2>
+                                {checkValid.length > 0 && (
+                                  <Form.Field>
+                                    <Label basic color="red" pointing="below">
+                                      {checkValid}
+                                    </Label>
+                                  </Form.Field>
+                                )}
+
+                                <Form.Field>
+                                  <Input
+                                    labelPosition="right"
+                                    type="text"
+                                    placeholder="Nhập số tiền để tham gia đấu giá"
+                                  >
+                                    <CurrencyFormat
+                                      value={bidAmount}
+                                      thousandSeparator={true}
+                                      onValueChange={onChangeBidAmount}
+                                    />
+                                    <Label>VNĐ</Label>
+                                  </Input>
+                                </Form.Field>
+                                <Button color={"green"}>Đặt giá</Button>
+                              </div>
                             )}
-                            <Form.Field>
-                              <Input
-                                labelPosition="right"
-                                type="text"
-                                placeholder="Nhập số tiền để tham gia đấu giá"
-                              >
-                                <CurrencyFormat
-                                  value={bidAmount}
-                                  thousandSeparator={true}
-                                  onValueChange={onChangeBidAmount}
-                                />
-                                <Label>VNĐ</Label>
-                              </Input>
-                            </Form.Field>
-                            <Button color={"green"}>Đặt giá</Button>
+                            {expired === true && (
+                              <Message
+                                negative
+                                header="Thời gian đấu giá đã kết thúc"
+                                content="Phiên đấu giá của sản phẩm này đã kết thúc"
+                              />
+                            )}
                           </Form>
                         )}
-                        {product.IdUserSeller === user.userId &&(<Form>
-                          <Button color={"green"}> <Icon name="pencil alternative"/>Bổ sung thông tin sản phẩm</Button>
-                        </Form>)}
+                        {product.IdUserSeller === user.userId && (
+                          <div>
+                            {expired === false && (
+                              <Form>
+                                <Button color={"green"}>
+                                  <Icon name="pencil alternative" />
+                                  Bổ sung thông tin sản phẩm
+                                </Button>
+                              </Form>
+                            )}
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <Message
@@ -219,10 +273,12 @@ function ProductDetail() {
                           </b>
                         </Message.Item>
                         <Message.Item>
-                          <Icon name="calendar outline" /> Thời gian đăng: {moment(product.DateCreated).format("DD-MM-YYYY")}
+                          <Icon name="calendar outline" /> Thời gian đăng:{" "}
+                          {moment(product.DateCreated).format("HH:mm:ss DD-MM-YYYY")}
                         </Message.Item>
                         <Message.Item>
-                          <Icon name="clock outline" /> Thời gian kết thúc: {moment(product.DateUpdated).format("DD-MM-YYYY")}
+                        <Icon name="clock outline" /> Thời gian kết thúc: {" "}
+                          {dateEnded}
                         </Message.Item>
                       </Message.List>
                     </Message>
