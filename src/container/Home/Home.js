@@ -125,6 +125,10 @@ function Home() {
                     buyNowPrice={product.buyNowPrice}
                     dateCreated ={product.DateCreated}
                     dateEnded = {product.DateUpdated}
+                    biddeds = {product.UserBuyer?.length}
+                    highestBid = {product.UserSeller?.length > 0
+                      ? `*****${product.UserSeller[0].Lastname}`
+                      : "Chưa có"}
                     //rating={product.rating}
                     images={product.images}
                   ></Product>

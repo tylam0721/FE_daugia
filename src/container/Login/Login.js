@@ -54,7 +54,7 @@ function Login() {
         })
         .catch(function (error) {
           // handle error
-          setCheckValid("Email hoặc mật khẩu sai hoặc không tồn tại");
+          setCheckValid("Email hoặc mật khẩu không hợp lệ hoặc bạn chưa xác thực email");
         });
     } else {
       setCheckValid("Email và mật khẩu không được để trống");

@@ -37,6 +37,7 @@ function Register() {
   const [confirmError, setConfirmError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [checkValid, setCheckValid] = useState("");
+  const [nameError, setNameError] = useState("");
 
   useEffect(() => {
     console.log(process.env);
@@ -53,7 +54,7 @@ function Register() {
       confirmError.length === 0 &&
       emailError.length === 0
     ) {
-      setCheckValid('');
+      setCheckValid("");
       axios
         .post(`${API_HOST}/api/register/create`, {
           Email: email,
@@ -66,7 +67,7 @@ function Register() {
         .then(function (res) {
           if (res.status === 201) {
             alert("Đăng ký thành công");
-            history.push('/');
+            history.push("/");
           }
         })
         .catch(function (error) {
@@ -169,13 +170,33 @@ function Register() {
                         onChange={(event) => setFirstName(event.target.value)}
                       />
                     </Form.Field>
-                    <Form.Field>
+                    <Form.Field required>
                       <label>Tên</label>
                       <Input
                         placeholder="Tên"
                         type="text"
-                        onChange={(event) => setLastName(event.target.value)}
+                        onKeyPress={(event) => {
+                          if (
+                            (event.charCode >= 65 && event.charCode <= 90) ||
+                            (event.charCode >= 97 && event.charCode <= 122) ===
+                              false
+                          ) {
+                            setNameError(
+                              "Tên không được chứa chữ số, kí tự đặc biệt hoặc khoảng trắng"
+                            );
+                          } else {
+                            setNameError("");
+                          }
+                        }}
+                        onChange={(event) => {
+                          setLastName(event.target.value);
+                        }}
                       />
+                      {nameError.length > 0 && (
+                        <Label basic color="red" pointing>
+                          {nameError}
+                        </Label>
+                      )}
                     </Form.Field>
                   </Form.Group>
                 </Form.Field>
@@ -186,17 +207,19 @@ function Register() {
                     onChange={(date) => setbirthDay(date)}
                   />
                 </Form.Field>
-                
+
                 {/* <ReCAPTCHA
                   sitekey={process.env.CAPTCHA_PUBLIC_KEY}
                   onChange={onCheckCaptcha}
                 /> */}
                 <Form.Field>
                   {checkValid.length > 0 && (
-                <Message negative>
-                <Message.Header>Vui lòng kiểm tra lại các trường thông tin</Message.Header>
-                <p>Các trường có chứa dấu * là các trường bắt buộc</p>
-              </Message>
+                    <Message negative>
+                      <Message.Header>
+                        Vui lòng kiểm tra lại các trường thông tin
+                      </Message.Header>
+                      <p>Các trường có chứa dấu * là các trường bắt buộc</p>
+                    </Message>
                   )}
                 </Form.Field>
                 <Form.Field>
