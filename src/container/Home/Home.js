@@ -64,7 +64,6 @@ function Home() {
     {
       let data = JSON.parse(message.data)[1];
       setProduct([...product,data]);
-      console.log(product[0].Name)
     }
 
   };
@@ -124,10 +123,10 @@ function Home() {
                     nowPrice={product.NowPrice}
                     buyNowPrice={product.buyNowPrice}
                     dateCreated ={product.DateCreated}
-                    dateEnded = {product.DateUpdated}
+                    dateEnded = {product.DateEnd}
                     biddeds = {product.UserBuyer?.length}
-                    highestBid = {product.UserSeller?.length > 0
-                      ? `*****${product.UserSeller[0].Lastname}`
+                    highestBid = {product.UserBuyer?.length > 0
+                      ? `*****${product.UserBuyer[0].Lastname}`
                       : "Chưa có"}
                     //rating={product.rating}
                     images={product.images}

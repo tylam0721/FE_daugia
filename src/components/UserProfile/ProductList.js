@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Dropdown, Image, Button, Form, Icon } from "semantic-ui-react";
+import { Table, Dropdown, Image, Button, Form, Icon,Loader,Dimmer } from "semantic-ui-react";
 import axios from "axios";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import { useStateValue } from "../../StateProvider/StateProvider";
@@ -12,6 +12,7 @@ function ProductList() {
     { key: "bid", value: "bid", text: "Sản phẩm bạn đang đấu giá" },
     { key: "win", value: "win", text: "Sản phẩm đã thắng" },
   ];
+  const [loading, setLoading] = useState(true);
 
   return (
     <div>
@@ -22,8 +23,8 @@ function ProductList() {
         options={countryOptions}
       />
 
-      <Table stripped>
-        <Table.Header>
+      <Table stripped >
+        <Table.Header >
           <Table.Row>
             <Table.HeaderCell>Sản phẩm</Table.HeaderCell>
             <Table.HeaderCell>Tên sản phẩm</Table.HeaderCell>

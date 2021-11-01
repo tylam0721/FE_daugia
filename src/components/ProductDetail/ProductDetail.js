@@ -25,11 +25,13 @@ import {
   Breadcrumb,
   Input,
 } from "semantic-ui-react";
-import CurrencyFormat from "react-currency-format";
+
 import moment from "moment";
 import webSocket from "../../Common/WebSocket";
 import HTMLRenderer from "react-html-renderer";
 import { IMG_HOST } from "../../config/endpoints";
+//import Bidding from "./Bidding";
+import CurrencyFormat from "react-currency-format";
 
 function ProductDetail() {
   const sections = [
@@ -41,19 +43,12 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState([]);
   const { id } = useParams();
-  const [bidAmount, SetBidAmount] = useState("");
-  const [checkValid, SetCheckValid] = useState("");
   const [dateEnded, setDateEnded] = useState();
   const [expired, setExpired] = useState(true);
-  const [isRated,setIsRated] = useState();
+  const [isRated, setIsRated] = useState();
   const [watchListCheck, setWatchListCheck] = useState(0);
-
-
-  const onWatchListCheck = function(e, { rating, maxRating }){
-    setWatchListCheck(rating);
-    console.log(rating);
-  }
-
+  const [checkValid, SetCheckValid] = useState("");
+  const [bidAmount, SetBidAmount] = useState("");
   const onChangeBidAmount = function (values) {
     if (values < 100000) {
       SetCheckValid("Giá tiền không được nhỏ hơn giá khởi điểm");
@@ -64,6 +59,11 @@ function ProductDetail() {
       SetBidAmount(formattedValue);
       SetCheckValid("");
     }
+  };
+
+  const onWatchListCheck = function (e, { rating, maxRating }) {
+    setWatchListCheck(rating);
+    console.log(rating);
   };
 
   webSocket.onopen = function () {
@@ -90,33 +90,43 @@ function ProductDetail() {
     // now we can use that data from the outside!
     axiosGetProduct()
       .then((data) => {
-        setLoading(false);
+        console.log(data[0]);
         setProduct(data[0]);
-        if(data[0].UserSeller[0].RateGood + data[0].UserSeller[0].RateBad === 0)
-        {
+        if (data[0].UserSeller.length > 0) {
+          if (
+            data[0].UserSeller[0].RateGood + data[0].UserSeller[0].RateBad ==
+            0
+          ) {
+            setIsRated(false);
+          } else {
+            setIsRated(true);
+          }
+        } else {
           setIsRated(false);
         }
-        else{
-          setIsRated(true);
-        }
+
+        setLoading(false);
         const timer = setInterval(() => {
           let endedIn = moment(
-            moment(data[0].DateUpdated).format("HH:mm:ss DD-MM-YYYY"),
-            "HH:mm:ss DD-MM-YYYY"
+            moment(data[0].DateEnd).format("DD/MM/YYYY A HH:mm:ss"),
+            "DD-MM-YYYY A HH:mm:ss"
           );
-          setDateEnded(endedIn.from(moment()));
+
           var min = endedIn.diff(moment(), "seconds");
           if (min <= 0) {
             //a is bigger than b actual moment.
             setExpired(true);
+            setDateEnded(endedIn.from(moment()));
           } else {
-            setDateEnded(false);
+            setDateEnded(moment(endedIn).format("HH:mm A - DD/MM/YYYY"));
+            setExpired(false);
           }
         }, 1000);
         if (expired === true) {
-          return () => clearInterval(timer);
+          return () => {
+            clearInterval(timer);
+          };
         }
-        
       })
       .catch((err) => console.log(err));
     /*axios
@@ -165,8 +175,8 @@ function ProductDetail() {
                         className="sliderimg"
                         centered
                         src={
-                          product.images?.length > 0
-                            ? `${IMG_HOST}${product.images[0].Name}`
+                          product.images?.length > 1
+                            ? `${IMG_HOST}${product.images[1].Name}`
                             : "https://giaoducthuydien.vn/wp-content/themes/consultix/images/no-image-found-360x250.png"
                         }
                       />
@@ -174,8 +184,8 @@ function ProductDetail() {
                         className="sliderimg"
                         centered
                         src={
-                          product.images?.length > 0
-                            ? `${IMG_HOST}${product.images[0].Name}`
+                          product.images?.length > 2
+                            ? `${IMG_HOST}${product.images[2].Name}`
                             : "https://giaoducthuydien.vn/wp-content/themes/consultix/images/no-image-found-360x250.png"
                         }
                       />
@@ -183,8 +193,8 @@ function ProductDetail() {
                         className="sliderimg"
                         centered
                         src={
-                          product.images?.length > 0
-                            ? `${IMG_HOST}${product.images[0].Name}`
+                          product.images?.length > 3
+                            ? `${IMG_HOST}${product.images[3].Name}`
                             : "https://giaoducthuydien.vn/wp-content/themes/consultix/images/no-image-found-360x250.png"
                         }
                       />
@@ -262,16 +272,31 @@ function ProductDetail() {
                 </Grid.Column>
                 <Grid.Column width={8} fluid>
                   <Segment>
-                    <Grid stackable >
-                      <Grid.Row><Breadcrumb fluid icon="right angle" sections={sections} style={{paddingTop:'1em',paddingLeft:'2em'}}/></Grid.Row>
+                    <Grid stackable>
+                      <Grid.Row>
+                        <Breadcrumb
+                          fluid
+                          icon="right angle"
+                          sections={sections}
+                          style={{ paddingTop: "1em", paddingLeft: "2em" }}
+                        />
+                      </Grid.Row>
                       <Grid.Row>
                         <Grid.Column width={13}>
-                        <h3 style={{paddingLeft:'0.5em'}}>{product.Name}</h3>
+                          <h3 style={{ paddingLeft: "0.5em" }}>
+                            {product.Name}
+                          </h3>
                         </Grid.Column>
                         <Grid.Column width={3}>
-                        <Rating icon='star' defaultRating={watchListCheck} maxRating={1} size='massive'onRate={onWatchListCheck}/>
+                          <Rating
+                            icon="star"
+                            defaultRating={watchListCheck}
+                            maxRating={1}
+                            size="massive"
+                            onRate={onWatchListCheck}
+                          />
                         </Grid.Column>
-                        </Grid.Row>
+                      </Grid.Row>
                     </Grid>
                     <Message size="large" color={"blue"}>
                       <Message.Header>Giá hiện tại</Message.Header>
@@ -287,22 +312,28 @@ function ProductDetail() {
                     <Grid style={{ padding: "1em" }} columns={2} divided>
                       <Grid.Row>
                         <Grid.Column>
-                          <Icon name="user" />{product.UserSeller?.length > 0? product.UserSeller[0].Firstname : `No Name`}
+                          <Icon name="user" />
+                          <b>
+                            {" "}
+                            {product.UserSeller?.length > 0
+                              ? product.UserSeller[0].Firstname
+                              : `????`}
+                          </b>
                         </Grid.Column>
                         <Grid.Column>
-                          {
-                            isRated?(
-                              <Rating
+                          {isRated ? (
+                            <Rating
                               disabled
                               icon="star"
-                              defaultRating={8}
+                              defaultRating={
+                                product.UserSeller?.RateGood -
+                                product.UserSeller?.RateBad
+                              }
                               maxRating={10}
                             />
-                            ):(
-                              <div>Chưa có đánh giá</div>
-                            )
-                          }
-
+                          ) : (
+                            <div>Chưa có đánh giá</div>
+                          )}
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
@@ -324,12 +355,12 @@ function ProductDetail() {
                         <Message.Item>
                           <Icon name="calendar outline" /> Thời gian đăng:{" "}
                           {moment(product.DateCreated).format(
-                            "HH:mm:ss DD-MM-YYYY"
+                            "HH:mm A - DD/MM/YYYY"
                           )}
                         </Message.Item>
                         <Message.Item>
                           <Icon name="clock outline" /> Thời gian kết thúc:{" "}
-                          {dateEnded}
+                          <Label color={"red"}>{dateEnded}</Label>
                         </Message.Item>
                       </Message.List>
                     </Message>
@@ -337,60 +368,65 @@ function ProductDetail() {
                   <Divider />
                   <Segment>
                     <Message positive>
-                      <Message.Header>Người đặt giá cao nhất</Message.Header>
-                      <p>
-                        <b>abcxyz</b> là đặt giá cao nhất:{" "}
-                        <b>
-                          <CurrencyFormat
-                            value={product.NowPrice}
-                            displayType={"text"}
-                            thousandSeparator={true}
-                          />{" "}
-                          VNĐ
-                        </b>
-                      </p>
+                      <Message.Header>
+                        {product.UserBuyer?.length > 0
+                          ? "Người đặt giá cao nhất"
+                          : "Hiện tại chưa có ai tham gia đấu giá sản phẩm này"}
+                      </Message.Header>
+                      {product.UserBuyer?.length > 0 ? (
+                        <p>
+                          <b>{`****${product.UserBuyer[0].Lastname}`}</b> đặt
+                          giá cao nhất:{" "}
+                          <b>
+                            <CurrencyFormat
+                              value={product.NowPrice}
+                              displayType={"text"}
+                              thousandSeparator={true}
+                            />{" "}
+                            VNĐ
+                          </b>
+                        </p>
+                      ) : (
+                        <p>Hãy là người đầu tiên đấu giá cho sản phẩm này !</p>
+                      )}
                     </Message>
-                    <Table celled selectable unstackable>
-                      <Table.Header>
-                        <Table.Row>
-                          <Table.HeaderCell>Thời điểm</Table.HeaderCell>
-                          <Table.HeaderCell>Người mua</Table.HeaderCell>
-                          <Table.HeaderCell>Giá đặt mua</Table.HeaderCell>
-                        </Table.Row>
-                      </Table.Header>
-                      <Table.Body>
-                        <Table.Row>
-                          <Table.Cell>John</Table.Cell>
-                          <Table.Cell>No Action</Table.Cell>
-                          <Table.Cell>None</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>Jamie</Table.Cell>
-                          <Table.Cell>Approved</Table.Cell>
-                          <Table.Cell>Requires call</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>Jill</Table.Cell>
-                          <Table.Cell>Denied</Table.Cell>
-                          <Table.Cell>None</Table.Cell>
-                        </Table.Row>
-                        <Table.Row warning>
-                          <Table.Cell>John</Table.Cell>
-                          <Table.Cell>No Action</Table.Cell>
-                          <Table.Cell>None</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>Jamie</Table.Cell>
-                          <Table.Cell positive>Approved</Table.Cell>
-                          <Table.Cell warning>Requires call</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>Jill</Table.Cell>
-                          <Table.Cell negative>Denied</Table.Cell>
-                          <Table.Cell>None</Table.Cell>
-                        </Table.Row>
-                      </Table.Body>
-                    </Table>
+                    {product.UserBuyer?.length > 0 ? (
+                      <Table celled selectable unstackable>
+                        <Table.Header>
+                          <Table.Row>
+                            <Table.HeaderCell>Thời điểm</Table.HeaderCell>
+                            <Table.HeaderCell>Người mua</Table.HeaderCell>
+                            <Table.HeaderCell>Giá đặt mua</Table.HeaderCell>
+                          </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                          {product.UserBuyer.map((buyer) => (
+                            <Table.Row>
+                              <Table.Cell>Thời điểm</Table.Cell>
+                              <Table.Cell>{`**** ${buyer.Lastname}`}</Table.Cell>
+                              <Table.Cell>None</Table.Cell>
+                            </Table.Row>
+                          ))}
+                        </Table.Body>
+                      </Table>
+                    ) : (
+                      <Table celled selectable unstackable>
+                        <Table.Header>
+                          <Table.Row>
+                            <Table.HeaderCell>Thời điểm</Table.HeaderCell>
+                            <Table.HeaderCell>Người mua</Table.HeaderCell>
+                            <Table.HeaderCell>Giá đặt mua</Table.HeaderCell>
+                          </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                          <Table.Row>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                          </Table.Row>
+                        </Table.Body>
+                      </Table>
+                    )}
                   </Segment>
                 </Grid.Column>
               </Grid.Row>

@@ -44,8 +44,6 @@ const [loading, setLoading] = useState(true);
     switch(activeItem){
         case 'profile': return <Profile/>
         case 'productList': return <ProductList/>;
-        case 'LogOut': return <div>Bạn đang xem danh sách bài viết</div>;
-        case 'postProduct': return <div>Đ có gì để xem {':)'}</div>;
         default: return <div></div>
     }
 }
@@ -56,7 +54,7 @@ const [loading, setLoading] = useState(true);
         <Segment className="home__segment">
           <Dimmer active inverted>
             <Loader size="large" className="home__loaderMessage">
-              Đangi tải...
+              Đang tải...
             </Loader>
           </Dimmer>
         </Segment>
@@ -83,15 +81,6 @@ const [loading, setLoading] = useState(true);
               }}
             />
             <Menu.Item
-              icon="edit"
-              name="postProduct"
-              content="Đăng sản phẩm"
-              active={activeItem === "postProduct"}
-              onClick={(event) => {
-                setActiveItem("postProduct");
-              }}
-            />
-            <Menu.Item
               icon="shopping basket"
               name="productList"
               content="Danh sách sản phẩm"
@@ -100,16 +89,6 @@ const [loading, setLoading] = useState(true);
                 setActiveItem("productList");
               }}
             />
-            <Menu.Item
-              icon="sign-out"
-              name="LogOut"
-              content="Đăng xuất"
-              active={activeItem === "LogOut"}
-              onClick={(event) => {
-                setActiveItem("LogOut");
-              }}
-            />
-
           </Menu>
         </Grid.Column>
         <Grid.Column stretched width={12}>
