@@ -192,27 +192,6 @@ const UploadProduct = () => {
                         parser={value => value.replace(/\VND\s?|(,*)/g, '')}
                     />
                 </Form.Item>
-                <Form.Item
-                    name={['product', 'NowPrice']}
-                    label="Giá hiện tại"
-                    rules={[
-                        {
-                            type: 'number',
-                            min: 0,
-                            max: 1000000000,
-                        },
-                        {
-                            required: true,
-                        },
-                    ]}
-                >
-                    <InputNumber
-                        style={{ width: 150 }}
-                        defaultValue={1000}
-                        formatter={value => `VND ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                        parser={value => value.replace(/\VND\s?|(,*)/g, '')}
-                    />
-                </Form.Item>
                 <Form.Item name={['product', 'IsCheckReturn']} label="Loại" rules={[{ required: true }]}>
                     <Select
                         placeholder="Tự động gia hạn"
