@@ -34,12 +34,13 @@ import { IMG_HOST } from "../../config/endpoints";
 import CurrencyFormat from "react-currency-format";
 
 function ProductDetail() {
+  const [{ user }, dispatch] = useStateValue();
   const sections = [
     { key: "Home", content: "Home", link: true },
     { key: "Store", content: "Store", link: true },
     { key: "Shirt", content: "T-Shirt", active: true },
   ];
-  const [{ user }, dispatch] = useStateValue();
+
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState([]);
   const { id } = useParams();
@@ -52,18 +53,6 @@ function ProductDetail() {
   const [biddingMessage, setBiddingMessage] = useState([]);
   const [bidders, setBidders] = useState([]);
 
-
-
-  const saveWatchList=(id)=>{
-    fetch('/addToWatchList',{
-      body:JSON.stringify({
-        IdProduct: product.id,
-      })
-    }).then(res=>res.json())
-    .then(result=>{
-      console.log(result)
-    })
-  }
 
   const onChangeBidAmount = function (values) {
     if (values < 100000) {
@@ -79,6 +68,23 @@ function ProductDetail() {
 
   const onWatchListCheck = function (e, { rating, maxRating }) {
     setWatchListCheck(rating);
+    if(rating == 0)
+    {
+      axios.post(`${API_HOST_DEV}/api/watchlist/delete`,{
+        IdProduct: product.id,
+        IdUser: user.userId,
+      }).then((res)=>{
+        console.log("thêm vào watchlist thành công");
+      }).catch((err)=>{});
+    }
+    else{
+      axios.post(`${API_HOST_DEV}/api/watchlist/add`,{
+        IdProduct: product.id,
+        IdUser: user.userId,
+      }).then((res)=>{
+        console.log("thêm vào watchlist thành công");
+      }).catch((err)=>{});
+    }
     console.log(rating);
   };
 
@@ -150,8 +156,8 @@ function ProductDetail() {
     }
     axiosGetProduct()
       .then((data) => {
-        console.log(data[0]);
         setProduct(data[0]);
+        setLoading(false);
         if (data[0].UserSeller.length > 0) {
           if (
             data[0].UserSeller[0].RateGood + data[0].UserSeller[0].RateBad ==
@@ -162,16 +168,21 @@ function ProductDetail() {
             setIsRated(true);
           }
         }
-        const userid=localStorage.getItem('userId');
-        if(data[0].watch_list[0].IdUserWatch==userid && data[0].watch_list[0].isWatchList==0)
-        {
-          setWatchListCheck(1);
-        }
-        else{
-          setWatchListCheck(0);
-        }
 
-        setLoading(false);
+        // if(user !== null)
+        // {
+        //   data[0].watch_list.map((w) => {
+        //     console.log(user.userId);
+        //     if(w.IdUserWatch == user.userId)
+        //     {
+        //       console.log(w);
+        
+        //     }
+        //   });
+        // }
+
+
+  
         const timer = setInterval(() => {
           let endedIn = moment(
             moment(data[0].DateEnd).format("DD/MM/YYYY A HH:mm:ss"),
@@ -184,8 +195,9 @@ function ProductDetail() {
             setExpired(true);
             setDateEnded(endedIn.from(moment()));
           } else {
-            setDateEnded(moment(endedIn).format("HH:mm A - DD/MM/YYYY"));
             setExpired(false);
+            setDateEnded(moment(endedIn).format("HH:mm A - DD/MM/YYYY"));
+
           }
         }, 1000);
         if (expired === true) {
@@ -332,7 +344,7 @@ function ProductDetail() {
                             {expired === false && (
                               <Form>
                                 <Button color={"green"}>
-                                  <Icon name="pencil alternative" />
+                                  <Icon name="pencil alternate" />
                                   Bổ sung thông tin sản phẩm
                                 </Button>
                               </Form>
@@ -366,9 +378,8 @@ function ProductDetail() {
                           </h3>
                         </Grid.Column>
                         <Grid.Column width={3}>
-                        <Rating icon='star' defaultRating={watchListCheck} maxRating={1} size='massive'
-                        onRate={onWatchListCheck} 
-                        onClick={()=>{saveWatchList(product.id)}}/>
+                        <Rating icon='star' rating={watchListCheck} maxRating={1} size='massive'
+                        onRate={onWatchListCheck}/>
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
