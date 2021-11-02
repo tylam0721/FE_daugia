@@ -91,7 +91,8 @@ function ProductDetail() {
 
   const biddingProcess= function (){
     axios.post(`${API_HOST_DEV}/api/action/check`,{
-      idUser: user.userId
+      idUser: user.userId,
+      idProduct: product.id
     }).then((res)=>{
       if(res?.status == 201)
       {
