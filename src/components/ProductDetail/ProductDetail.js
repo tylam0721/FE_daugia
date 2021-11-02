@@ -52,16 +52,19 @@ function ProductDetail() {
   const [bidAmount, setBidAmount] = useState("");
   const [biddingMessage, setBiddingMessage] = useState([]);
   const [bidders, setBidders] = useState([]);
+  const [price,setPrice]=useState("");
+  const [NowPrice,setNowPrice]=useState("");
 
 
   const onChangeBidAmount = function (values) {
-    if (values < 100000) {
-      setCheckValid("Giá tiền không được nhỏ hơn giá khởi điểm");
+    if (values < product.NowPrice) {
+      setCheckValid("Giá tiền không được nhỏ hơn giá hiện tại");
     } else {
       const { formattedValue, value } = values;
       // formattedValue = $2,223
       // value ie, 2223
       setBidAmount(formattedValue);
+      setPrice(value);
       setCheckValid("");
     }
   };
@@ -103,7 +106,7 @@ function ProductDetail() {
         axios
           .post(`${API_HOST_DEV}/api/action/buys`, {
             IdProduct: product.id,
-            Price: bidAmount,
+            Price: price,
             IdUser: user.userId,
           })
           .then((res) => {
@@ -111,7 +114,7 @@ function ProductDetail() {
               setBiddingMessage(['green',"Tham gia đấu giá thành công"]);
 
             }
-            else{
+            if(res.status == 500){
               setBiddingMessage(['red',"Mức giá không hợp lệ"]);
             }
           })
@@ -137,10 +140,12 @@ function ProductDetail() {
     console.log("connected to server");
   };
   webSocket.onmessage = function (message) {
-    if(JSON.parse(message.data)[0] === 'updateAunction')
+    if(JSON.parse(message.data)[0] === 'updateProductDetail')
     {
       let data = JSON.parse(message.data)[1];
-      setBidders([...bidders,data]);
+      console.log(data[0].UserBuyer);
+      setNowPrice(data[0].NowPrice);
+      setBidders(data[0].UserBuyer);
     }
   };
 
@@ -158,6 +163,8 @@ function ProductDetail() {
     axiosGetProduct()
       .then((data) => {
         setProduct(data[0]);
+        setBidders(data[0].UserBuyer);
+        setNowPrice(data[0].NowPrice);
         setLoading(false);
         if (data[0].UserSeller.length > 0) {
           if (
@@ -388,7 +395,7 @@ function ProductDetail() {
                       <Message.Header>Giá hiện tại</Message.Header>
                       <p style={{ color: "red", fontWeight: "bold" }}>
                         <CurrencyFormat
-                          value={product.StartingPrice}
+                          value={NowPrice}
                           displayType={"text"}
                           thousandSeparator={true}
                         />{" "}
@@ -455,13 +462,13 @@ function ProductDetail() {
                   <Segment>
                     <Message positive>
                       <Message.Header>
-                        {product.UserBuyer?.length > 0
+                        {bidders.length > 0
                           ? "Người đặt giá cao nhất"
                           : "Hiện tại chưa có ai tham gia đấu giá sản phẩm này"}
                       </Message.Header>
-                      {product.UserBuyer?.length > 0 ? (
+                      {bidders.length > 0 ? (
                         <p>
-                          <b>{`****${product.UserBuyer[0].Lastname}`}</b> đặt
+                          <b>{`****${bidders[0].Lastname}`}</b> đặt
                           giá cao nhất:{" "}
                           <b>
                             <CurrencyFormat
@@ -476,7 +483,7 @@ function ProductDetail() {
                         <p>Hãy là người đầu tiên đấu giá cho sản phẩm này !</p>
                       )}
                     </Message>
-                    {product.UserBuyer?.length > 0 ? (
+                    {bidders.length > 0 ? (
                       <Table celled selectable unstackable>
                         <Table.Header>
                           <Table.Row>
@@ -486,7 +493,7 @@ function ProductDetail() {
                           </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                          {product.UserBuyer.map((buyer) => (
+                          {bidders.map((buyer) => (
                             <Table.Row key={buyer.id}>
                               <Table.Cell>{moment(buyer.DateStart).format("DD/MM/YYYY HH:mm")}</Table.Cell>
                               <Table.Cell>{`****${buyer.Lastname}`}</Table.Cell>
