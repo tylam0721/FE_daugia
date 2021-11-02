@@ -53,6 +53,22 @@ function ProductDetail() {
   const [bidders, setBidders] = useState([]);
 
 
+  const onWatchListCheck = function(e, { rating, maxRating }){
+    setWatchListCheck(rating);
+    console.log(rating);
+  }
+
+  const saveWatchList=(id)=>{
+    fetch('/addToWatchList',{
+      body:JSON.stringify({
+        IdProduct: product.id,
+      })
+    }).then(res=>res.json())
+    .then(result=>{
+      console.log(result)
+    })
+  }
+
   const onChangeBidAmount = function (values) {
     if (values < 100000) {
       setCheckValid("Giá tiền không được nhỏ hơn giá khởi điểm");
@@ -149,8 +165,14 @@ function ProductDetail() {
           } else {
             setIsRated(true);
           }
-        } else {
-          setIsRated(false);
+        }
+        const userid=localStorage.getItem('userId');
+        if(data[0].watch_list[0].IdUserWatch==userid && data[0].watch_list[0].isWatchList==0)
+        {
+          setWatchListCheck(1);
+        }
+        else{
+          setWatchListCheck(0);
         }
 
         setLoading(false);
@@ -186,6 +208,8 @@ function ProductDetail() {
       })
       .catch(function (error) {});*/
   }, []);
+
+
 
   return (
     <div className="home">
@@ -346,13 +370,9 @@ function ProductDetail() {
                           </h3>
                         </Grid.Column>
                         <Grid.Column width={3}>
-                          <Rating
-                            icon="star"
-                            defaultRating={watchListCheck}
-                            maxRating={1}
-                            size="massive"
-                            onRate={onWatchListCheck}
-                          />
+                        <Rating icon='star' defaultRating={watchListCheck} maxRating={1} size='massive'
+                        onRate={onWatchListCheck} 
+                        onClick={()=>{saveWatchList(product.id)}}/>
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
