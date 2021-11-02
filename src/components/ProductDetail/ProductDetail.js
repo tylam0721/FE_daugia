@@ -47,17 +47,21 @@ function ProductDetail() {
   const [expired, setExpired] = useState(true);
   const [isRated, setIsRated] = useState();
   const [watchListCheck, setWatchListCheck] = useState(0);
-  const [checkValid, SetCheckValid] = useState("");
-  const [bidAmount, SetBidAmount] = useState("");
+  const [checkValid, setCheckValid] = useState("");
+  const [bidAmount, setBidAmount] = useState("");
+  const [biddingMessage, setBiddingMessage] = useState([]);
+  const [bidders, setBidders] = useState([]);
+
+
   const onChangeBidAmount = function (values) {
     if (values < 100000) {
-      SetCheckValid("Giá tiền không được nhỏ hơn giá khởi điểm");
+      setCheckValid("Giá tiền không được nhỏ hơn giá khởi điểm");
     } else {
       const { formattedValue, value } = values;
       // formattedValue = $2,223
       // value ie, 2223
-      SetBidAmount(formattedValue);
-      SetCheckValid("");
+      setBidAmount(formattedValue);
+      setCheckValid("");
     }
   };
 
@@ -66,13 +70,59 @@ function ProductDetail() {
     console.log(rating);
   };
 
+
+  const biddingProcess= function (){
+    axios.post(`${API_HOST_DEV}/api/action/check`,{
+      idUser: user.userId
+    }).then((res)=>{
+      if(res?.status == 201)
+      {
+        setBiddingMessage(['red',"Sản phẩm này không cho phép bidder chưa từng được đánh giá tham gia"]);
+      }
+      else if(res?.status == 202)
+      {
+        axios
+          .post(`${API_HOST_DEV}/api/action/buys`, {
+            IdProduct: product.id,
+            Price: bidAmount,
+            IdUser: user.userId,
+          })
+          .then((res) => {
+            if(res.status == 202){
+              setBiddingMessage(['green',"Tham gia đấu giá thành công"]);
+
+            }
+            else{
+              setBiddingMessage(['red',"Mức giá không hợp lệ"]);
+            }
+          })
+          .catch((err) => {
+
+          });
+      }
+      else if(res?.status==500)
+      {
+        setBiddingMessage(['red',"Bạn không đủ điều kiện tham gia phiên đấu giá này"]);
+      }
+      else{
+        setBiddingMessage([]);
+      }
+ 
+    }).catch((err)=>{
+
+    })
+  }
+
   webSocket.onopen = function () {
     //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
     console.log("connected to server");
   };
   webSocket.onmessage = function (message) {
-    let data = JSON.parse(message.data);
-    console.log("Socket server message", data);
+    if(JSON.parse(message.data)[0] === 'updateAunction')
+    {
+      let data = JSON.parse(message.data)[1];
+      setBidders([...bidders,data]);
+    }
   };
 
   useEffect(() => {
@@ -86,8 +136,6 @@ function ProductDetail() {
       // return it
       return dataPromise;
     }
-
-    // now we can use that data from the outside!
     axiosGetProduct()
       .then((data) => {
         console.log(data[0]);
@@ -151,7 +199,7 @@ function ProductDetail() {
         </Segment>
       ) : (
         <Container>
-          <div fluid>
+          <div>
             <Grid
               columns={"equal"}
               divided
@@ -236,7 +284,18 @@ function ProductDetail() {
                                     <Label>VNĐ</Label>
                                   </Input>
                                 </Form.Field>
-                                <Button color={"green"}>Đặt giá</Button>
+                                <Button
+                                  color={"green"}
+                                  onClick={biddingProcess}
+                                >
+                                  Đặt giá
+                                </Button>
+                                {biddingMessage.length > 0 && (
+                                  <Message color={biddingMessage[0]}
+                                    header="Thông báo"
+                                    content={biddingMessage[1]}
+                                  />
+                                )}
                               </div>
                             )}
                             {expired === true && (
@@ -270,12 +329,11 @@ function ProductDetail() {
                     )}
                   </Segment>
                 </Grid.Column>
-                <Grid.Column width={8} fluid>
+                <Grid.Column width={8}>
                   <Segment>
                     <Grid stackable>
                       <Grid.Row>
                         <Breadcrumb
-                          fluid
                           icon="right angle"
                           sections={sections}
                           style={{ paddingTop: "1em", paddingLeft: "2em" }}
@@ -317,7 +375,7 @@ function ProductDetail() {
                             {" "}
                             {product.UserSeller?.length > 0
                               ? product.UserSeller[0].Firstname
-                              : `????`}
+                              : `????????`}
                           </b>
                         </Grid.Column>
                         <Grid.Column>
@@ -401,7 +459,7 @@ function ProductDetail() {
                         </Table.Header>
                         <Table.Body>
                           {product.UserBuyer.map((buyer) => (
-                            <Table.Row>
+                            <Table.Row key={buyer}>
                               <Table.Cell>Thời điểm</Table.Cell>
                               <Table.Cell>{`**** ${buyer.Lastname}`}</Table.Cell>
                               <Table.Cell>None</Table.Cell>
