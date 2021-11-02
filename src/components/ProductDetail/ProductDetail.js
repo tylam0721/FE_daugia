@@ -34,12 +34,13 @@ import { IMG_HOST } from "../../config/endpoints";
 import CurrencyFormat from "react-currency-format";
 
 function ProductDetail() {
+  const [{ user }, dispatch] = useStateValue();
   const sections = [
     { key: "Home", content: "Home", link: true },
     { key: "Store", content: "Store", link: true },
     { key: "Shirt", content: "T-Shirt", active: true },
   ];
-  const [{ user }, dispatch] = useStateValue();
+
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState([]);
   const { id } = useParams();
@@ -51,41 +52,50 @@ function ProductDetail() {
   const [bidAmount, setBidAmount] = useState("");
   const [biddingMessage, setBiddingMessage] = useState([]);
   const [bidders, setBidders] = useState([]);
+  const [price,setPrice]=useState("");
+  const [NowPrice,setNowPrice]=useState("");
 
-
-
-  const saveWatchList=(id)=>{
-    fetch('/addToWatchList',{
-      body:JSON.stringify({
-        IdProduct: product.id,
-      })
-    }).then(res=>res.json())
-    .then(result=>{
-      console.log(result)
-    })
-  }
 
   const onChangeBidAmount = function (values) {
-    if (values < 100000) {
-      setCheckValid("Giá tiền không được nhỏ hơn giá khởi điểm");
+    if (values < product.NowPrice) {
+      setCheckValid("Giá tiền không được nhỏ hơn giá hiện tại");
     } else {
       const { formattedValue, value } = values;
       // formattedValue = $2,223
       // value ie, 2223
       setBidAmount(formattedValue);
+      setPrice(value);
       setCheckValid("");
     }
   };
 
   const onWatchListCheck = function (e, { rating, maxRating }) {
     setWatchListCheck(rating);
+    if(rating == 0)
+    {
+      axios.post(`${API_HOST_DEV}/api/watchlist/delete`,{
+        IdProduct: product.id,
+        IdUser: user.userId,
+      }).then((res)=>{
+        console.log("thêm vào watchlist thành công");
+      }).catch((err)=>{});
+    }
+    else{
+      axios.post(`${API_HOST_DEV}/api/watchlist/add`,{
+        IdProduct: product.id,
+        IdUser: user.userId,
+      }).then((res)=>{
+        console.log("thêm vào watchlist thành công");
+      }).catch((err)=>{});
+    }
     console.log(rating);
   };
 
 
   const biddingProcess= function (){
     axios.post(`${API_HOST_DEV}/api/action/check`,{
-      idUser: user.userId
+      idUser: user.userId,
+      idProduct: product.id
     }).then((res)=>{
       if(res?.status == 201)
       {
@@ -96,7 +106,7 @@ function ProductDetail() {
         axios
           .post(`${API_HOST_DEV}/api/action/buys`, {
             IdProduct: product.id,
-            Price: bidAmount,
+            Price: price,
             IdUser: user.userId,
           })
           .then((res) => {
@@ -104,7 +114,7 @@ function ProductDetail() {
               setBiddingMessage(['green',"Tham gia đấu giá thành công"]);
 
             }
-            else{
+            if(res.status == 500){
               setBiddingMessage(['red',"Mức giá không hợp lệ"]);
             }
           })
@@ -130,10 +140,12 @@ function ProductDetail() {
     console.log("connected to server");
   };
   webSocket.onmessage = function (message) {
-    if(JSON.parse(message.data)[0] === 'updateAunction')
+    if(JSON.parse(message.data)[0] === 'updateProductDetail')
     {
       let data = JSON.parse(message.data)[1];
-      setBidders([...bidders,data]);
+      console.log(data[0].UserBuyer);
+      setNowPrice(data[0].NowPrice);
+      setBidders(data[0].UserBuyer);
     }
   };
 
@@ -150,8 +162,10 @@ function ProductDetail() {
     }
     axiosGetProduct()
       .then((data) => {
-        console.log(data[0]);
         setProduct(data[0]);
+        setBidders(data[0].UserBuyer);
+        setNowPrice(data[0].NowPrice);
+        setLoading(false);
         if (data[0].UserSeller.length > 0) {
           if (
             data[0].UserSeller[0].RateGood + data[0].UserSeller[0].RateBad ==
@@ -162,16 +176,21 @@ function ProductDetail() {
             setIsRated(true);
           }
         }
-        const userid=localStorage.getItem('userId');
-        if(data[0].watch_list[0].IdUserWatch==userid && data[0].watch_list[0].isWatchList==0)
-        {
-          setWatchListCheck(1);
-        }
-        else{
-          setWatchListCheck(0);
-        }
 
-        setLoading(false);
+        // if(user !== null)
+        // {
+        //   data[0].watch_list.map((w) => {
+        //     console.log(user.userId);
+        //     if(w.IdUserWatch == user.userId)
+        //     {
+        //       console.log(w);
+        
+        //     }
+        //   });
+        // }
+
+
+  
         const timer = setInterval(() => {
           let endedIn = moment(
             moment(data[0].DateEnd).format("DD/MM/YYYY A HH:mm:ss"),
@@ -184,8 +203,9 @@ function ProductDetail() {
             setExpired(true);
             setDateEnded(endedIn.from(moment()));
           } else {
-            setDateEnded(moment(endedIn).format("HH:mm A - DD/MM/YYYY"));
             setExpired(false);
+            setDateEnded(moment(endedIn).format("HH:mm A - DD/MM/YYYY"));
+
           }
         }, 1000);
         if (expired === true) {
@@ -332,7 +352,7 @@ function ProductDetail() {
                             {expired === false && (
                               <Form>
                                 <Button color={"green"}>
-                                  <Icon name="pencil alternative" />
+                                  <Icon name="pencil alternate" />
                                   Bổ sung thông tin sản phẩm
                                 </Button>
                               </Form>
@@ -366,9 +386,8 @@ function ProductDetail() {
                           </h3>
                         </Grid.Column>
                         <Grid.Column width={3}>
-                        <Rating icon='star' defaultRating={watchListCheck} maxRating={1} size='massive'
-                        onRate={onWatchListCheck} 
-                        onClick={()=>{saveWatchList(product.id)}}/>
+                        <Rating icon='star' rating={watchListCheck} maxRating={1} size='massive'
+                        onRate={onWatchListCheck}/>
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
@@ -376,7 +395,7 @@ function ProductDetail() {
                       <Message.Header>Giá hiện tại</Message.Header>
                       <p style={{ color: "red", fontWeight: "bold" }}>
                         <CurrencyFormat
-                          value={product.StartingPrice}
+                          value={NowPrice}
                           displayType={"text"}
                           thousandSeparator={true}
                         />{" "}
@@ -443,13 +462,13 @@ function ProductDetail() {
                   <Segment>
                     <Message positive>
                       <Message.Header>
-                        {product.UserBuyer?.length > 0
+                        {bidders.length > 0
                           ? "Người đặt giá cao nhất"
                           : "Hiện tại chưa có ai tham gia đấu giá sản phẩm này"}
                       </Message.Header>
-                      {product.UserBuyer?.length > 0 ? (
+                      {bidders.length > 0 ? (
                         <p>
-                          <b>{`****${product.UserBuyer[0].Lastname}`}</b> đặt
+                          <b>{`****${bidders[0].Lastname}`}</b> đặt
                           giá cao nhất:{" "}
                           <b>
                             <CurrencyFormat
@@ -464,7 +483,7 @@ function ProductDetail() {
                         <p>Hãy là người đầu tiên đấu giá cho sản phẩm này !</p>
                       )}
                     </Message>
-                    {product.UserBuyer?.length > 0 ? (
+                    {bidders.length > 0 ? (
                       <Table celled selectable unstackable>
                         <Table.Header>
                           <Table.Row>
@@ -474,7 +493,7 @@ function ProductDetail() {
                           </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                          {product.UserBuyer.map((buyer) => (
+                          {bidders.map((buyer) => (
                             <Table.Row key={buyer.id}>
                               <Table.Cell>{moment(buyer.DateStart).format("DD/MM/YYYY HH:mm")}</Table.Cell>
                               <Table.Cell>{`****${buyer.Lastname}`}</Table.Cell>
