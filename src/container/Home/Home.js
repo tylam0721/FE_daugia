@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Product from "../../components/Product/Product";
-import { Container, Grid, Segment, Dimmer, Loader, Menu, Input, Pagination, Dropdown } from "semantic-ui-react";
+import {
+  Container,
+  Grid,
+  Segment,
+  Dimmer,
+  Loader,
+  Menu,
+  Input,
+  Pagination,
+  Dropdown,
+} from "semantic-ui-react";
 import "./Home.css";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import axios from "axios";
@@ -16,24 +26,33 @@ function Home() {
   const [alertStatus, setAlertStatus] = useState(false);
   const [alertType, setAlertType] = useState("");
   const [alertTitle, setAlertTitle] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [activeItem, setActiveItem] = useState("all");
   const [category, setCategory] = useState([]);
-  const [postsPerPage] = useState(5);
+
+  const [postsPerPage] = useState(2);
+  const [displayProducts, setDisplayProducts] = useState([]);
   const [offset, setOffset] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 
   useEffect(() => {
-
-    
     // get category
+    axios.get(`${API_HOST}/api/category`).then(function (res) {
+      setCategory(res?.data?.data);
+    });
+
+    // get product
     axios
-      .get(`${API_HOST}/api/category`)
+      .get(`${API_HOST}/api/product`)
       .then(function (res) {
-        // console.log(res?.data?.data)
-        setCategory(res?.data?.data);
+        setLoading(false);
+        const data = res.data;
+
+        // save all data
+        setAllProduct(data);
       })
       .catch(function (error) {
+        setAlertStatus(true);
+        setAlertType("error");
       });
   }, []);
 
@@ -42,77 +61,89 @@ function Home() {
     if (menuValue == 0) {
       setProduct(allProduct);
     } else {
-      var filteredProduct = allProduct.filter(item => item.IdCategory == menuValue);
+      var filteredProduct = allProduct.filter(
+        (item) => item.IdCategory == menuValue
+      );
       setProduct(filteredProduct);
     }
-  }
+  };
 
-  webSocket.onopen = function(){
+  webSocket.onopen = function () {
     //webSocket.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
-    console.log('connected to server');
-  }
-  webSocket.onmessage = function(message) {
-    if(JSON.parse(message.data)[0] === 'newProduct')
-    {
+    console.log("connected to server");
+  };
+  webSocket.onmessage = function (message) {
+    if (JSON.parse(message.data)[0] === "newProduct") {
       let data = JSON.parse(message.data)[1];
-      setProduct([...product,data]);
+      setProduct([...product, data]);
     }
-
   };
 
   const sortOptions = [
-    { key: 1, text: 'Giá từ cao đến thấp', value: 1, label: { color: 'red', empty: true, circular: true }  },
-    { key: 2, text: 'Giá từ thấp đến cao', value: 2, label: { color: 'blue', empty: true, circular: true }  },
-    { key: 3, text: 'Xem nhiều nhất', value: 3, label: { color: 'green', empty: true, circular: true } },
-  ]
+    {
+      key: 1,
+      text: "Giá từ cao đến thấp",
+      value: 1,
+      label: { color: "red", empty: true, circular: true },
+    },
+    {
+      key: 2,
+      text: "Giá từ thấp đến cao",
+      value: 2,
+      label: { color: "blue", empty: true, circular: true },
+    },
+    {
+      key: 3,
+      text: "Xem nhiều nhất",
+      value: 3,
+      label: { color: "green", empty: true, circular: true },
+    },
+  ];
 
-  const onSort = value => {
+  const onSort = (value) => {
     console.log(value);
-  }
-
-  const getPostData = (data) => {
-    return (
-      data.map(post => 
-        <div className="container" key={post.id} >
-          User ID: {post.id}
-          Title: {post.title}
-        </div>)
-    )
   };
 
-  // const getAllPosts = async () => {
-  //   // get product
-  //   axios
-  //   .get(`${API_HOST}/api/product`)
-  //   .then(function (res) {
-  //     setLoading(false);
-  //     const data = res.data;
-  //     const slice = data.slice(offset - 1 , offset - 1 + postsPerPage)
-    
-  //     // For displaying Data
-  //     const postData = getPostData(slice)
-    
-  //     // Using Hooks to set value
-  //     setProduct(res?.data);
-  //     setAllProduct(res?.data);
-  //     setAllPosts(postData)
-  //     setPageCount(Math.ceil(data.length / postsPerPage))
-  //   })
-  //   .catch(function (error) {
-  //     setAlertStatus(true);
-  //     setAlertType("error");
-  //   });
-  // }
+  const getProductData = (productData) => {
+    return productData.map((product, index) => (
+      <Grid.Column stretched key={index}>
+        <Product
+          id={product.id}
+          key={product.id}
+          title={product.Name}
+          nowPrice={product.NowPrice}
+          buyNowPrice={product.buyNowPrice}
+          dateCreated={product.DateCreated}
+          dateEnded={product.DateEnd}
+          biddeds={product.UserBuyer?.length}
+          highestBid={
+            product.UserBuyer?.length > 0
+              ? `*****${product.UserBuyer[0].Lastname}`
+              : "Chưa có"
+          }
+          //rating={product.rating}
+          images={product.images}
+        ></Product>
+      </Grid.Column>
+    ));
+  };
 
-  //  const handlePageClick = (event) => {
-  //   const selectedPage = event.selected;
-  //   setOffset(selectedPage + 1)
-  // };
- 
-  // useEffect(() => {
-  //   getAllPosts()
-  // }, [offset])
-  
+  const getAllPosts = async () => {
+      // split data
+      const slice = allProduct.slice(offset - 1, offset - 1 + postsPerPage);
+      setDisplayProducts(getProductData(slice));
+      setPageCount(Math.ceil(allProduct.length / postsPerPage));
+  };
+
+  const handlePageClick = (event) => {
+    const selectedPage = event.selected;
+    setOffset(selectedPage + 1);
+  };
+
+  useEffect(() => {
+    getAllPosts();
+  }, [allProduct, offset]);
+
   return (
     <div className="home">
       <Alert
@@ -132,56 +163,40 @@ function Home() {
       ) : (
         <Container>
           <Menu secondary>
-
             <Grid container columns={3} doubling stackable>
               <Menu.Item
                 key={0}
-                name='Tất cả'
+                name="Tất cả"
                 active={true}
                 active={activeItem === 0}
                 onClick={() => onMenuClick(0)}
               />
-              {
-                category.map((item, index) => {
-                  return <Menu.Item
+              {category.map((item, index) => {
+                return (
+                  <Menu.Item
                     key={index}
                     name={item.Name}
                     active={activeItem === item.id}
                     onClick={() => onMenuClick(item.id)}
                   />
-                })
-              }
+                );
+              })}
               <Menu.Item key={1000}>
-                <Input icon='search' placeholder='Tìm kiếm...' />
+                <Input icon="search" placeholder="Tìm kiếm..." />
               </Menu.Item>
               <Menu.Item>
-                <Dropdown onChange={(e, data) => onSort(data)} placeholder="Sắp xếp" clearable options={sortOptions} selection />
+                <Dropdown
+                  onChange={(e, data) => onSort(data)}
+                  placeholder="Sắp xếp"
+                  clearable
+                  options={sortOptions}
+                  selection
+                />
               </Menu.Item>
             </Grid>
-
           </Menu>
           <Grid container columns={3} doubling stackable>
-            {product.map((product, index) => {
-              return (
-                <Grid.Column stretched key={index}>
-                  <Product
-                    id={product.id}
-                    key={product.id}
-                    title={product.Name}
-                    nowPrice={product.NowPrice}
-                    buyNowPrice={product.buyNowPrice}
-                    dateCreated ={product.DateCreated}
-                    dateEnded = {product.DateEnd}
-                    biddeds = {product.UserBuyer?.length}
-                    highestBid = {product.UserBuyer?.length > 0
-                      ? `*****${product.UserBuyer[0].Lastname}`
-                      : "Chưa có"}
-                    //rating={product.rating}
-                    images={product.images}
-                  ></Product>
-                </Grid.Column>
-              );
-            })}
+            {displayProducts}
           </Grid>
         </Container>
       )}
@@ -196,7 +211,6 @@ function Home() {
           totalPages={10}
         />
       </div>
-
     </div>
   );
 }
