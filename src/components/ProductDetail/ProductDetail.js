@@ -459,10 +459,15 @@ function ProductDetail() {
                         </Table.Header>
                         <Table.Body>
                           {product.UserBuyer.map((buyer) => (
-                            <Table.Row key={buyer}>
-                              <Table.Cell>Thời điểm</Table.Cell>
-                              <Table.Cell>{`**** ${buyer.Lastname}`}</Table.Cell>
-                              <Table.Cell>None</Table.Cell>
+                            <Table.Row key={buyer.id}>
+                              <Table.Cell>{moment(buyer.DateStart).format("DD/MM/YYYY HH:mm")}</Table.Cell>
+                              <Table.Cell>{`****${buyer.Lastname}`}</Table.Cell>
+                              <Table.Cell>  <CurrencyFormat
+                              value={buyer.Price}
+                              displayType={"text"}
+                              thousandSeparator={true}
+                            />{" "}
+                            VNĐ</Table.Cell>
                             </Table.Row>
                           ))}
                         </Table.Body>
