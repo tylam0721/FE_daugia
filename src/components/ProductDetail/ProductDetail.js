@@ -53,10 +53,6 @@ function ProductDetail() {
   const [bidders, setBidders] = useState([]);
 
 
-  const onWatchListCheck = function(e, { rating, maxRating }){
-    setWatchListCheck(rating);
-    console.log(rating);
-  }
 
   const saveWatchList=(id)=>{
     fetch('/addToWatchList',{
