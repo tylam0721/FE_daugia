@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, InputNumber, Button, Select, Modal } from 'antd';
+import { Form, Input, InputNumber, Button, Select, Modal, DatePicker } from 'antd';
 import 'antd/dist/antd.css';
 import './UploadProduct.css';
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
@@ -77,6 +77,7 @@ const UploadProduct = () => {
     const onFinish = (values) => {
         values.product.IdUserSeller = user?.userId;
         values.product.Description = convertedContent;
+        values.product.DateEnd = values.product.DateEnd._d; 
         console.log(values.product);
         axios
             .post(`${API_HOST}/api/product/add`, values.product)
@@ -201,7 +202,16 @@ const UploadProduct = () => {
                         <Option value={1}>Không</Option>        
                     </Select>
                 </Form.Item>
-
+                <Form.Item 
+                    name={['product', 'DateEnd']} 
+                    label="Ngày kết thúc"                     
+                    rules={[
+                        {
+                            required: true,
+                        },
+                ]}>
+                    <DatePicker />
+                </Form.Item>
                 <Form.Item label="Mô tả" rules={[{ required: true }]}>
                     <Editor
                         editorState={editorState}

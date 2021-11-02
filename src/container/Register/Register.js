@@ -19,8 +19,7 @@ import axios from "axios";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import "react-datepicker/dist/react-datepicker.css";
 import validator from "validator";
-import * as moment from "moment";
-import "moment/locale/nl";
+import moment from "moment";
 
 function Register() {
   //router
@@ -60,7 +59,7 @@ function Register() {
           Email: email,
           Password: password,
           cf_password: confirmPassword,
-          Birthday: birthDay,
+          Birthday: moment(birthDay).format("YYYY-MM-DD"),
           Firstname: firstName,
           Lastname: lastName,
         })
@@ -204,7 +203,7 @@ function Register() {
                   <label>Ngày sinh</label>
                   <DatePicker
                     selected={birthDay}
-                    onChange={(date) => setbirthDay(date)}
+                    onChange={(date) => {setbirthDay(date)}}
                   />
                 </Form.Field>
 

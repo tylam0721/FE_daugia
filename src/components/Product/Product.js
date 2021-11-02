@@ -27,11 +27,20 @@ function Product({
         moment(dateEnded).format("DD-MM-YYYY HH:mm:ss"),
         "DD-MM-YYYY HH:mm:ss"
       );
-      setEndedCounter(endedIn.from(moment()));
+      
       var min = endedIn.diff(moment(), "seconds");
       if (min <= 0) {
         //a is bigger than b actual moment.
+        setEndedCounter(endedIn.from(moment()));
         setExpired(true);
+      }
+      else{
+        if(endedIn.diff(moment(),"days") <= 3){
+        setEndedCounter(endedIn.from(moment()));
+        }
+        else{
+          setEndedCounter(moment(endedIn).format("DD/MM/YYYY"));
+        }
       }
     }, 1000);
   });
@@ -95,7 +104,7 @@ function Product({
             <i className="calendar alternate outline icon" />
             <span>Ngày đăng: </span>
             <span className="">
-              {moment(dateCreated).format("DD-MM-YYYY HH:mm:ss")}
+              {moment(dateCreated).format("DD/MM/YYYY")}
             </span>
           </Card.Description>
           <Card.Description>

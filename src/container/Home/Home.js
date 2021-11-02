@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Product from "../../components/Product/Product";
-import { Container, Grid, Segment, Dimmer, Loader, Menu, Input, Pagination } from "semantic-ui-react";
+import { Container, Grid, Segment, Dimmer, Loader, Menu, Input, Pagination, Dropdown } from "semantic-ui-react";
 import "./Home.css";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import axios from "axios";
@@ -19,22 +19,13 @@ function Home() {
   const [errorMessage, setErrorMessage] = useState("");
   const [activeItem, setActiveItem] = useState("all");
   const [category, setCategory] = useState([]);
+  const [postsPerPage] = useState(5);
+  const [offset, setOffset] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
 
   useEffect(() => {
-    // get product
-    axios
-      .get(`${API_HOST}/api/product`)
-      .then(function (res) {
-        setProduct(res?.data);
-        setAllProduct(res?.data);
-        setLoading(false);
-      })
-      .catch(function (error) {
 
-        setAlertStatus(true);
-        setAlertType("error");
-      });
-
+    
     // get category
     axios
       .get(`${API_HOST}/api/category`)
@@ -45,6 +36,7 @@ function Home() {
       .catch(function (error) {
       });
   }, []);
+
   const onMenuClick = async (menuValue) => {
     setActiveItem(menuValue);
     if (menuValue == 0) {
@@ -64,11 +56,63 @@ function Home() {
     {
       let data = JSON.parse(message.data)[1];
       setProduct([...product,data]);
-      console.log(product[0].Name)
     }
 
   };
 
+  const sortOptions = [
+    { key: 1, text: 'Giá từ cao đến thấp', value: 1, label: { color: 'red', empty: true, circular: true }  },
+    { key: 2, text: 'Giá từ thấp đến cao', value: 2, label: { color: 'blue', empty: true, circular: true }  },
+    { key: 3, text: 'Xem nhiều nhất', value: 3, label: { color: 'green', empty: true, circular: true } },
+  ]
+
+  const onSort = value => {
+    console.log(value);
+  }
+
+  const getPostData = (data) => {
+    return (
+      data.map(post => 
+        <div className="container" key={post.id} >
+          User ID: {post.id}
+          Title: {post.title}
+        </div>)
+    )
+  };
+
+  // const getAllPosts = async () => {
+  //   // get product
+  //   axios
+  //   .get(`${API_HOST}/api/product`)
+  //   .then(function (res) {
+  //     setLoading(false);
+  //     const data = res.data;
+  //     const slice = data.slice(offset - 1 , offset - 1 + postsPerPage)
+    
+  //     // For displaying Data
+  //     const postData = getPostData(slice)
+    
+  //     // Using Hooks to set value
+  //     setProduct(res?.data);
+  //     setAllProduct(res?.data);
+  //     setAllPosts(postData)
+  //     setPageCount(Math.ceil(data.length / postsPerPage))
+  //   })
+  //   .catch(function (error) {
+  //     setAlertStatus(true);
+  //     setAlertType("error");
+  //   });
+  // }
+
+  //  const handlePageClick = (event) => {
+  //   const selectedPage = event.selected;
+  //   setOffset(selectedPage + 1)
+  // };
+ 
+  // useEffect(() => {
+  //   getAllPosts()
+  // }, [offset])
+  
   return (
     <div className="home">
       <Alert
@@ -110,6 +154,9 @@ function Home() {
               <Menu.Item key={1000}>
                 <Input icon='search' placeholder='Tìm kiếm...' />
               </Menu.Item>
+              <Menu.Item>
+                <Dropdown onChange={(e, data) => onSort(data)} placeholder="Sắp xếp" clearable options={sortOptions} selection />
+              </Menu.Item>
             </Grid>
 
           </Menu>
@@ -124,10 +171,10 @@ function Home() {
                     nowPrice={product.NowPrice}
                     buyNowPrice={product.buyNowPrice}
                     dateCreated ={product.DateCreated}
-                    dateEnded = {product.DateUpdated}
+                    dateEnded = {product.DateEnd}
                     biddeds = {product.UserBuyer?.length}
-                    highestBid = {product.UserSeller?.length > 0
-                      ? `*****${product.UserSeller[0].Lastname}`
+                    highestBid = {product.UserBuyer?.length > 0
+                      ? `*****${product.UserBuyer[0].Lastname}`
                       : "Chưa có"}
                     //rating={product.rating}
                     images={product.images}
@@ -135,18 +182,6 @@ function Home() {
                 </Grid.Column>
               );
             })}
-
-            {/* <Grid.Column stretched key={"index"}>
-              <Product
-                id={"product.id"}
-                key={"product.id"}
-                title={"RTXX TIGERBYTE"}
-                price={"100.000.000"}
-                buyNowPrice={"100.000.000"}
-                rating={"product.rating"}
-                imageUrl={"https://scontent.fsgn2-6.fna.fbcdn.net/v/t1.6435-9/224312462_847159839544101_819576698287251221_n.jpg?_nc_cat=110&ccb=1-5&_nc_sid=dbeb18&_nc_ohc=1d6RMRJTCnAAX8PgGeA&_nc_ht=scontent.fsgn2-6.fna&oh=462b14d2fd59eb332843541e043bef09&oe=61949520"}
-              ></Product>
-            </Grid.Column> */}
           </Grid>
         </Container>
       )}
