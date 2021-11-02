@@ -19,22 +19,13 @@ function Home() {
   const [errorMessage, setErrorMessage] = useState("");
   const [activeItem, setActiveItem] = useState("all");
   const [category, setCategory] = useState([]);
+  const [postsPerPage] = useState(5);
+  const [offset, setOffset] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
 
   useEffect(() => {
-    // get product
-    axios
-      .get(`${API_HOST}/api/product`)
-      .then(function (res) {
-        setProduct(res?.data);
-        setAllProduct(res?.data);
-        setLoading(false);
-      })
-      .catch(function (error) {
 
-        setAlertStatus(true);
-        setAlertType("error");
-      });
-
+    
     // get category
     axios
       .get(`${API_HOST}/api/category`)
@@ -45,6 +36,7 @@ function Home() {
       .catch(function (error) {
       });
   }, []);
+
   const onMenuClick = async (menuValue) => {
     setActiveItem(menuValue);
     if (menuValue == 0) {
@@ -77,6 +69,49 @@ function Home() {
   const onSort = value => {
     console.log(value);
   }
+
+  const getPostData = (data) => {
+    return (
+      data.map(post => 
+        <div className="container" key={post.id} >
+          User ID: {post.id}
+          Title: {post.title}
+        </div>)
+    )
+  };
+
+  // const getAllPosts = async () => {
+  //   // get product
+  //   axios
+  //   .get(`${API_HOST}/api/product`)
+  //   .then(function (res) {
+  //     setLoading(false);
+  //     const data = res.data;
+  //     const slice = data.slice(offset - 1 , offset - 1 + postsPerPage)
+    
+  //     // For displaying Data
+  //     const postData = getPostData(slice)
+    
+  //     // Using Hooks to set value
+  //     setProduct(res?.data);
+  //     setAllProduct(res?.data);
+  //     setAllPosts(postData)
+  //     setPageCount(Math.ceil(data.length / postsPerPage))
+  //   })
+  //   .catch(function (error) {
+  //     setAlertStatus(true);
+  //     setAlertType("error");
+  //   });
+  // }
+
+  //  const handlePageClick = (event) => {
+  //   const selectedPage = event.selected;
+  //   setOffset(selectedPage + 1)
+  // };
+ 
+  // useEffect(() => {
+  //   getAllPosts()
+  // }, [offset])
   
   return (
     <div className="home">
