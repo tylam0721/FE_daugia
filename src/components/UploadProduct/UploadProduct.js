@@ -193,9 +193,27 @@ const UploadProduct = () => {
                         parser={value => value.replace(/\VND\s?|(,*)/g, '')}
                     />
                 </Form.Item>
+                <Form.Item name={['product', 'AllowUnrated']} label="Cho phép đánh giá" rules={[{ required: true }]}>
+                    <Select
+                        placeholder="Cho phép đánh giá"
+                        allowClear
+                    >
+                        <Option value={1}>Có</Option>        
+                        <Option value={0}>Không</Option>        
+                    </Select>
+                </Form.Item>
                 <Form.Item name={['product', 'IsCheckReturn']} label="Loại" rules={[{ required: true }]}>
                     <Select
                         placeholder="Tự động gia hạn"
+                        allowClear
+                    >
+                        <Option value={1}>Có</Option>        
+                        <Option value={0}>Không</Option>        
+                    </Select>
+                </Form.Item>
+                <Form.Item name={['product', 'allowUnrated']} label="Cho phép tham gia" rules={[{ required: true }]}>
+                    <Select
+                        placeholder="Cho phép bidder chưa được đánh giá tham gia ?"
                         allowClear
                     >
                         <Option value={0}>Có</Option>        
@@ -210,7 +228,8 @@ const UploadProduct = () => {
                             required: true,
                         },
                 ]}>
-                    <DatePicker />
+                    <DatePicker showTime 
+                    />
                 </Form.Item>
                 <Form.Item label="Mô tả" rules={[{ required: true }]}>
                     <Editor
