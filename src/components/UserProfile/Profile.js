@@ -56,12 +56,6 @@ function Profile() {
       </Loader>
     </Dimmer>):(  <Grid columns={2}>
       <Grid.Row divided={true}>
-        <Grid.Column width={4}>
-          <Image
-            src="https://react.semantic-ui.com/images/wireframe/image.png"
-            fluid
-          />
-        </Grid.Column>
         <Grid.Column fluid>
           <Header as="h2">
             <Icon name="settings" />
@@ -70,7 +64,7 @@ function Profile() {
               <Header.Subheader>Thiết lập thông tin cá nhân</Header.Subheader>
             </Header.Content>
           </Header>
-          <Form fluid className="attached segment">
+          <Form fluid className="attached segment userform" style={{ boder: 'none'}}>
             <Form.Field inline >
               <label>E-mail:</label> {profile.Email}
             </Form.Field>

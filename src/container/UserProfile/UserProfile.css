@@ -11,3 +11,15 @@
 .home__loaderMessage{
    font-weight: bold;
 }
+
+.ui.column.grid>[class*="two wide"].column, .ui.grid>.column.row>[class*="two wide"].column, .ui.grid>.row>[class*="two wide"].column, .ui.grid>[class*="two wide"].column {
+   width: 13.2%!important;
+}
+
+.userform {
+   border: none !important; 
+}
+
+.col__user {
+   padding-left: 20px;
+}
