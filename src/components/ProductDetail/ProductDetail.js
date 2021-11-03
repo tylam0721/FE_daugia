@@ -52,9 +52,9 @@ function ProductDetail() {
   const [bidAmount, setBidAmount] = useState("");
   const [biddingMessage, setBiddingMessage] = useState([]);
   const [bidders, setBidders] = useState([]);
-  const [price,setPrice]=useState("");
-  const [NowPrice,setNowPrice]=useState("");
-
+  const [price, setPrice] = useState("");
+  const [NowPrice, setNowPrice] = useState("");
+  const [onBidded, setOnBidded] = useState(false);
 
   const onChangeBidAmount = function (values) {
     if (values < product.NowPrice) {
@@ -71,77 +71,92 @@ function ProductDetail() {
 
   const onWatchListCheck = function (e, { rating, maxRating }) {
     setWatchListCheck(rating);
-    if(rating == 0)
-    {
-      axios.post(`${API_HOST_DEV}/api/watchlist/delete`,{
-        IdProduct: product.id,
-        IdUser: user.userId,
-      }).then((res)=>{
-        console.log("thêm vào watchlist thành công");
-      }).catch((err)=>{});
-    }
-    else{
-      axios.post(`${API_HOST_DEV}/api/watchlist/add`,{
-        IdProduct: product.id,
-        IdUser: user.userId,
-      }).then((res)=>{
-        console.log("thêm vào watchlist thành công");
-      }).catch((err)=>{});
+    if (rating == 0) {
+      axios
+        .post(`${API_HOST_DEV}/api/watchlist/delete`, {
+          IdProduct: product.id,
+          IdUser: user.userId,
+        })
+        .then((res) => {
+          console.log("thêm vào watchlist thành công");
+        })
+        .catch((err) => {});
+    } else {
+      axios
+        .post(`${API_HOST_DEV}/api/watchlist/add`, {
+          IdProduct: product.id,
+          IdUser: user.userId,
+        })
+        .then((res) => {
+          console.log("thêm vào watchlist thành công");
+        })
+        .catch((err) => {});
     }
     console.log(rating);
   };
 
-
-  const biddingProcess= function (){
-    axios.post(`${API_HOST_DEV}/api/action/check`,{
-      idUser: user.userId,
-      idProduct: product.id
-    }).then((res)=>{
-      if(res?.status == 201)
-      {
-        setBiddingMessage(['red',"Sản phẩm này không cho phép bidder chưa từng được đánh giá tham gia"]);
-      }
-      else if(res?.status == 202)
-      {
-        axios
-          .post(`${API_HOST_DEV}/api/action/buys`, {
-            IdProduct: product.id,
-            Price: price,
-            IdUser: user.userId,
-          })
-          .then((res) => {
-            if(res.status == 202){
-              setBiddingMessage(['green',"Tham gia đấu giá thành công"]);
-
-            }
-            if(res.status == 500){
-              setBiddingMessage(['red',"Mức giá không hợp lệ"]);
-            }
-          })
-          .catch((err) => {
-
-          });
-      }
-      else if(res?.status==500)
-      {
-        setBiddingMessage(['red',"Bạn không đủ điều kiện tham gia phiên đấu giá này"]);
-      }
-      else{
-        setBiddingMessage([]);
-      }
- 
-    }).catch((err)=>{
-
-    })
-  }
+  const biddingProcess = function () {
+    axios
+      .post(`${API_HOST_DEV}/api/action/check`, {
+        idUser: user.userId,
+        idProduct: product.id,
+      })
+      .then((res) => {
+        if (res?.status == 201) {
+          setOnBidded(true);
+          setBiddingMessage([
+            "red",
+            "Sản phẩm này không cho phép bidder chưa từng được đánh giá tham gia",
+            false,
+          ]);
+        } else if (res?.status == 202) {
+          setBiddingMessage([
+            "teal",
+            "Đang gửi thông tin đấu giá. Vui lòng chờ giây lát...",
+            true,
+          ]);
+          axios
+            .post(`${API_HOST_DEV}/api/action/buys`, {
+              IdProduct: product.id,
+              Price: price,
+              IdUser: user.userId,
+            })
+            .then((res) => {
+              if (res.status == 202) {
+                setBiddingMessage([
+                  "green",
+                  "Tham gia đấu giá thành công",
+                  false,
+                ]);
+                setOnBidded(false);
+              }
+              if (res.status == 500) {
+                setBiddingMessage(["red", "Mức giá không hợp lệ", false]);
+                setOnBidded(false);
+              }
+            })
+            .catch((err) => {});
+        } else if (res?.status == 500) {
+          setBiddingMessage([
+            "red",
+            "Bạn không đủ điều kiện tham gia phiên đấu giá này",
+            false,
+          ]);
+          setOnBidded(false);
+        } else {
+          setBiddingMessage([]);
+          setOnBidded(false);
+        }
+      })
+      .catch((err) => {});
+  };
 
   webSocket.onopen = function () {
     //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
     console.log("connected to server");
   };
   webSocket.onmessage = function (message) {
-    if(JSON.parse(message.data)[0] === 'updateProductDetail')
-    {
+    if (JSON.parse(message.data)[0] === "updateProductDetail") {
       let data = JSON.parse(message.data)[1];
       console.log(data[0].UserBuyer);
       setNowPrice(data[0].NowPrice);
@@ -184,13 +199,11 @@ function ProductDetail() {
         //     if(w.IdUserWatch == user.userId)
         //     {
         //       console.log(w);
-        
+
         //     }
         //   });
         // }
 
-
-  
         const timer = setInterval(() => {
           let endedIn = moment(
             moment(data[0].DateEnd).format("DD/MM/YYYY A HH:mm:ss"),
@@ -205,7 +218,6 @@ function ProductDetail() {
           } else {
             setExpired(false);
             setDateEnded(moment(endedIn).format("HH:mm A - DD/MM/YYYY"));
-
           }
         }, 1000);
         if (expired === true) {
@@ -224,8 +236,6 @@ function ProductDetail() {
       })
       .catch(function (error) {});*/
   }, []);
-
-
 
   return (
     <div className="home">
@@ -331,10 +341,22 @@ function ProductDetail() {
                                   Đặt giá
                                 </Button>
                                 {biddingMessage.length > 0 && (
-                                  <Message color={biddingMessage[0]}
+                                  <Message
+                                    icon
+                                    color={biddingMessage[0]}
                                     header="Thông báo"
                                     content={biddingMessage[1]}
-                                  />
+                                  >
+                                    {biddingMessage[2] === true && (
+                                      <Icon name="circle notched" loading />
+                                    )}
+                                    <Message.Content>
+                                      <Message.Header>
+                                        Thông báo
+                                      </Message.Header>
+                                      {biddingMessage[1]}
+                                    </Message.Content>
+                                  </Message>
                                 )}
                               </div>
                             )}
@@ -373,21 +395,19 @@ function ProductDetail() {
                   <Segment>
                     <Grid stackable>
                       <Grid.Row>
-                        <Breadcrumb
-                          icon="right angle"
-                          sections={sections}
-                          style={{ paddingTop: "1em", paddingLeft: "2em" }}
-                        />
-                      </Grid.Row>
-                      <Grid.Row>
                         <Grid.Column width={13}>
-                          <h3 style={{ paddingLeft: "0.5em" }}>
+                          <h3 style={{ paddingLeft: "0.5em", fontWeight:'bold' }}>
                             {product.Name}
                           </h3>
                         </Grid.Column>
                         <Grid.Column width={3}>
-                        <Rating icon='star' rating={watchListCheck} maxRating={1} size='massive'
-                        onRate={onWatchListCheck}/>
+                          <Rating
+                            icon="star"
+                            rating={watchListCheck}
+                            maxRating={1}
+                            size="massive"
+                            onRate={onWatchListCheck}
+                          />
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
@@ -468,11 +488,11 @@ function ProductDetail() {
                       </Message.Header>
                       {bidders.length > 0 ? (
                         <p>
-                          <b>{`****${bidders[0].Lastname}`}</b> đặt
-                          giá cao nhất:{" "}
+                          <b>{`****${bidders[0].Lastname}`}</b> đặt giá cao
+                          nhất:{" "}
                           <b>
                             <CurrencyFormat
-                              value={product.NowPrice}
+                              value={bidders[0].Price}
                               displayType={"text"}
                               thousandSeparator={true}
                             />{" "}
@@ -495,14 +515,21 @@ function ProductDetail() {
                         <Table.Body>
                           {bidders.map((buyer) => (
                             <Table.Row key={buyer.id}>
-                              <Table.Cell>{moment(buyer.DateStart).format("DD/MM/YYYY HH:mm")}</Table.Cell>
+                              <Table.Cell>
+                                {moment(buyer.DateStart).format(
+                                  "DD/MM/YYYY HH:mm"
+                                )}
+                              </Table.Cell>
                               <Table.Cell>{`****${buyer.Lastname}`}</Table.Cell>
-                              <Table.Cell>  <CurrencyFormat
-                              value={buyer.Price}
-                              displayType={"text"}
-                              thousandSeparator={true}
-                            />{" "}
-                            VNĐ</Table.Cell>
+                              <Table.Cell>
+                                {" "}
+                                <CurrencyFormat
+                                  value={buyer.Price}
+                                  displayType={"text"}
+                                  thousandSeparator={true}
+                                />{" "}
+                                VNĐ
+                              </Table.Cell>
                             </Table.Row>
                           ))}
                         </Table.Body>

@@ -202,6 +202,15 @@ const UploadProduct = () => {
                         <Option value={1}>Không</Option>        
                     </Select>
                 </Form.Item>
+                <Form.Item name={['product', 'allowUnrated']} label="Cho phép tham gia" rules={[{ required: true }]}>
+                    <Select
+                        placeholder="Cho phép bidder chưa được đánh giá tham gia ?"
+                        allowClear
+                    >
+                        <Option value={0}>Có</Option>        
+                        <Option value={1}>Không</Option>        
+                    </Select>
+                </Form.Item>
                 <Form.Item 
                     name={['product', 'DateEnd']} 
                     label="Ngày kết thúc"                     
@@ -210,7 +219,8 @@ const UploadProduct = () => {
                             required: true,
                         },
                 ]}>
-                    <DatePicker />
+                    <DatePicker showTime 
+                    />
                 </Form.Item>
                 <Form.Item label="Mô tả" rules={[{ required: true }]}>
                     <Editor
