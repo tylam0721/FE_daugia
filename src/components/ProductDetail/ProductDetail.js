@@ -34,6 +34,7 @@ import { IMG_HOST } from "../../config/endpoints";
 import CurrencyFormat from "react-currency-format";
 
 function ProductDetail() {
+  moment().locale('vi')
   const [{ user }, dispatch] = useStateValue();
   const sections = [
     { key: "Home", content: "Home", link: true },
@@ -74,7 +75,7 @@ function ProductDetail() {
     setWatchListCheck(rating);
     if (rating == 0) {
       axios
-        .post(`${API_HOST_DEV}/api/watchlist/delete`, {
+        .post(`${API_HOST}/api/watchlist/delete`, {
           IdProduct: product.id,
           IdUser: user.userId,
         })
@@ -84,7 +85,7 @@ function ProductDetail() {
         .catch((err) => {});
     } else {
       axios
-        .post(`${API_HOST_DEV}/api/watchlist/add`, {
+        .post(`${API_HOST}/api/watchlist/add`, {
           IdProduct: product.id,
           IdUser: user.userId,
         })
@@ -102,7 +103,7 @@ function ProductDetail() {
       setOnBidded(true);
       setDisableBidBtn(true);
       axios
-      .post(`${API_HOST_DEV}/api/action/check`, {
+      .post(`${API_HOST}/api/action/check`, {
         idUser: user.userId,
         idProduct: product.id,
       })
@@ -123,7 +124,7 @@ function ProductDetail() {
             "circle notched",
           ]);
           axios
-            .post(`${API_HOST_DEV}/api/action/buys`, {
+            .post(`${API_HOST}/api/action/buys`, {
               IdProduct: product.id,
               Price: price,
               IdUser: user.userId,
@@ -187,7 +188,7 @@ function ProductDetail() {
   useEffect(() => {
     function axiosGetProduct() {
       // create a promise for the axios request
-      const promise = axios.get(`${API_HOST_DEV}/api/product/${id}`);
+      const promise = axios.get(`${API_HOST}/api/product/${id}`);
 
       // using .then, create a new promise which extracts the data
       const dataPromise = promise.then((response) => response.data);
@@ -545,7 +546,9 @@ function ProductDetail() {
                         </Table.Header>
                         <Table.Body>
                           {bidders.map((buyer) => (
-                            <Table.Row key={buyer.id}>
+                            <Table.Row key={buyer.id +" "+moment(buyer.DateStart).format(
+                              "DD/MM/YYYY HH:mm"
+                            )}>
                               <Table.Cell>
                                 {moment(buyer.DateStart).format(
                                   "DD/MM/YYYY HH:mm"
