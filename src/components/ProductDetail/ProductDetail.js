@@ -55,6 +55,7 @@ function ProductDetail() {
   const [price, setPrice] = useState("");
   const [NowPrice, setNowPrice] = useState("");
   const [onBidded, setOnBidded] = useState(false);
+  const [disableBidBtn, setDisableBidBtn] = useState(false);
 
   const onChangeBidAmount = function (values) {
     if (values < NowPrice) {
@@ -96,24 +97,30 @@ function ProductDetail() {
   };
 
   const biddingProcess = function () {
-    axios
+    if(!onBidded)
+    {       
+      setOnBidded(true);
+      setDisableBidBtn(true);
+      axios
       .post(`${API_HOST_DEV}/api/action/check`, {
         idUser: user.userId,
         idProduct: product.id,
       })
       .then((res) => {
+ 
         if (res?.status == 201) {
-          setOnBidded(true);
           setBiddingMessage([
             "red",
             "Sản phẩm này không cho phép bidder chưa từng được đánh giá tham gia",
             false,
+            "cancel",
           ]);
         } else if (res?.status == 202) {
           setBiddingMessage([
             "teal",
             "Đang gửi thông tin đấu giá. Vui lòng chờ giây lát...",
             true,
+            "circle notched",
           ]);
           axios
             .post(`${API_HOST_DEV}/api/action/buys`, {
@@ -127,28 +134,41 @@ function ProductDetail() {
                   "green",
                   "Tham gia đấu giá thành công",
                   false,
+                  "checkmark",
                 ]);
-                setOnBidded(false);
               }
-              if (res.status == 500) {
-                setBiddingMessage(["red", "Mức giá không hợp lệ", false]);
-                setOnBidded(false);
-              }
+              setOnBidded(false);
+              setDisableBidBtn(false);
             })
-            .catch((err) => {});
-        } else if (res?.status == 500) {
-          setBiddingMessage([
-            "red",
-            "Bạn không đủ điều kiện tham gia phiên đấu giá này",
-            false,
-          ]);
-          setOnBidded(false);
+            .catch((err) => {
+              setBiddingMessage([
+                "red",
+                "Mức giá không được nhỏ hơn giá hiện tại + bước giá",
+                false,
+                "cancel",
+              ]);
+              setOnBidded(false);
+              setDisableBidBtn(false);
+            });
         } else {
-          setBiddingMessage([]);
+          setBiddingMessage(false);
           setOnBidded(false);
+          setDisableBidBtn(false);
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setBiddingMessage([
+          "red",
+          "Bạn không đủ điều kiện tham gia phiên đấu giá này",
+          false,
+          "cancel",
+        ]);
+        setOnBidded(false);
+        setDisableBidBtn(false);
+      });
+
+    }
+    
   };
 
   webSocket.onopen = function () {
@@ -337,26 +357,35 @@ function ProductDetail() {
                                 <Button
                                   color={"green"}
                                   onClick={biddingProcess}
+                                  disabled={disableBidBtn}
                                 >
                                   Đặt giá
                                 </Button>
-                                {biddingMessage.length > 0 && (
-                                  <Message
-                                    icon
-                                    color={biddingMessage[0]}
-                                    header="Thông báo"
-                                    content={biddingMessage[1]}
-                                  >
-                                    {biddingMessage[2] === true && (
-                                      <Icon name="circle notched" loading />
+                                <br />
+                                {biddingMessage?.length > 0 && (
+                                  <Form.Field>
+                                    {biddingMessage[2] ? (
+                                      <Message icon color={biddingMessage[0]}>
+                                        <Icon name="circle notched" loading />
+                                        <Message.Content>
+                                          <Message.Header>
+                                            Thông báo
+                                          </Message.Header>
+                                          {biddingMessage[1]}
+                                        </Message.Content>
+                                      </Message>
+                                    ) : (
+                                      <Message icon color={biddingMessage[0]}>
+                                        <Icon name={biddingMessage[3]} />
+                                        <Message.Content>
+                                          <Message.Header>
+                                            Thông báo
+                                          </Message.Header>
+                                          {biddingMessage[1]}
+                                        </Message.Content>
+                                      </Message>
                                     )}
-                                    <Message.Content>
-                                      <Message.Header>
-                                        Thông báo
-                                      </Message.Header>
-                                      {biddingMessage[1]}
-                                    </Message.Content>
-                                  </Message>
+                                  </Form.Field>
                                 )}
                               </div>
                             )}
@@ -396,7 +425,9 @@ function ProductDetail() {
                     <Grid stackable>
                       <Grid.Row>
                         <Grid.Column width={13}>
-                          <h3 style={{ paddingLeft: "0.5em", fontWeight:'bold' }}>
+                          <h3
+                            style={{ paddingLeft: "0.5em", fontWeight: "bold" }}
+                          >
                             {product.Name}
                           </h3>
                         </Grid.Column>
