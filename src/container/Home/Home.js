@@ -29,9 +29,9 @@ function Home() {
   const [activeItem, setActiveItem] = useState("all");
   const [category, setCategory] = useState([]);
 
-  const [postsPerPage] = useState(2);
+  const [postsPerPage] = useState(6);
   const [displayProducts, setDisplayProducts] = useState([]);
-  const [offset, setOffset] = useState(1);
+  const [offset, setOffset] = useState(0);
   const [pageCount, setPageCount] = useState(0);
 
   useEffect(() => {
@@ -49,6 +49,7 @@ function Home() {
 
         // save all data
         setAllProduct(data);
+        setPageCount(Math.ceil(data.length / postsPerPage));
       })
       .catch(function (error) {
         setAlertStatus(true);
@@ -59,12 +60,12 @@ function Home() {
   const onMenuClick = async (menuValue) => {
     setActiveItem(menuValue);
     if (menuValue == 0) {
-      setProduct(allProduct);
+      setDisplayProducts(getProductData(allProduct));
     } else {
       var filteredProduct = allProduct.filter(
         (item) => item.IdCategory == menuValue
       );
-      setProduct(filteredProduct);
+      setDisplayProducts(getProductData(filteredProduct));
     }
   };
 
@@ -128,16 +129,15 @@ function Home() {
     ));
   };
 
-  const getAllPosts = async () => {
-      // split data
-      const slice = allProduct.slice(offset - 1, offset - 1 + postsPerPage);
+  const getAllPosts = () => {
+      var slice = allProduct.slice(offset * postsPerPage, (offset * postsPerPage) + postsPerPage);
+      // console.log(slice);
+      // console.log(allProduct);
       setDisplayProducts(getProductData(slice));
-      setPageCount(Math.ceil(allProduct.length / postsPerPage));
   };
 
-  const handlePageClick = (event) => {
-    const selectedPage = event.selected;
-    setOffset(selectedPage + 1);
+  const onPageChange = (event, data) => {
+    setOffset(data.activePage - 1);
   };
 
   useEffect(() => {
@@ -202,13 +202,15 @@ function Home() {
       )}
       <div className="paging">
         <Pagination
+          // onPageChange={(event, data) => console.log(data.activePage)}
+          onPageChange={onPageChange}
           boundaryRange={0}
           defaultActivePage={1}
           ellipsisItem={null}
           firstItem={null}
           lastItem={null}
           siblingRange={1}
-          totalPages={10}
+          totalPages={pageCount}
         />
       </div>
     </div>
