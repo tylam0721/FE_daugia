@@ -89,6 +89,38 @@ const [loading, setLoading] = useState(true);
                 setActiveItem("productList");
               }}
             />
+            <Menu.Item
+              name=""
+              content=""
+            />
+            <Menu.Item
+              name=""
+              content=""
+            />
+            <Menu.Item
+              name=""
+              content=""
+            />
+            <Menu.Item
+              name=""
+              content=""
+            />
+            <Menu.Item
+              name=""
+              content=""
+            />
+            <Menu.Item
+              name=""
+              content=""
+            />
+            <Menu.Item
+              name=""
+              content=""
+            />
+            <Menu.Item
+              name=""
+              content=""
+            />
           </Menu>
         </Grid.Column>
         <Grid.Column stretched width={12}>
