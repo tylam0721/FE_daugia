@@ -17,6 +17,7 @@ function Product({
   highestBid,
   biddeds,
 }) {
+
   const [, dispatch] = useStateValue();
   const [endedCounter, setEndedCounter] = useState();
   const [expired, setExpired] = useState(false);
