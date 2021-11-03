@@ -57,8 +57,8 @@ function ProductDetail() {
   const [onBidded, setOnBidded] = useState(false);
 
   const onChangeBidAmount = function (values) {
-    if (values < product.NowPrice) {
-      setCheckValid("Giá tiền không được nhỏ hơn giá hiện tại");
+    if (values < NowPrice) {
+      setCheckValid("Giá tiền không được nhỏ hơn giá hiện tại + bước giá");
     } else {
       const { formattedValue, value } = values;
       // formattedValue = $2,223

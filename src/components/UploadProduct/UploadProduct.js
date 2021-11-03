@@ -216,8 +216,8 @@ const UploadProduct = () => {
                         placeholder="Cho phép bidder chưa được đánh giá tham gia ?"
                         allowClear
                     >
-                        <Option value={0}>Có</Option>        
-                        <Option value={1}>Không</Option>        
+                        <Option value={1}>Có</Option>        
+                        <Option value={0}>Không</Option>        
                     </Select>
                 </Form.Item>
                 <Form.Item 
