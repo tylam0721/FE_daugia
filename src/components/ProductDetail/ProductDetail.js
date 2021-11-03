@@ -174,13 +174,13 @@ function ProductDetail() {
   const job = new cron.schedule('* * * * *', () => {
     mailer.send({
       from: 'webdaugiaonline@gmail.com',
-      to: `${req.body.Email}`,
+      to: `${user.email}`,
       subject: 'Web Đấu Giá Online: Xác thực tài khoản của bạn.',
       html: `
-      Xin chào ${req.body.Lastname}, cảm ơn bạn đã tham gia web Đấu Giá Online.
+      Xin chào ${user.name}, cảm ơn bạn đã tham gia web Đấu Giá Online.
       <br> 
       Bạn đã là người chiến thắng, link sản phẩm
-      <a href="https://localhost:4000/api/product/${req.body.productId}"> đây </a> 
+      <a href="https://localhost:4000/api/product/${product.productId}"> tại đây </a> 
       để xem thông tin chi tiết sản phẩm.
       <br>
       (Đây là thư tự động vui lòng không phản hồi)
