@@ -77,6 +77,21 @@ function Register() {
     }
   };
 
+  const registerByFacebook = (event) => {
+    event.preventDefault();
+    axios
+      .post(`${API_HOST}/api/register/auth/facebook`)
+      .then(function (res) {
+        if (res.status === 201) {
+          alert("Đăng ký thành công");
+          history.push("/");
+        }
+      })
+      .catch(function (error) {
+        setEmailError("Email đã tồn tại");
+      });
+  }
+
   const onCheckCaptcha = (value) => {
     setCaptcha(value);
   };
@@ -178,7 +193,7 @@ function Register() {
                           if (
                             (event.charCode >= 65 && event.charCode <= 90) ||
                             (event.charCode >= 97 && event.charCode <= 122) ===
-                              false
+                            false
                           ) {
                             setNameError(
                               "Tên không được chứa chữ số, kí tự đặc biệt hoặc khoảng trắng"
@@ -203,7 +218,7 @@ function Register() {
                   <label>Ngày sinh</label>
                   <DatePicker
                     selected={birthDay}
-                    onChange={(date) => {setbirthDay(date)}}
+                    onChange={(date) => { setbirthDay(date) }}
                   />
                 </Form.Field>
 
@@ -224,6 +239,11 @@ function Register() {
                 <Form.Field>
                   <Button color="blue" type="submit" onClick={registerUser}>
                     Đăng Ký Tài Khoản
+                  </Button>
+                </Form.Field>
+                <Form.Field>
+                  <Button color="blue" type="submit" onClick={registerByFacebook}>
+                    <Icon name="facebook" />
                   </Button>
                 </Form.Field>
               </Form>
