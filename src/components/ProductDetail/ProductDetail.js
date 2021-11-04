@@ -7,7 +7,6 @@ import "./ProductDetail.css";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import Product from "../../components/Product/Product";
-import cron from "node-cron";
 import {
   Button,
   Segment,
@@ -173,22 +172,6 @@ function ProductDetail() {
     }
     
   };
-  const job = new cron.schedule('* * * * *', () => {
-    mailer.send({
-      from: 'webdaugiaonline@gmail.com',
-      to: `${user.email}`,
-      subject: 'Web Đấu Giá Online: Xác thực tài khoản của bạn.',
-      html: `
-      Xin chào ${user.name}, cảm ơn bạn đã tham gia web Đấu Giá Online.
-      <br> 
-      Bạn đã là người chiến thắng, link sản phẩm
-      <a href="https://localhost:4000/api/product/${product.productId}"> tại đây </a> 
-      để xem thông tin chi tiết sản phẩm.
-      <br>
-      (Đây là thư tự động vui lòng không phản hồi)
-      `
-    });
-  });
   webSocket.onopen = function () {
     //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
     console.log("connected to server");
