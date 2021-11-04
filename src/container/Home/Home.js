@@ -20,6 +20,7 @@ import moment from "moment";
 import CurrencyFormat from "react-currency-format";
 
 function Home() {
+
   const [allProduct, setAllProduct] = useState([]);
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,7 @@ function Home() {
   const [pageCount, setPageCount] = useState(0);
 
   useEffect(() => {
+    moment().locale('vi');
     // get category
     axios.get(`${API_HOST}/api/category`).then(function (res) {
       setCategory(res?.data?.data);
@@ -116,7 +118,7 @@ function Home() {
           buyNowPrice={product.buyNowPrice}
           dateCreated={product.DateCreated}
           dateEnded={product.DateEnd}
-          biddeds={product.UserBuyer?.length}
+          biddeds={product.UserBuyer.length}
           highestBid={
             product.UserBuyer?.length > 0
               ? `*****${product.UserBuyer[0].Lastname}`

@@ -39,6 +39,7 @@ const validateMessages = {
 
 
 const UploadProduct = () => {
+    moment().locale('vi')
     const [showUploadImageModal, setShowUploadImageModal] = useState(false);
     const [productId, setProductId] = useState(null);
     const [{ user }, dispatch] = useStateValue();

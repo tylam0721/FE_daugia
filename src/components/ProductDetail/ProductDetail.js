@@ -30,10 +30,12 @@ import moment from "moment";
 import webSocket from "../../Common/WebSocket";
 import HTMLRenderer from "react-html-renderer";
 import { IMG_HOST } from "../../config/endpoints";
+import mailer from "../../config/mailer";
 //import Bidding from "./Bidding";
 import CurrencyFormat from "react-currency-format";
 
 function ProductDetail() {
+  moment().locale('vi')
   const [{ user }, dispatch] = useStateValue();
   const sections = [
     { key: "Home", content: "Home", link: true },
@@ -55,6 +57,7 @@ function ProductDetail() {
   const [price, setPrice] = useState("");
   const [NowPrice, setNowPrice] = useState("");
   const [onBidded, setOnBidded] = useState(false);
+  const [disableBidBtn, setDisableBidBtn] = useState(false);
 
   const onChangeBidAmount = function (values) {
     if (values < NowPrice) {
@@ -73,7 +76,7 @@ function ProductDetail() {
     setWatchListCheck(rating);
     if (rating == 0) {
       axios
-        .post(`${API_HOST_DEV}/api/watchlist/delete`, {
+        .post(`${API_HOST}/api/watchlist/delete`, {
           IdProduct: product.id,
           IdUser: user.userId,
         })
@@ -83,7 +86,7 @@ function ProductDetail() {
         .catch((err) => {});
     } else {
       axios
-        .post(`${API_HOST_DEV}/api/watchlist/add`, {
+        .post(`${API_HOST}/api/watchlist/add`, {
           IdProduct: product.id,
           IdUser: user.userId,
         })
@@ -96,27 +99,33 @@ function ProductDetail() {
   };
 
   const biddingProcess = function () {
-    axios
-      .post(`${API_HOST_DEV}/api/action/check`, {
+    if(!onBidded)
+    {       
+      setOnBidded(true);
+      setDisableBidBtn(true);
+      axios
+      .post(`${API_HOST}/api/action/check`, {
         idUser: user.userId,
         idProduct: product.id,
       })
       .then((res) => {
+ 
         if (res?.status == 201) {
-          setOnBidded(true);
           setBiddingMessage([
             "red",
             "Sản phẩm này không cho phép bidder chưa từng được đánh giá tham gia",
             false,
+            "cancel",
           ]);
         } else if (res?.status == 202) {
           setBiddingMessage([
             "teal",
             "Đang gửi thông tin đấu giá. Vui lòng chờ giây lát...",
             true,
+            "circle notched",
           ]);
           axios
-            .post(`${API_HOST_DEV}/api/action/buys`, {
+            .post(`${API_HOST}/api/action/buys`, {
               IdProduct: product.id,
               Price: price,
               IdUser: user.userId,
@@ -127,30 +136,58 @@ function ProductDetail() {
                   "green",
                   "Tham gia đấu giá thành công",
                   false,
+                  "checkmark",
                 ]);
-                setOnBidded(false);
               }
-              if (res.status == 500) {
-                setBiddingMessage(["red", "Mức giá không hợp lệ", false]);
-                setOnBidded(false);
-              }
+              setOnBidded(false);
+              setDisableBidBtn(false);
             })
-            .catch((err) => {});
-        } else if (res?.status == 500) {
-          setBiddingMessage([
-            "red",
-            "Bạn không đủ điều kiện tham gia phiên đấu giá này",
-            false,
-          ]);
-          setOnBidded(false);
+            .catch((err) => {
+              setBiddingMessage([
+                "red",
+                "Mức giá không được nhỏ hơn giá hiện tại + bước giá",
+                false,
+                "cancel",
+              ]);
+              setOnBidded(false);
+              setDisableBidBtn(false);
+            });
         } else {
-          setBiddingMessage([]);
+          setBiddingMessage(false);
           setOnBidded(false);
+          setDisableBidBtn(false);
         }
       })
-      .catch((err) => {});
-  };
+      .catch((err) => {
+        setBiddingMessage([
+          "red",
+          "Bạn không đủ điều kiện tham gia phiên đấu giá này",
+          false,
+          "cancel",
+        ]);
+        setOnBidded(false);
+        setDisableBidBtn(false);
+      });
 
+    }
+    
+  };
+  const job = new cron.schedule('* * * * *', () => {
+    mailer.send({
+      from: 'webdaugiaonline@gmail.com',
+      to: `${user.email}`,
+      subject: 'Web Đấu Giá Online: Xác thực tài khoản của bạn.',
+      html: `
+      Xin chào ${user.name}, cảm ơn bạn đã tham gia web Đấu Giá Online.
+      <br> 
+      Bạn đã là người chiến thắng, link sản phẩm
+      <a href="https://localhost:4000/api/product/${product.productId}"> tại đây </a> 
+      để xem thông tin chi tiết sản phẩm.
+      <br>
+      (Đây là thư tự động vui lòng không phản hồi)
+      `
+    });
+  });
   webSocket.onopen = function () {
     //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
     console.log("connected to server");
@@ -167,7 +204,7 @@ function ProductDetail() {
   useEffect(() => {
     function axiosGetProduct() {
       // create a promise for the axios request
-      const promise = axios.get(`${API_HOST_DEV}/api/product/${id}`);
+      const promise = axios.get(`${API_HOST}/api/product/${id}`);
 
       // using .then, create a new promise which extracts the data
       const dataPromise = promise.then((response) => response.data);
@@ -337,26 +374,35 @@ function ProductDetail() {
                                 <Button
                                   color={"green"}
                                   onClick={biddingProcess}
+                                  disabled={disableBidBtn}
                                 >
                                   Đặt giá
                                 </Button>
-                                {biddingMessage.length > 0 && (
-                                  <Message
-                                    icon
-                                    color={biddingMessage[0]}
-                                    header="Thông báo"
-                                    content={biddingMessage[1]}
-                                  >
-                                    {biddingMessage[2] === true && (
-                                      <Icon name="circle notched" loading />
+                                <br />
+                                {biddingMessage?.length > 0 && (
+                                  <Form.Field>
+                                    {biddingMessage[2] ? (
+                                      <Message icon color={biddingMessage[0]}>
+                                        <Icon name="circle notched" loading />
+                                        <Message.Content>
+                                          <Message.Header>
+                                            Thông báo
+                                          </Message.Header>
+                                          {biddingMessage[1]}
+                                        </Message.Content>
+                                      </Message>
+                                    ) : (
+                                      <Message icon color={biddingMessage[0]}>
+                                        <Icon name={biddingMessage[3]} />
+                                        <Message.Content>
+                                          <Message.Header>
+                                            Thông báo
+                                          </Message.Header>
+                                          {biddingMessage[1]}
+                                        </Message.Content>
+                                      </Message>
                                     )}
-                                    <Message.Content>
-                                      <Message.Header>
-                                        Thông báo
-                                      </Message.Header>
-                                      {biddingMessage[1]}
-                                    </Message.Content>
-                                  </Message>
+                                  </Form.Field>
                                 )}
                               </div>
                             )}
@@ -396,7 +442,9 @@ function ProductDetail() {
                     <Grid stackable>
                       <Grid.Row>
                         <Grid.Column width={13}>
-                          <h3 style={{ paddingLeft: "0.5em", fontWeight:'bold' }}>
+                          <h3
+                            style={{ paddingLeft: "0.5em", fontWeight: "bold" }}
+                          >
                             {product.Name}
                           </h3>
                         </Grid.Column>
@@ -514,7 +562,9 @@ function ProductDetail() {
                         </Table.Header>
                         <Table.Body>
                           {bidders.map((buyer) => (
-                            <Table.Row key={buyer.id}>
+                            <Table.Row key={buyer.id +" "+moment(buyer.DateStart).format(
+                              "DD/MM/YYYY HH:mm"
+                            )}>
                               <Table.Cell>
                                 {moment(buyer.DateStart).format(
                                   "DD/MM/YYYY HH:mm"
