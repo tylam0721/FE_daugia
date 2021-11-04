@@ -7,6 +7,7 @@ import "./ProductDetail.css";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import Product from "../../components/Product/Product";
+import cron from "node-cron";
 import {
   Button,
   Segment,
