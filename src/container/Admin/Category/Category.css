@@ -20,3 +20,9 @@
   color: green !important;
   border-color: green !important;
 }
+
+tbody {
+  display: block;
+  height: 270px !important;
+  overflow: auto;
+}
