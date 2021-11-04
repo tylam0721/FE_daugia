@@ -105,6 +105,20 @@ function Profile() {
     });
   };
 
+  const openNotificationSendSuccess = (type) => {
+    notification[type]({
+      message: "Gửi yêu cầu thành công",
+      description: "Bạn đã gửi yêu cầu thành công, vui lòng đợi admin phê duyệt",
+    });
+  };
+
+  const openNotificationSenderror = (type) => {
+    notification[type]({
+      message: "Gửi yêu cầu thất bại",
+      description: "Bạn đã gửi yêu cầu thất bại, vui lòng kiểm tra lại",
+    });
+  };
+
   const handleChangePassword = () => {
     axios
       .put(`${API_HOST_DEV}/api/user/update-password/` + profile.id, {
@@ -117,6 +131,18 @@ function Profile() {
       .catch((error) => {
         console.log("error " + error);
         openNotificationWithIcon("error");
+      });
+  };
+
+  const handleSendReques = () => {
+    axios
+      .post(`${API_HOST_DEV}/api/user/request/upto-seller/` + profile.id, {}, config)
+      .then((response) => {
+        openNotificationSendSuccess("success");
+      })
+      .catch((error) => {
+        console.log("error " + error);
+        openNotificationSenderror("error");
       });
   };
 
@@ -179,7 +205,9 @@ function Profile() {
             <Form.Field inline>
               <label>Ngày sinh: </label> {moment(profile.Birthday).format("DD-MM-YYYY")}
             </Form.Field>
-            <Button color='teal'>Gửi yêu cầu nâng cấp lên Seller</Button>
+            {profile.Scope === 'Bidder' &&(
+               <Button color='teal' onClick={handleSendReques}>Gửi yêu cầu nâng cấp lên Seller</Button>
+            )}
             <Modal title="Đổi mật khẩu" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
             <Space direction="vertical">
             <p><b>Nhập mật khẩu cũ</b></p>
