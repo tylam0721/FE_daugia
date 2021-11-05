@@ -86,7 +86,7 @@ function ProductDetail() {
                       </Label>
                     </Table.Cell>
                     <Table.Cell>
-                      <Button icon color={"red"}>
+                      <Button icon color={"red"} onClick={()=>{RejectBidder(infor.id)}}>
                         <Icon name="user cancel" /> Từ chối
                       </Button>
                     </Table.Cell>
@@ -145,6 +145,18 @@ function ProductDetail() {
       setCheckValid("");
     }
   };
+
+
+  const RejectBidder = function(userId){
+    axios.post(`${API_HOST_DEV}/api/action/reject`,{
+      IdProduct: product.id,
+      IdBuyer: userId,
+    }).then((res)=>{
+      console.log("từ chối thành công");
+    }).catch((err)=>{
+      console.log("từ chối ko thành công");
+    })
+  }
 
   const onWatchListCheck = function (e, { rating, maxRating }) {
     setWatchListCheck(rating);
@@ -233,7 +245,7 @@ function ProductDetail() {
         .catch((err) => {
           setBiddingMessage([
             "red",
-            "Bạn không đủ điều kiện tham gia phiên đấu giá này",
+            "Bạn không đủ điều kiện tham gia hoặc đã bị người bán từ chối phiên đấu giá này",
             false,
             "cancel",
           ]);
@@ -252,6 +264,7 @@ function ProductDetail() {
       console.log(data[0].UserBuyer);
       setNowPrice(data[0].NowPrice);
       setBidders(data[0].UserBuyer);
+      setUserInfor(data[0].UserInfor);
     }
   };
 
