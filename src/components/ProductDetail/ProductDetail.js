@@ -52,75 +52,68 @@ function ProductDetail() {
           <Form>
             <Form.Field inline>
               <TextArea placeholder="Bổ sung thông tin sản phẩm" />
-         
             </Form.Field>
-            <Button icon color={'green'}><Icon name="pencil"/> Thêm thông tin bổ sung</Button>
+            <Button icon color={"green"}>
+              <Icon name="pencil" /> Thêm thông tin bổ sung
+            </Button>
           </Form>
         </Tab.Pane>
       ),
     },
     {
       menuItem: "Danh sách người tham gia",
-      render: () => <Tab.Pane>
-{bidders.length > 0 ? (
-                      <Table celled selectable unstackable>
-                        <Table.Header>
-                          <Table.Row>
-                            <Table.HeaderCell>Người mua</Table.HeaderCell>
-                            <Table.HeaderCell>Điểm đánh giá</Table.HeaderCell>
-                            <Table.HeaderCell>Thao tác</Table.HeaderCell>
-                          </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                          {bidders.map((buyer) => (
-                            <Table.Row
-                              key={
-                                buyer.id +
-                                " " +
-                                moment(buyer.DateStart).format(
-                                  "DD/MM/YYYY HH:mm"
-                                )
-                              }
-                            >
-                              <Table.Cell>
-                                {moment(buyer.DateStart).format(
-                                  "DD/MM/YYYY HH:mm"
-                                )}
-                              </Table.Cell>
-                              <Table.Cell>{`****${buyer.Lastname}`}</Table.Cell>
-                              <Table.Cell>
-                                {" "}
-                                <CurrencyFormat
-                                  value={buyer.Price}
-                                  displayType={"text"}
-                                  thousandSeparator={true}
-                                />{" "}
-                                VNĐ
-                              </Table.Cell>
-                            </Table.Row>
-                          ))}
-                        </Table.Body>
-                      </Table>
-                    ) : (
-                      <Table celled selectable unstackable>
-                        <Table.Header>
-                          <Table.Row>
-                          <Table.HeaderCell>Người mua</Table.HeaderCell>
-                            <Table.HeaderCell>Điểm đánh giá</Table.HeaderCell>
-                            <Table.HeaderCell>Thao tác</Table.HeaderCell>
-                          </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                          <Table.Row>
-                            <Table.Cell></Table.Cell>
-                            <Table.Cell></Table.Cell>
-                            <Table.Cell></Table.Cell>
-                          </Table.Row>
-                        </Table.Body>
-                      </Table>
-                    )}
-
-      </Tab.Pane>,
+      render: () => (
+        <Tab.Pane>
+          {userInfor?.length > 0 ? (
+            <Table celled selectable unstackable>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Người mua</Table.HeaderCell>
+                  <Table.HeaderCell>Điểm đánh giá</Table.HeaderCell>
+                  <Table.HeaderCell>Thao tác</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {userInfor.map((infor) => (
+                  <Table.Row key={infor.id}>
+                    <Table.Cell>{`****${infor.Lastname}`}</Table.Cell>
+                    <Table.Cell inline>
+                      <Label>
+                        <Icon name="thumbs up" color={'green'}/> {infor.RateGood}
+                      </Label>
+                      <Label>
+                        <Icon name="thumbs down" color={'red'}/> {infor.RateBad}
+                      </Label>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Button icon color={"red"}>
+                        <Icon name="user cancel" /> Từ chối
+                      </Button>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          ) : (
+            <Table celled selectable unstackable>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Người mua</Table.HeaderCell>
+                  <Table.HeaderCell>Điểm đánh giá</Table.HeaderCell>
+                  <Table.HeaderCell>Thao tác</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell></Table.Cell>
+                  <Table.Cell></Table.Cell>
+                  <Table.Cell></Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          )}
+        </Tab.Pane>
+      ),
     },
   ];
   const [loading, setLoading] = useState(true);
@@ -138,6 +131,7 @@ function ProductDetail() {
   const [NowPrice, setNowPrice] = useState("");
   const [onBidded, setOnBidded] = useState(false);
   const [disableBidBtn, setDisableBidBtn] = useState(false);
+  const [userInfor, setUserInfor]= useState([]);
 
   const onChangeBidAmount = function (values) {
     if (values < NowPrice) {
@@ -264,7 +258,7 @@ function ProductDetail() {
   useEffect(() => {
     function axiosGetProduct() {
       // create a promise for the axios request
-      const promise = axios.get(`${API_HOST}/api/product/${id}`);
+      const promise = axios.get(`${API_HOST_DEV}/api/product/${id}`);
 
       // using .then, create a new promise which extracts the data
       const dataPromise = promise.then((response) => response.data);
@@ -277,6 +271,7 @@ function ProductDetail() {
         setProduct(data[0]);
         setBidders(data[0].UserBuyer);
         setNowPrice(data[0].NowPrice);
+        setUserInfor(data[0].UserInfor);
         setLoading(false);
         if (data[0].UserSeller.length > 0) {
           if (
