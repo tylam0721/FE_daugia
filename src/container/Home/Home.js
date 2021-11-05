@@ -36,7 +36,7 @@ function Home() {
   const [pageCount, setPageCount] = useState(0);
 
   useEffect(() => {
-    moment().locale('vi');
+    moment.locale('vi');
     // get category
     axios.get(`${API_HOST}/api/category`).then(function (res) {
       setCategory(res?.data?.data);

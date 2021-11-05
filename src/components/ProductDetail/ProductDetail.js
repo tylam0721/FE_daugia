@@ -22,8 +22,9 @@ import {
   Icon,
   Rating,
   Table,
-  Breadcrumb,
+  TextArea,
   Input,
+  Tab,
 } from "semantic-ui-react";
 
 import moment from "moment";
@@ -35,7 +36,7 @@ import mailer from "../../config/mailer";
 import CurrencyFormat from "react-currency-format";
 
 function ProductDetail() {
-  moment().locale('vi')
+  moment().locale("vi");
   const [{ user }, dispatch] = useStateValue();
   const sections = [
     { key: "Home", content: "Home", link: true },
@@ -43,6 +44,85 @@ function ProductDetail() {
     { key: "Shirt", content: "T-Shirt", active: true },
   ];
 
+  const panes = [
+    {
+      menuItem: "Thông tin sản phẩm",
+      render: () => (
+        <Tab.Pane>
+          <Form>
+            <Form.Field inline>
+              <TextArea placeholder="Bổ sung thông tin sản phẩm" />
+         
+            </Form.Field>
+            <Button icon color={'green'}><Icon name="pencil"/> Thêm thông tin bổ sung</Button>
+          </Form>
+        </Tab.Pane>
+      ),
+    },
+    {
+      menuItem: "Danh sách người tham gia",
+      render: () => <Tab.Pane>
+{bidders.length > 0 ? (
+                      <Table celled selectable unstackable>
+                        <Table.Header>
+                          <Table.Row>
+                            <Table.HeaderCell>Người mua</Table.HeaderCell>
+                            <Table.HeaderCell>Điểm đánh giá</Table.HeaderCell>
+                            <Table.HeaderCell>Thao tác</Table.HeaderCell>
+                          </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                          {bidders.map((buyer) => (
+                            <Table.Row
+                              key={
+                                buyer.id +
+                                " " +
+                                moment(buyer.DateStart).format(
+                                  "DD/MM/YYYY HH:mm"
+                                )
+                              }
+                            >
+                              <Table.Cell>
+                                {moment(buyer.DateStart).format(
+                                  "DD/MM/YYYY HH:mm"
+                                )}
+                              </Table.Cell>
+                              <Table.Cell>{`****${buyer.Lastname}`}</Table.Cell>
+                              <Table.Cell>
+                                {" "}
+                                <CurrencyFormat
+                                  value={buyer.Price}
+                                  displayType={"text"}
+                                  thousandSeparator={true}
+                                />{" "}
+                                VNĐ
+                              </Table.Cell>
+                            </Table.Row>
+                          ))}
+                        </Table.Body>
+                      </Table>
+                    ) : (
+                      <Table celled selectable unstackable>
+                        <Table.Header>
+                          <Table.Row>
+                          <Table.HeaderCell>Người mua</Table.HeaderCell>
+                            <Table.HeaderCell>Điểm đánh giá</Table.HeaderCell>
+                            <Table.HeaderCell>Thao tác</Table.HeaderCell>
+                          </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                          <Table.Row>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                          </Table.Row>
+                        </Table.Body>
+                      </Table>
+                    )}
+
+      </Tab.Pane>,
+    },
+  ];
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState([]);
   const { id } = useParams();
@@ -99,78 +179,74 @@ function ProductDetail() {
   };
 
   const biddingProcess = function () {
-    if(!onBidded)
-    {       
+    if (!onBidded) {
       setOnBidded(true);
       setDisableBidBtn(true);
       axios
-      .post(`${API_HOST}/api/action/check`, {
-        idUser: user.userId,
-        idProduct: product.id,
-      })
-      .then((res) => {
- 
-        if (res?.status == 201) {
+        .post(`${API_HOST}/api/action/check`, {
+          idUser: user.userId,
+          idProduct: product.id,
+        })
+        .then((res) => {
+          if (res?.status == 201) {
+            setBiddingMessage([
+              "red",
+              "Sản phẩm này không cho phép bidder chưa từng được đánh giá tham gia",
+              false,
+              "cancel",
+            ]);
+          } else if (res?.status == 202) {
+            setBiddingMessage([
+              "teal",
+              "Đang gửi thông tin đấu giá. Vui lòng chờ giây lát...",
+              true,
+              "circle notched",
+            ]);
+            axios
+              .post(`${API_HOST}/api/action/buys`, {
+                IdProduct: product.id,
+                Price: price,
+                IdUser: user.userId,
+              })
+              .then((res) => {
+                if (res.status == 202) {
+                  setBiddingMessage([
+                    "green",
+                    "Tham gia đấu giá thành công",
+                    false,
+                    "checkmark",
+                  ]);
+                }
+                setOnBidded(false);
+                setDisableBidBtn(false);
+              })
+              .catch((err) => {
+                setBiddingMessage([
+                  "red",
+                  "Mức giá không được nhỏ hơn giá hiện tại + bước giá",
+                  false,
+                  "cancel",
+                ]);
+                setOnBidded(false);
+                setDisableBidBtn(false);
+              });
+          } else {
+            setBiddingMessage(false);
+            setOnBidded(false);
+            setDisableBidBtn(false);
+          }
+        })
+        .catch((err) => {
           setBiddingMessage([
             "red",
-            "Sản phẩm này không cho phép bidder chưa từng được đánh giá tham gia",
+            "Bạn không đủ điều kiện tham gia phiên đấu giá này",
             false,
             "cancel",
           ]);
-        } else if (res?.status == 202) {
-          setBiddingMessage([
-            "teal",
-            "Đang gửi thông tin đấu giá. Vui lòng chờ giây lát...",
-            true,
-            "circle notched",
-          ]);
-          axios
-            .post(`${API_HOST}/api/action/buys`, {
-              IdProduct: product.id,
-              Price: price,
-              IdUser: user.userId,
-            })
-            .then((res) => {
-              if (res.status == 202) {
-                setBiddingMessage([
-                  "green",
-                  "Tham gia đấu giá thành công",
-                  false,
-                  "checkmark",
-                ]);
-              }
-              setOnBidded(false);
-              setDisableBidBtn(false);
-            })
-            .catch((err) => {
-              setBiddingMessage([
-                "red",
-                "Mức giá không được nhỏ hơn giá hiện tại + bước giá",
-                false,
-                "cancel",
-              ]);
-              setOnBidded(false);
-              setDisableBidBtn(false);
-            });
-        } else {
-          setBiddingMessage(false);
           setOnBidded(false);
           setDisableBidBtn(false);
-        }
-      })
-      .catch((err) => {
-        setBiddingMessage([
-          "red",
-          "Bạn không đủ điều kiện tham gia phiên đấu giá này",
-          false,
-          "cancel",
-        ]);
-        setOnBidded(false);
-        setDisableBidBtn(false);
-      });
-
+        });
     }
-    
   };
   webSocket.onopen = function () {
     //ws.send(JSON.stringify({message: 'What is the meaning of life, the universe and everything?'}));
@@ -400,16 +476,16 @@ function ProductDetail() {
                           </Form>
                         )}
                         {product.IdUserSeller === user.userId && (
-                          <div>
-                            {expired === false && (
-                              <Form>
-                                <Button color={"green"}>
-                                  <Icon name="pencil alternate" />
-                                  Bổ sung thông tin sản phẩm
-                                </Button>
-                              </Form>
+                          <Form>
+                            {expired === false && <Tab panes={panes} />}
+                            {expired === true && (
+                              <Message
+                                warning
+                                header="Sản phẩm đã hết phiên đấu giá"
+                                content="Bạn không thể chỉnh sửa của sản phẩm đã hết hạn đấu giá"
+                              />
                             )}
-                          </div>
+                          </Form>
                         )}
                       </div>
                     ) : (
@@ -546,9 +622,15 @@ function ProductDetail() {
                         </Table.Header>
                         <Table.Body>
                           {bidders.map((buyer) => (
-                            <Table.Row key={buyer.id +" "+moment(buyer.DateStart).format(
-                              "DD/MM/YYYY HH:mm"
-                            )}>
+                            <Table.Row
+                              key={
+                                buyer.id +
+                                " " +
+                                moment(buyer.DateStart).format(
+                                  "DD/MM/YYYY HH:mm"
+                                )
+                              }
+                            >
                               <Table.Cell>
                                 {moment(buyer.DateStart).format(
                                   "DD/MM/YYYY HH:mm"
