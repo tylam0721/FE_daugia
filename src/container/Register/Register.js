@@ -20,6 +20,7 @@ import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import "react-datepicker/dist/react-datepicker.css";
 import validator from "validator";
 import moment from "moment";
+import config from "../../config/default.json";
 
 function Register() {
   //router
@@ -29,7 +30,7 @@ function Register() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [captcha, setCaptcha] = useState("");
+  var [captcha, setCaptcha] = useState(false);
   const [captchaKey, setCaptchaKey] = useState("");
   const [birthDay, setbirthDay] = useState(new Date());
   const [emailError, setEmailError] = useState("");
@@ -37,7 +38,6 @@ function Register() {
   const [passwordError, setPasswordError] = useState("");
   const [checkValid, setCheckValid] = useState("");
   const [nameError, setNameError] = useState("");
-
   useEffect(() => {
     console.log(process.env);
     setCaptchaKey(process.env.CAPTCHA_PUBLIC_KEY);
@@ -77,23 +77,8 @@ function Register() {
     }
   };
 
-  const registerByFacebook = (event) => {
-    event.preventDefault();
-    axios
-      .post(`${API_HOST}/api/register/auth/facebook`)
-      .then(function (res) {
-        if (res.status === 201) {
-          alert("Đăng ký thành công");
-          history.push("/");
-        }
-      })
-      .catch(function (error) {
-        setEmailError("Email đã tồn tại");
-      });
-  }
-
-  const onCheckCaptcha = (value) => {
-    setCaptcha(value);
+  const onCheckCaptcha = () => {
+    setCaptcha(true)
   };
 
   return (
@@ -221,11 +206,7 @@ function Register() {
                     onChange={(date) => { setbirthDay(date) }}
                   />
                 </Form.Field>
-
-                {/* <ReCAPTCHA
-                  sitekey={process.env.CAPTCHA_PUBLIC_KEY}
-                  onChange={onCheckCaptcha}
-                /> */}
+               
                 <Form.Field>
                   {checkValid.length > 0 && (
                     <Message negative>
@@ -236,15 +217,17 @@ function Register() {
                     </Message>
                   )}
                 </Form.Field>
+                <ReCAPTCHA
+                    sitekey={config.Captcha_Site_Key}
+                    onChange={onCheckCaptcha}
+                  />
                 <Form.Field>
-                  <Button color="blue" type="submit" onClick={registerUser}>
+                  <Button color="blue" type="submit" onClick={registerUser} disabled={!captcha}>
                     Đăng Ký Tài Khoản
                   </Button>
                 </Form.Field>
                 <Form.Field>
-                  <Button color="blue" type="submit" onClick={registerByFacebook}>
-                    <Icon name="facebook" />
-                  </Button>
+                    <a href="/register/auth/facebook"> <Icon name="facebook" /> </a>
                 </Form.Field>
               </Form>
               <Message attached="bottom" info>
