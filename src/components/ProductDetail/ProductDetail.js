@@ -25,6 +25,7 @@ import {
   TextArea,
   Input,
   Tab,
+  Popup,
 } from "semantic-ui-react";
 
 import moment from "moment";
@@ -79,16 +80,35 @@ function ProductDetail() {
                     <Table.Cell>{`****${infor.Lastname}`}</Table.Cell>
                     <Table.Cell inline>
                       <Label>
-                        <Icon name="thumbs up" color={'green'}/> {infor.RateGood}
+                        <Icon name="thumbs up" color={"green"} />{" "}
+                        {infor.RateGood}
                       </Label>
                       <Label>
-                        <Icon name="thumbs down" color={'red'}/> {infor.RateBad}
+                        <Icon name="thumbs down" color={"red"} />{" "}
+                        {infor.RateBad}
                       </Label>
                     </Table.Cell>
                     <Table.Cell>
-                      <Button icon color={"red"} onClick={()=>{RejectBidder(infor.id)}}>
-                        <Icon name="user cancel" /> Từ chối
-                      </Button>
+                      <Popup
+                        trigger={
+                          <Button
+                            color="red"
+                            icon="user cancel"
+                            content="Từ chối"
+                          />
+                        }
+                        content={
+                          <Button
+                            color="green"
+                            content="Xác nhận từ chối ra giá"
+                            onClick={() => {
+                              RejectBidder(infor.id);
+                            }}
+                          />
+                        }
+                        on="click"
+                        position="top right"
+                      />
                     </Table.Cell>
                   </Table.Row>
                 ))}
@@ -131,7 +151,8 @@ function ProductDetail() {
   const [NowPrice, setNowPrice] = useState("");
   const [onBidded, setOnBidded] = useState(false);
   const [disableBidBtn, setDisableBidBtn] = useState(false);
-  const [userInfor, setUserInfor]= useState([]);
+  const [userInfor, setUserInfor] = useState([]);
+  const [openConfirm, setOpenConfirm] = useState();
 
   const onChangeBidAmount = function (values) {
     if (values < NowPrice) {
@@ -146,17 +167,23 @@ function ProductDetail() {
     }
   };
 
+  const Confirmation = function () {
+    setOpenConfirm(true);
+  };
 
-  const RejectBidder = function(userId){
-    axios.post(`${API_HOST_DEV}/api/action/reject`,{
-      IdProduct: product.id,
-      IdBuyer: userId,
-    }).then((res)=>{
-      console.log("từ chối thành công");
-    }).catch((err)=>{
-      console.log("từ chối ko thành công");
-    })
-  }
+  const RejectBidder = function (userId) {
+    axios
+      .post(`${API_HOST_DEV}/api/action/reject`, {
+        IdProduct: product.id,
+        IdBuyer: userId,
+      })
+      .then((res) => {
+        console.log("từ chối thành công");
+      })
+      .catch((err) => {
+        console.log("từ chối ko thành công");
+      });
+  };
 
   const onWatchListCheck = function (e, { rating, maxRating }) {
     setWatchListCheck(rating);

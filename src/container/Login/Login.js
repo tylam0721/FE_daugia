@@ -19,6 +19,7 @@ import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import jwt from "jwt-decode";
 import { useStateValue } from "../../StateProvider/StateProvider";
 import validator from "validator";
+import webSocket from "../../Common/WebSocket";
 
 function Login() {
   const [, dispatch] = useStateValue();
@@ -33,6 +34,12 @@ function Login() {
   const [checkValid, setCheckValid] = useState("");
   const loginUser = (event) => {
     // test modal:
+
+
+    webSocket.onopen = function () {
+    };
+    webSocket.onmessage = function (message) {
+    };
 
     event.preventDefault();
     localStorage.clear();
@@ -69,6 +76,8 @@ function Login() {
 
       // set USER global state:
       dispatch({ type: "SET_USER", user: user });
+      console.log("send user id to server");
+      webSocket.send(JSON.stringify({id: user.userId}));
     } else {
       // remove USER global state:
       dispatch({ type: "SET_USER", user: null });

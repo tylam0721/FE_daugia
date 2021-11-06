@@ -55,6 +55,7 @@ function App() {
       const user = jwt(accessToken);
       if (moment.unix(user.exp) > moment()) {
         dispatch({ type: "SET_USER", user: user });
+
         // console.log(user.userId);
       } else {
         dispatch({ type: "SET_USER", user: null });
