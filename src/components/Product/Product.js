@@ -71,7 +71,7 @@ function Product({
     {
       return true;
     }
-    return false
+    return false;
   }
   return (
     <div className="product">
