@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Table, Dropdown, Image, Button, Form, Icon,Loader,Dimmer } from "semantic-ui-react";
+import { Table, Dropdown, Image, Button, Form, Icon, Loader, Dimmer } from "semantic-ui-react";
 import axios from "axios";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import { useStateValue } from "../../StateProvider/StateProvider";
 import { useHistory, Redirect } from "react-router-dom";
+import Product from "../../components/UserProfile/Product";
 
 function ProductList() {
   const countryOptions = [
@@ -13,6 +14,34 @@ function ProductList() {
     { key: "win", value: "win", text: "Sản phẩm đã thắng" },
   ];
   const [loading, setLoading] = useState(true);
+
+  const history = useHistory();
+  const [{ user }, dispatch] = useStateValue();
+  const [watchList, setWatchList] = useState([]);
+  const [biddingList, setBiddingList] = useState([]);
+  const [winBidList, setWinBidList] = useState([]);
+
+  useEffect(() => {
+    if(user && user.userId)
+    {
+      axios
+      .get(`${API_HOST}/api/user/info/${user.userId}`)
+      .then(async (res)=>{
+        // handle success
+
+        await setWatchList(res.data.watchlist);
+        await setBiddingList(res.data.auctionList);
+        // <Redirect to='/'/>
+        // setUserInfo(res?.data?.accessToken);
+        console.log(watchList);
+        setLoading(false);
+      })
+      .catch((error)=>{
+        // handle error
+        history.push('/');
+      });
+    }
+  }, [dispatch]);
 
   return (
     <div>
@@ -34,31 +63,9 @@ function ProductList() {
           </Table.Row>
         </Table.Header>
 
-        <Table.Body>
-          <Table.Row verticalAlign='top'>
-            <Table.Cell>
-              <Image
-                src="https://react.semantic-ui.com/images/wireframe/image.png"
-                size="small"
-              />
-            </Table.Cell>
-            <Table.Cell>RTXX TIGERBYTE</Table.Cell>
-            <Table.Cell>100,000,000 vnđ</Table.Cell>
-            <Table.Cell>Đã bán</Table.Cell>
-            <Table.Cell width="2">
-            <Button color='green' icon labelPosition="right">
-                Xem chi tiết
-                <Icon name="right arrow" />
-              </Button>
-                <br/>
-                <br/>
-              <Button color='red' icon labelPosition="right">
-                Loại bỏ
-                <Icon  name="trash alternate outline" />
-              </Button>
-            </Table.Cell>
-          </Table.Row>
-        </Table.Body>
+        
+          { <Product list={watchList}/>}         
+        
       </Table>
     </div>
   );

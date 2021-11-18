@@ -35,9 +35,6 @@ const [loading, setLoading] = useState(true);
     history.push('/login')
   }
   
-
- 
-
   useEffect(() => {}, []);
   const renderSwitch = function()
   {
