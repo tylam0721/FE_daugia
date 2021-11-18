@@ -11,6 +11,11 @@ import {
   Icon,
   Label,
 } from "semantic-ui-react";
+
+import {
+  notification,
+} from "antd";
+import { NotificationTwoTone } from "@ant-design/icons";
 import "./Register.css";
 import { useHistory } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -43,6 +48,13 @@ function Register() {
     setCaptchaKey(process.env.CAPTCHA_PUBLIC_KEY);
   }, []);
 
+  const openNotificationSuccess = (type) => {
+    notification[type]({
+      message: "Đăng kí tàu khoản thành công",
+      description: "Bạn hãy check gmail để kích hoạt mã otp",
+    });
+  };
+
   const registerUser = (event) => {
     event.preventDefault();
     if (
@@ -65,7 +77,7 @@ function Register() {
         })
         .then(function (res) {
           if (res.status === 201) {
-            alert("Đăng ký thành công");
+            openNotificationSuccess('success');
             history.push("/");
           }
         })
