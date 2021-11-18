@@ -59,7 +59,7 @@ function Header() {
           )}
           {user?.scope === 15 ? (
             <div>
-              <Link to="/uploadImage">
+              <Link to="/product/add">
                 <Menu.Item>
                   <Icon name="upload" /> Add product
                 </Menu.Item>
