@@ -8,7 +8,6 @@ import Product from "../../components/UserProfile/Product";
 
 function ProductList() {
   const countryOptions = [
-    { key: "all", value: "all", text: "Tất cả" },
     { key: "fav", value: "fav", text: "Sản phẩm yêu thích" },
     { key: "bid", value: "bid", text: "Sản phẩm bạn đang đấu giá" },
     { key: "win", value: "win", text: "Sản phẩm đã thắng" },
@@ -17,9 +16,10 @@ function ProductList() {
 
   const history = useHistory();
   const [{ user }, dispatch] = useStateValue();
-  const [watchList, setWatchList] = useState([]);
+  // const [watchList, setWatchList] = useState([]);
   const [biddingList, setBiddingList] = useState([]);
   const [winBidList, setWinBidList] = useState([]);
+  const [productList, setProductList] = useState([]);
 
   useEffect(() => {
     if(user && user.userId)
@@ -29,11 +29,11 @@ function ProductList() {
       .then(async (res)=>{
         // handle success
 
-        await setWatchList(res.data.watchlist);
-        await setBiddingList(res.data.auctionList);
+        setProductList(res.data.watchlist);
+        setBiddingList(res.data.auctionList);
+        setWinBidList(res.data.auctionList);
         // <Redirect to='/'/>
-        // setUserInfo(res?.data?.accessToken);
-        console.log(watchList);
+        // setUserInfo(res?.data?.accessToken)
         setLoading(false);
       })
       .catch((error)=>{
@@ -43,6 +43,10 @@ function ProductList() {
     }
   }, [dispatch]);
 
+  const sortByOption=()=>{
+    setProductList(biddingList);
+  }
+  
   return (
     <div>
       <Dropdown
@@ -50,12 +54,14 @@ function ProductList() {
         placeholder="Chọn danh sách..."
         selection
         options={countryOptions}
+        defaultValue={countryOptions.key="fav"}
+        id="dropdownOp"
+        onChange={sortByOption}
       />
 
       <Table stripped >
         <Table.Header >
           <Table.Row>
-            <Table.HeaderCell>Sản phẩm</Table.HeaderCell>
             <Table.HeaderCell>Tên sản phẩm</Table.HeaderCell>
             <Table.HeaderCell>Giá</Table.HeaderCell>
             <Table.HeaderCell>Tình trạng</Table.HeaderCell>
@@ -64,7 +70,7 @@ function ProductList() {
         </Table.Header>
 
         
-          { <Product list={watchList}/>}         
+          { <Product list={productList}/>}         
         
       </Table>
     </div>
