@@ -18,6 +18,13 @@ function Header() {
       to: "/admin/upto",
     },
     { key: 2, text: "Hạ Cấp tài khoản", value: 2, as: Link, to: "/admin/downto" },
+    {
+      key: 3,
+      text: "Quản lý tài khoản",
+      value: 3,
+      as: Link,
+      to: "/admin/manager",
+    },
   ];
 
   const login = () => {

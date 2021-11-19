@@ -37,7 +37,10 @@ function Upto() {
   };
 
   const formatDatime = (a) => {
-    return a.toString().slice(0, 19).replace("T", " ");
+    if(a !== null){
+      return a.toString().slice(0, 19).replace("T", " ");
+    }
+    return "";
   };
 
   function callback(key) {

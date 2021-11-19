@@ -21,6 +21,7 @@ import axios from "axios";
 const { TabPane } = Tabs;
 function Upto() {
   const [data, setdata] = useState();
+  
 
   const [isModalVisibleUpto, setIsModalVisibleAddUpto] =
     useState(false);
@@ -30,8 +31,8 @@ function Upto() {
 
   let config = {
     headers: {
-      'x-access-token': localStorage.accessToken,
-      'Content-Type': "application/json",
+      "x-access-token": localStorage.accessToken,
+      "Content-Type": "application/json",
     },
   };
 
@@ -45,6 +46,13 @@ function Upto() {
   function callback(key) {
     console.log(key);
   }
+
+  const openNotificationSendSuccess = (type) => {
+    notification[type]({
+      message: "Reset Password thành côngg",
+      description: "Đã gửi mail thay đổi mật khẩu đến người dùng",
+    });
+  };
 
   const columns = [
     {
@@ -63,18 +71,6 @@ function Upto() {
       title: "NameRole",
       dataIndex: "NameRole",
       key: "NameRole",
-      render: (text) => <p>{text}</p>,
-    },
-    {
-      title: "RateGood",
-      dataIndex: "RateGood",
-      key: "RateGood",
-      render: (text) => <p>{text}</p>,
-    },
-    {
-      title: "RateBad",
-      dataIndex: "RateBad",
-      key: "RateBad",
       render: (text) => <p>{text}</p>,
     },
     {
@@ -100,8 +96,11 @@ function Upto() {
               //setSeletedRow(record);
             }}
           >
+            <Button type="primary" ghost onClick={() => handResetPassword(record.id)}>
+              RePass
+            </Button>
             <Button type="primary" danger ghost onClick={() => showModalUpto(record.id)}>
-              UPTO
+              DELELE
             </Button>
           </Space>
         );
@@ -122,7 +121,7 @@ function Upto() {
   const handleOkUpto = () => {
     setIsModalVisibleAddUpto(false);
     axios
-      .post(`${API_HOST_DEV}/api/admin/upto`, {
+      .put(`${API_HOST_DEV}/api/admin/del`, {
         id: selectedRowID
       }, config)
       .then((response) => {
@@ -133,9 +132,22 @@ function Upto() {
       });
   };
 
+  const handResetPassword = (id) => {
+    axios
+      .put(`${API_HOST_DEV}/api/user/reset-password`, {
+        id: id
+      }, config)
+      .then((response) => {
+        openNotificationSendSuccess('success')
+      })
+      .catch((error) => {
+        console.log("error " + error);
+      });
+  }
+
   let FnLoaduser = () => {
     axios
-      .get(`${API_HOST_DEV}/api/admin/bidder`, {}, config)
+      .get(`${API_HOST_DEV}/api/admin/all`, {}, config)
       .then((response) => {
         setdata(response.data.data);
       })
@@ -155,7 +167,7 @@ function Upto() {
         <Container>
           <div className="div__parent">
           <Tabs defaultActiveKey="1" onChange={callback}>
-            <TabPane tab="Tài khoản Bidder cần nâng cấp lên Seller" key="1" size="large">
+            <TabPane tab="Quản lý danh sách người dùng" key="1" size="large">
               <Table
                 pagination={{ pageSize: 4 }}
                 columns={columns}
@@ -173,7 +185,7 @@ function Upto() {
         onCancel={handleCancelUpto}
       >
         <h1>
-          <b className="delete__category">Nâng cấp tài khoảng lên Seller </b>{" "}
+          <b className="delete__category">Xóa tài khoản này </b>{" "}
         </h1>
       </Modal>
     </>
