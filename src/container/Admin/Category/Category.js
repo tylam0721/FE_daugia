@@ -45,15 +45,13 @@ function Category() {
   const [selectedRow, setSeletedRow] = useState(null);
   const [selectedId, setSeletedId] = useState();
 
-  const AuthStr = "Bearer ".concat("");
-
   const formatDatime = (a) => {
     return a.toString().slice(0, 19).replace("T", " ");
   };
 
   let config = {
     headers: {
-      Authorization: AuthStr,
+      "x-access-token": localStorage.accessToken,
       "Content-Type": "application/json",
     },
   };
@@ -219,9 +217,7 @@ function Category() {
 
   let FnLoadCategory = () => {
     axios
-      .get(`${API_HOST_DEV}/api/category`, {
-        headers: { Authorization: AuthStr },
-      })
+      .get(`${API_HOST_DEV}/api/category`, {},config)
       .then((response) => {
         setdata(response.data.data);
       })

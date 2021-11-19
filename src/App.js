@@ -13,6 +13,7 @@ import Checkout from "./container/Checkout/Checkout";
 import AdminCategory from "./container/Admin/Category/Category";
 import AdminProduct from "./container/Admin/Product/Prodcuct";
 import AdminUpto from "./container/Admin/Upto/Upto";
+import AdminManager from "./container/Admin/ResetUser/ResetUser";
 import AdminDownto from "./container/Admin/Downto/Downto";
 import ProductDetail from "./components/ProductDetail/ProductDetail";
 import Footer from "./container/Footer/Footer";
@@ -111,10 +112,11 @@ function App() {
               path="/accountActivation/:code"
               component={AccountActivation}
             ></Route>
-            <Route path="/admin/category" component={AdminCategory}></Route>
-            <Route path="/admin/product" component={AdminProduct}></Route>
-            <Route path="/admin/downto" component={AdminDownto}></Route>
-            <Route path="/admin/upto" component={AdminUpto}></Route>
+            <Route path="/admin/category" component={AdminCategory} onEnter={userValidation}></Route>
+            <Route path="/admin/product" component={AdminProduct} onEnter={userValidation}></Route>
+            <Route path="/admin/downto" component={AdminDownto} onEnter={userValidation}></Route>
+            <Route path="/admin/upto" component={AdminUpto} onEnter={userValidation}></Route>
+            <Route path="/admin/manager" component={AdminManager}></Route>
           </Switch>
         </main>
         <Footer></Footer>
