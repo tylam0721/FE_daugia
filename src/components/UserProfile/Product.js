@@ -22,7 +22,7 @@ function Product({list}) {
             {
                 list.map(function (item) {
                     var status = "";
-                    if(compareDate(item.DateEnd)<=0){
+                    if(compareDate(item.DateEnd)>=0){
                         status="on sale";
                     }
                     else
