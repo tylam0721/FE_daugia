@@ -109,7 +109,7 @@ function Profile() {
   const openNotificationSuccess = (type) => {
     notification[type]({
       message: "Thao tác thành công",
-      description: "Bạn đã đổi mật khẩu thành công",
+      description: "Bạn đã lưu thành công",
     });
   };
 
@@ -155,23 +155,6 @@ function Profile() {
   };
 
   const updateInfo = (event) => {
-    if(email=="")
-    {
-      setEmail(profile.Email);
-    }
-    else if(firstName==""){
-      setFirstName(profile.Firstname);
-    }
-    else if(lastName==""){
-      setLastName(profile.Lastname);
-    }
-    else if(adress==""){
-      setAdress(profile.Adress);
-    }
-    else if(birthDay==null)
-    {
-      setbirthDay(new Date(profile.Birthday));
-    }
     event.preventDefault();
       axios
         .put(`${API_HOST}/api/user/info/update`, {
@@ -181,12 +164,11 @@ function Profile() {
           Birthday: moment(birthDay).format("YYYY-MM-DD"),
           Firstname:firstName,
           Lastname: lastName
-
         })
         .then(function (res) {
           if (res.status === 201) {
             openNotificationSuccess('success');
-            history.push("/");
+            history.push("/profile");
           }
         })
         .catch(function (error) {
