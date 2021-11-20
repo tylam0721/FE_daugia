@@ -248,7 +248,7 @@ function Home() {
         <>
           <Container className="home-container product-section coming-end-auction-section">
             <Header className="section-header">
-              <div>Sản phẩm ngẫu nhiên</div>
+              <div>Tất cả sản phẩm</div>
               <a href="/product/all">Xem thêm</a>
             </Header>
             <Grid container columns={3} doubling stackable>
@@ -259,7 +259,6 @@ function Home() {
           <Container className="home-container product-section coming-end-auction-section">
             <Header className="section-header">
               <div>Sản phẩm có số lượt đánh giá cao nhất</div>
-              <a href="/product/all?sortByPrice=1">Xem thêm</a>
             </Header>
             <Grid container columns={3} doubling stackable>
               {displayHighestAuctionCount}
@@ -271,7 +270,6 @@ function Home() {
           <Container className="home-container product-section coming-end-auction-section">
             <Header className="section-header">
               <div>Sản phẩm có giá cao nhất</div>
-              <a href="/product/all?sortByPrice=1">Xem thêm</a>
             </Header>
             <Grid container columns={3} doubling stackable>
               {displayHighestPriceProduct}
@@ -283,7 +281,6 @@ function Home() {
           <Container className="home-container product-section coming-end-auction-section">
             <Header className="section-header">
               <div>Sản phẩm sắp kết thúc đấu giá trong 5 ngày nữa</div>
-              <a href="/product/coming-auction-end">Xem thêm</a>
             </Header>
             <Grid container columns={3} doubling stackable>
               {displayComingAuctionProducts}

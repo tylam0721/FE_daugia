@@ -22,6 +22,7 @@ import './ProductList.css'
 
 function ProductList({productType}) {
   const [allProduct, setAllProduct] = useState([]);
+  const [allProductCaptured, setAllProductCaptured] = useState([]);
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alertStatus, setAlertStatus] = useState(false);
@@ -52,8 +53,8 @@ function ProductList({productType}) {
     let endpoint = "";
     switch(productType) {
       case "coming-auction-end":
-        endpoint = "api/product/auction-coming-end";
-        setPageTitle("Danh sách sản phẩm có nhiêu lượt đánh giá nhất")
+        endpoint = "api/product";
+        setPageTitle("Danh sách sản phẩm")
         break;
       case "all":
         endpoint = "api/product";
@@ -64,7 +65,7 @@ function ProductList({productType}) {
         setPageTitle("Danh sách sản phẩm")
         break;
     }
-    console.log(`${API_HOST}/${endpoint}`)
+
     axios
       .get(`${API_HOST}/${endpoint}`)
       .then(function (res) {
@@ -74,6 +75,7 @@ function ProductList({productType}) {
         // save all data
         setAllProduct(data);
         setPageCount(Math.ceil(data.length / postsPerPage));
+        setAllProductCaptured(data)
       })
       .catch(function (error) {
         setAlertStatus(true);
@@ -119,14 +121,30 @@ function ProductList({productType}) {
     },
     {
       key: 3,
-      text: "Xem nhiều nhất",
+      text: "Sắp kết thúc",
       value: 3,
       label: { color: "green", empty: true, circular: true },
     },
   ];
 
   const onSort = (value) => {
-    console.log(value);
+    switch (value) {
+      case 1:
+        // giá cao đến thấp;
+        setAllProduct([...allProduct.sort((i, j) => j.NowPrice - i.NowPrice)])
+        break;
+      case 2:
+        // giá thấp đến cao;
+        setAllProduct([...allProduct.sort((i, j) => i.NowPrice - j.NowPrice)])
+        break;
+      case 3:
+        setAllProduct([...allProduct.sort((i, j) => {
+          return new Date(i.DateEnd) - new Date(j.DateEnd);
+        })])
+        break;
+      default:
+        break;
+    }
   };
 
   const getProductData = (productData) => {
@@ -168,7 +186,31 @@ function ProductList({productType}) {
 
   useEffect(() => {
     getAllPosts();
+    console.log(allProduct)
   }, [allProduct, offset]);
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      console.log(event.target.value)
+
+      if (event.target.value === "") {
+        setAllProduct(allProductCaptured)
+      } else {
+        axios({
+          method: 'post',
+          url: `${API_HOST}/api/product/key`,
+          headers: {}, 
+          data: {
+            key: event.target.value,
+          }
+        })
+          .then(function (res) {
+            setAllProduct(res.data)
+          })
+          .catch();
+      }
+    }
+  }
 
   return (
     <div className="home">
@@ -202,11 +244,11 @@ function ProductList({productType}) {
                 );
               })}
               <Menu.Item key={1000}>
-                <Input icon="search" placeholder="Tìm kiếm..." />
+                <Input icon="search" placeholder="Tìm kiếm..." onKeyDown={(e) => handleKeyDown(e)}  />
               </Menu.Item>
               <Menu.Item>
                 <Dropdown
-                  onChange={(e, data) => onSort(data)}
+                  onChange={(e, { value }) => onSort(value)} 
                   placeholder="Sắp xếp"
                   clearable
                   options={sortOptions}

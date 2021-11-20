@@ -33,17 +33,22 @@
 }
 
 .home-container .section-header {
-   margin-left: 10px;
+   /* margin-left: 10px; */
    display: flex;
    align-items: center;
    justify-content: space-between;
-   color: rgb(255, 118, 118);
+   border: 1px solid #208f97;
+   border-radius: 5px;
+   padding: 10px;
+   text-decoration: none !important;
+   color: #208f97 !important;
+   font-size: 25px !important;
 }
 
 .home-container .section-header a {
    /* text-decoration: underline; */
    margin-right: 10px;
-
+   font-size: 15px !important;
 }
 
 .product-section {
