@@ -33,7 +33,6 @@
 }
 
 .home-container .section-header {
-   padding-bottom: 15px;
    margin-left: 10px;
    display: flex;
    align-items: center;
@@ -41,14 +40,14 @@
    color: rgb(255, 118, 118);
 }
 
-.home-container .section-header:not(:first-child) {
-   margin-top: 20px !important;
-}
-
 .home-container .section-header a {
    /* text-decoration: underline; */
    margin-right: 10px;
 
+}
+
+.product-section {
+   padding-top: 40px !important;
 }
 
 .break-line {
@@ -59,4 +58,24 @@
 
 .coming-end-auction-section {
    padding-top: 20px;
+
+}
+
+.product-section .ui.grid.container {
+   margin-top: 0 !important;
+}
+
+.menuu {
+   margin-top: 0 !important;
+}
+
+.ant-carousel .slick-track {
+   height: 250px;
+}
+
+.ant-carousel .slick-slide img {
+   width: 100%;
+}
+.home {
+   margin-top: 0 !important;
 }

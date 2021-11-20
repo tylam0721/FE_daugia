@@ -20,6 +20,7 @@ import Alert from "../../Common/Alert";
 import webSocket from "../../Common/WebSocket";
 import moment from "moment";
 import CurrencyFormat from "react-currency-format";
+import { Carousel } from "antd";
 
 function Home() {
   const [allProduct, setAllProduct] = useState([]);
@@ -38,15 +39,22 @@ function Home() {
 
   const [comingEndAuctionProduct, setComingEndAuctionProduct] = useState([]);
   const [highestPriceProduct, setHighestPriceProduct] = useState([]);
-  const [displayComingAuctionProducts, setDisplayComingAuctionProducts] = useState([]);
-  const [displayHighestPriceProduct, setDisplayHighestPriceProduct] = useState([]);
+  const [highestAuctionCount, setHighestAuctionCount] = useState([]);
+  const [displayComingAuctionProducts, setDisplayComingAuctionProducts] =
+    useState([]);
+  const [displayHighestPriceProduct, setDisplayHighestPriceProduct] = useState(
+    []
+  );
+  const [displayHighestAuctionCount, setDisplayHighestAuctionCount] = useState(
+    []
+  );
 
   useEffect(() => {
     moment.locale("vi");
-    // get category
-    axios.get(`${API_HOST}/api/category`).then(function (res) {
-      setCategory(res?.data?.data);
-    });
+    // // get category
+    // axios.get(`${API_HOST}/api/category`).then(function (res) {
+    //   setCategory(res?.data?.data);
+    // });
 
     // get product
     axios
@@ -66,11 +74,20 @@ function Home() {
 
     // get danh sách sản phẩm sắp kết thúc đấu giá
     axios
-      .post(`http://localhost:4000/api/product/auction-coming-end`)
+      .post(`${API_HOST}/api/product/auction-coming-end`)
       .then(function (res) {
         const data1 = res.data;
         // console.log(data.data)
-        setComingEndAuctionProduct(data1.data)
+        setComingEndAuctionProduct(data1.data);
+      })
+      .catch();
+
+    // get danh sách có số lượt đánh giá cao nhất;
+    axios
+      .get(`${API_HOST}/api/product/maxauction`)
+      .then(function (res) {
+        const data1 = res.data;
+        setHighestAuctionCount(data1);
       })
       .catch();
   }, []);
@@ -162,9 +179,11 @@ function Home() {
   };
 
   const getHighestPrice = () => {
-    var result = allProduct.sort((item1, item2) => item2.NowPrice - item1.NowPrice)
-    setHighestPriceProduct(result)
-  }
+    var result = allProduct.sort(
+      (item1, item2) => item2.NowPrice - item1.NowPrice
+    );
+    setHighestPriceProduct(result);
+  };
 
   useEffect(() => {
     getAllPosts();
@@ -174,19 +193,43 @@ function Home() {
   // display danh sach san pham sap het han dau gia
   useEffect(() => {
     if (comingEndAuctionProduct) {
-      setDisplayComingAuctionProducts(getProductData(comingEndAuctionProduct.slice(0, 5)))
+      setDisplayComingAuctionProducts(
+        getProductData(comingEndAuctionProduct.slice(0, 5))
+      );
     }
-  }, [comingEndAuctionProduct])
+  }, [comingEndAuctionProduct]);
 
   // display danh sach san pham co gia cao nhat
   useEffect(() => {
     if (highestPriceProduct) {
-      setDisplayHighestPriceProduct(getProductData(highestPriceProduct.slice(0, 5)))
+      setDisplayHighestPriceProduct(
+        getProductData(highestPriceProduct.slice(0, 5))
+      );
     }
-  }, [highestPriceProduct])
+  }, [highestPriceProduct]);
+
+  // display danh sach san pham có số lượt ra giá cao nhất
+  useEffect(() => {
+    if (highestAuctionCount) {
+      setDisplayHighestAuctionCount(
+        getProductData(highestAuctionCount.slice(0, 5))
+      );
+    }
+  }, [highestAuctionCount]);
 
   return (
     <div className="home">
+        <Carousel autoplay>
+          <div>
+            <img src="https://www.interserver.net/tips/wp-content/uploads/2021/04/image1-1.png" />
+          </div>
+          <div>
+            <img src="https://d3jlwjv6gmyigl.cloudfront.net/images/2020/10/auct.jpg" />
+          </div>
+          <div>
+            <img src="https://eadn-wc04-1927238.nxedge.io/cdn/media/2019/07/560X292_Auction-Bid.png" />
+          </div>
+        </Carousel>
       <Alert
         status={alertStatus} // true or false
         type={alertType} // success, warning, error, info
@@ -203,74 +246,51 @@ function Home() {
         </Segment>
       ) : (
         <>
-        <Container className="home-container">
-          <Menu secondary>
+          <Container className="home-container product-section coming-end-auction-section">
+            <Header className="section-header">
+              <div>Sản phẩm ngẫu nhiên</div>
+              <a href="/product/all">Xem thêm</a>
+            </Header>
             <Grid container columns={3} doubling stackable>
-              <Menu.Item
-                key={0}
-                name="Tất cả"
-                active={true}
-                active={activeItem === 0}
-                onClick={() => onMenuClick(0)}
-              />
-              {category.map((item, index) => {
-                return (
-                  <Menu.Item
-                    key={index}
-                    name={item.Name}
-                    active={activeItem === item.id}
-                    onClick={() => onMenuClick(item.id)}
-                  />
-                );
-              })}
-              <Menu.Item key={1000}>
-                <Input icon="search" placeholder="Tìm kiếm..." />
-              </Menu.Item>
-              <Menu.Item>
-                <Dropdown
-                  onChange={(e, data) => onSort(data)}
-                  placeholder="Sắp xếp"
-                  clearable
-                  options={sortOptions}
-                  selection
-                />
-              </Menu.Item>
+              {displayProducts}
             </Grid>
-          </Menu>
-          <Header className="section-header">
-            <div>Tất cả</div>
-            <a href="/product/all">Xem thêm</a>
-          </Header>
-          <Grid container columns={3} doubling stackable>
-            {displayProducts}
-          </Grid>
-        </Container>
+          </Container>
 
-        <hr className="break-line"/>
+          <Container className="home-container product-section coming-end-auction-section">
+            <Header className="section-header">
+              <div>Sản phẩm có số lượt đánh giá cao nhất</div>
+              <a href="/product/all?sortByPrice=1">Xem thêm</a>
+            </Header>
+            <Grid container columns={3} doubling stackable>
+              {displayHighestAuctionCount}
+            </Grid>
+          </Container>
 
-        <Container className="home-container coming-end-auction-section">
-          <Header className="section-header">
-            <div>Sản phẩm có giá cao nhất</div>
-            <a href="/product/all?sortByPrice=1">Xem thêm</a>
-          </Header>
-          <Grid container columns={3} doubling stackable>
-            {displayHighestPriceProduct}
-          </Grid>
-        </Container>
+          <hr className="break-line" />
 
-        <hr className="break-line"/>
+          <Container className="home-container product-section coming-end-auction-section">
+            <Header className="section-header">
+              <div>Sản phẩm có giá cao nhất</div>
+              <a href="/product/all?sortByPrice=1">Xem thêm</a>
+            </Header>
+            <Grid container columns={3} doubling stackable>
+              {displayHighestPriceProduct}
+            </Grid>
+          </Container>
 
-        <Container className="home-container coming-end-auction-section">
-          <Header className="section-header">
-            <div>Sản phẩm sắp kết thúc đấu giá trong 5 ngày nữa</div>
-            <a href="/product/coming-auction-end">Xem thêm</a>
-          </Header>
-          <Grid container columns={3} doubling stackable>
-            {displayComingAuctionProducts}
-          </Grid>
-        </Container>
+          <hr className="break-line" />
+
+          <Container className="home-container product-section coming-end-auction-section">
+            <Header className="section-header">
+              <div>Sản phẩm sắp kết thúc đấu giá trong 5 ngày nữa</div>
+              <a href="/product/coming-auction-end">Xem thêm</a>
+            </Header>
+            <Grid container columns={3} doubling stackable>
+              {displayComingAuctionProducts}
+            </Grid>
+          </Container>
         </>
-      )}   
+      )}
     </div>
   );
 }

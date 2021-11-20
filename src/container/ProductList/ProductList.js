@@ -64,7 +64,7 @@ function ProductList({productType}) {
         setPageTitle("Danh sách sản phẩm")
         break;
     }
-
+    console.log(`${API_HOST}/${endpoint}`)
     axios
       .get(`${API_HOST}/${endpoint}`)
       .then(function (res) {
@@ -223,7 +223,6 @@ function ProductList({productType}) {
       )}
       <div className="paging">
         <Pagination
-          // onPageChange={(event, data) => console.log(data.activePage)}
           onPageChange={onPageChange}
           boundaryRange={0}
           defaultActivePage={1}
