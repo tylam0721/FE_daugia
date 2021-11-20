@@ -203,7 +203,7 @@ const UploadProduct = () => {
                         <Option value={0}>Không</Option>        
                     </Select>
                 </Form.Item>
-                <Form.Item name={['product', 'IsCheckReturn']} label="Loại" rules={[{ required: true }]}>
+                <Form.Item name={['product', 'IsCheckReturn']} label="Tự động gia hạn" rules={[{ required: true }]}>
                     <Select
                         placeholder="Tự động gia hạn"
                         allowClear
