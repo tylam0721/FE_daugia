@@ -258,7 +258,7 @@ function Home() {
 
           <Container className="home-container product-section coming-end-auction-section">
             <Header className="section-header">
-              <div>Sản phẩm có số lượt đánh giá cao nhất</div>
+              <div>Sản phẩm có số lượt đấu giá cao nhất</div>
             </Header>
             <Grid container columns={3} doubling stackable>
               {displayHighestAuctionCount}
