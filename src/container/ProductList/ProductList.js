@@ -11,23 +11,21 @@ import {
   Pagination,
   Dropdown,
   Header,
-  Link,
 } from "semantic-ui-react";
-import "./Home.css";
+import "./ProductList.css";
 import { API_HOST, API_HOST_DEV } from "../../config/endpoints";
 import axios from "axios";
 import Alert from "../../Common/Alert";
 import webSocket from "../../Common/WebSocket";
 import moment from "moment";
-import CurrencyFormat from "react-currency-format";
+import './ProductList.css'
 
-function Home() {
+function ProductList({productType}) {
   const [allProduct, setAllProduct] = useState([]);
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alertStatus, setAlertStatus] = useState(false);
   const [alertType, setAlertType] = useState("");
-  const [alertTitle, setAlertTitle] = useState("");
   const [activeItem, setActiveItem] = useState("all");
   const [category, setCategory] = useState([]);
 
@@ -36,25 +34,43 @@ function Home() {
   const [offset, setOffset] = useState(0);
   const [pageCount, setPageCount] = useState(0);
 
-  const [comingEndAuctionProduct, setComingEndAuctionProduct] = useState([]);
-  const [highestPriceProduct, setHighestPriceProduct] = useState([]);
-  const [displayComingAuctionProducts, setDisplayComingAuctionProducts] = useState([]);
-  const [displayHighestPriceProduct, setDisplayHighestPriceProduct] = useState([]);
+  const [pageTitle, setPageTitle] = useState("Danh sách sản phẩm");
+  const [isSortByPrice, setIsSortByPrice] = useState(false);
 
   useEffect(() => {
-    moment.locale("vi");
+    moment.locale('vi');
     // get category
     axios.get(`${API_HOST}/api/category`).then(function (res) {
       setCategory(res?.data?.data);
     });
 
+    if(new URLSearchParams(window.location.search).get("sortByPrice")) {
+      setIsSortByPrice(true)
+    }
+    
     // get product
+    let endpoint = "";
+    switch(productType) {
+      case "coming-auction-end":
+        endpoint = "api/product/auction-coming-end";
+        setPageTitle("Danh sách sản phẩm có nhiêu lượt đánh giá nhất")
+        break;
+      case "all":
+        endpoint = "api/product";
+        setPageTitle("Danh sách sản phẩm")
+        break;
+      default:
+        endpoint = "api/product";
+        setPageTitle("Danh sách sản phẩm")
+        break;
+    }
+
     axios
-      .get(`${API_HOST}/api/product`)
+      .get(`${API_HOST}/${endpoint}`)
       .then(function (res) {
         setLoading(false);
         const data = res.data;
-
+        console.log(data)
         // save all data
         setAllProduct(data);
         setPageCount(Math.ceil(data.length / postsPerPage));
@@ -63,16 +79,6 @@ function Home() {
         setAlertStatus(true);
         setAlertType("error");
       });
-
-    // get danh sách sản phẩm sắp kết thúc đấu giá
-    axios
-      .post(`http://localhost:4000/api/product/auction-coming-end`)
-      .then(function (res) {
-        const data1 = res.data;
-        // console.log(data.data)
-        setComingEndAuctionProduct(data1.data)
-      })
-      .catch();
   }, []);
 
   const onMenuClick = async (menuValue) => {
@@ -127,14 +133,14 @@ function Home() {
     return productData.map((product, index) => (
       <Grid.Column stretched key={index}>
         <Product
-          id={product?.id}
-          key={product?.id}
-          title={product?.Name}
-          nowPrice={product?.NowPrice}
-          buyNowPrice={product?.buyNowPrice}
-          dateCreated={product?.DateCreated}
-          dateEnded={product?.DateEnd}
-          biddeds={product?.UserBuyer?.length}
+          id={product.id}
+          key={product.id}
+          title={product.Name}
+          nowPrice={product.NowPrice}
+          buyNowPrice={product.buyNowPrice}
+          dateCreated={product.DateCreated}
+          dateEnded={product.DateEnd}
+          biddeds={product.UserBuyer.length}
           highestBid={
             product.UserBuyer?.length > 0
               ? `*****${product.UserBuyer[0].Lastname}`
@@ -148,12 +154,11 @@ function Home() {
   };
 
   const getAllPosts = () => {
-    var slice = allProduct.slice(
-      offset * postsPerPage,
-      offset * postsPerPage + postsPerPage
-    );
-    // console.log(slice);
-    // console.log(allProduct);
+    var products = allProduct
+    if (isSortByPrice) {
+      products.sort((i, j) => j.NowPrice - i.NowPrice)
+    }
+    var slice = products.slice(offset * postsPerPage, (offset * postsPerPage) + postsPerPage);
     setDisplayProducts(getProductData(slice));
   };
 
@@ -161,38 +166,12 @@ function Home() {
     setOffset(data.activePage - 1);
   };
 
-  const getHighestPrice = () => {
-    var result = allProduct.sort((item1, item2) => item2.NowPrice - item1.NowPrice)
-    setHighestPriceProduct(result)
-  }
-
   useEffect(() => {
     getAllPosts();
-    getHighestPrice();
   }, [allProduct, offset]);
-
-  // display danh sach san pham sap het han dau gia
-  useEffect(() => {
-    if (comingEndAuctionProduct) {
-      setDisplayComingAuctionProducts(getProductData(comingEndAuctionProduct.slice(0, 5)))
-    }
-  }, [comingEndAuctionProduct])
-
-  // display danh sach san pham co gia cao nhat
-  useEffect(() => {
-    if (highestPriceProduct) {
-      setDisplayHighestPriceProduct(getProductData(highestPriceProduct.slice(0, 5)))
-    }
-  }, [highestPriceProduct])
 
   return (
     <div className="home">
-      <Alert
-        status={alertStatus} // true or false
-        type={alertType} // success, warning, error, info
-        title={alertTitle} // title you want to display
-        setIsAlert={setAlertStatus}
-      />
       {loading ? (
         <Segment className="home__segment">
           <Dimmer active inverted>
@@ -202,7 +181,6 @@ function Home() {
           </Dimmer>
         </Segment>
       ) : (
-        <>
         <Container className="home-container">
           <Menu secondary>
             <Grid container columns={3} doubling stackable>
@@ -237,42 +215,27 @@ function Home() {
               </Menu.Item>
             </Grid>
           </Menu>
-          <Header className="section-header">
-            <div>Tất cả</div>
-            <a href="/product/all">Xem thêm</a>
-          </Header>
+          <Header>{pageTitle}</Header>
           <Grid container columns={3} doubling stackable>
             {displayProducts}
           </Grid>
         </Container>
-
-        <hr className="break-line"/>
-
-        <Container className="home-container coming-end-auction-section">
-          <Header className="section-header">
-            <div>Sản phẩm có giá cao nhất</div>
-            <a href="/product/all?sortByPrice=1">Xem thêm</a>
-          </Header>
-          <Grid container columns={3} doubling stackable>
-            {displayHighestPriceProduct}
-          </Grid>
-        </Container>
-
-        <hr className="break-line"/>
-
-        <Container className="home-container coming-end-auction-section">
-          <Header className="section-header">
-            <div>Sản phẩm sắp kết thúc đấu giá trong 5 ngày nữa</div>
-            <a href="/product/coming-auction-end">Xem thêm</a>
-          </Header>
-          <Grid container columns={3} doubling stackable>
-            {displayComingAuctionProducts}
-          </Grid>
-        </Container>
-        </>
-      )}   
+      )}
+      <div className="paging">
+        <Pagination
+          // onPageChange={(event, data) => console.log(data.activePage)}
+          onPageChange={onPageChange}
+          boundaryRange={0}
+          defaultActivePage={1}
+          ellipsisItem={null}
+          firstItem={null}
+          lastItem={null}
+          siblingRange={1}
+          totalPages={pageCount}
+        />
+      </div>
     </div>
   );
 }
 
-export default Home;
+export default ProductList;

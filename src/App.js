@@ -22,6 +22,7 @@ import { useStateValue } from "./StateProvider/StateProvider";
 import UploadImage from "./container/UploadImage/UploadImage";
 import UploadProduct from "./components/UploadProduct/UploadProduct";
 import AccountActivation from "./container/AccountActivation/AccountActivation";
+import ProductList from "./container/ProductList/ProductList.js";
 import jwt from "jwt-decode";
 import moment from "moment";
 import 'moment/locale/vi'  // without this line it didn't work
@@ -86,6 +87,12 @@ function App() {
               onEnter={userValidation}
             ></Route>
             <Route path="/product/upload-image" component={UploadImage}></Route>
+            <Route path="/product/coming-auction-end">
+              <ProductList productType="coming-auction-end"/>
+            </Route>
+            <Route path="/product/all">
+              <ProductList productType="all"/>
+            </Route>
             <Route
               path="/login"
               component={Login}
