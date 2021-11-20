@@ -64,9 +64,9 @@ function Product({
     });
   };
   function compareDay(day){
-    var date1=moment(day, 'DD-MM-YYYY HH:mm:ss');
-    var date2=moment(moment(), 'DD-MM-YYYY HH:mm:ss');
-    var diff = (date2.diff(date1,'days'));
+    const date1=moment(day, 'YYYY-MM-DD HH:mm:ss');
+    const date2=moment(moment(), 'YYYY-MM-DD HH:mm:ss');
+    const diff = date2.diff(date1,'days');
     if(parseInt(diff) <= 3)
     {
       return true;
